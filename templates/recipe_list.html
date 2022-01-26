@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{%for recipe in recipes%}
+    <div class="col">
+        <a href="/recipe/{{recipe.doc_id}}">{{recipe.name }}</a>
+    </div>
+{%endfor%}
+<a href="/recipe/-1">New</h1> </a>
+
+{% endblock %}

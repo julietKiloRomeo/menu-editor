@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+{%for ingredient in ingredients%}
+<div class="row">
+      <form action="/ingredient" method="POST" class="form-inline" style="display: inline-block;">
+        <div class="form-group mb-2">
+          <input type="hidden" name="doc_id" value="{{ingredient.doc_id}}">
+          <label for="nameinput" class="sr-only">Name:</label>
+          <input type="text" id="nameinput" name="name" value="{{ingredient.name }}">
+        </div>
+
+        <div class="form-group mx-sm-3 mb-2">
+          <label for="catinput" class="sr-only">Category:</label>
+          <select id="catinput" name="category">
+            {% for cat in categories %}
+                <option value={{cat}} {{"selected" if ingredient.category==cat else ""}}>{{cat}}</option>
+            {%endfor%}
+          </select>
+        </div>
+
+        <div class="form-group mx-sm-3 mb-2">
+          <label for="aliiinput" class="sr-only">Alii:</label>
+          <input type="text" id="aliiinput" name="alii" value="{{", ".join(ingredient.alii) }}">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Update</button>
+      </form>
+
+      <form action="/ingredient/delete/{{ingredient.doc_id}}" method="POST" class="form-inline" style="display: inline-block;">
+        <button type="submit" class="btn btn-primary mb-2">Delete</button>
+      </form>
+    </div>
+{%endfor%}
+
+<div class="row">
+    <form action="/ingredient/new" method="POST" class="form-inline">
+      <div class="form-group mb-2">
+        <label for="nameinput" class="sr-only">Name:</label>
+        <input type="text" id="nameinput" name="name">
+      </div>
+      <div class="form-group mb-2">
+        <label for="catinput" class="sr-only">Category:</label>
+        <select id="catinput" name="category">
+          {% for cat in categories %}
+              <option value={{cat}}>{{cat}}</option>
+          {%endfor%}
+        </select>
+      </div>
+      <div class="form-group mb-2">
+        <label for="aliiinput" class="sr-only">Alii:</label>
+        <input type="text" id="aliiinput" name="alii" value="">
+        <button type="submit" class="btn btn-primary mb-2">New</button>
+      </div>
+    </form>
+</div>
+
+{% endblock %}

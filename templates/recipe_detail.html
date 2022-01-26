@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form action="/recipe" method="POST">
+
+    <div class="form-group mb-2">
+      <input type="hidden" name="doc_id" value="{{recipe.doc_id}}">
+      <label for="nameinput">Name:</label>
+        <h2>
+      <input type="text" id="nameinput" name="name" value="{{recipe.name }}" class="form-control" >
+            </h2>
+    </div>
+
+    <div class="form-group mb-2">
+      <label for="placementinput">Placement:</label>
+      <input type="text" id="placementinput" name="placement" value="{{recipe.placement }}">
+    </div>
+    
+    <div class="form-group mb-2">
+      <label for="ratinginput">Rating:</label>
+      <input type="text" id="ratinginput" name="rating" value="{{recipe.rating }}">
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+          <h5>Placement:</h5>
+        </div>
+        <div class="col-sm">
+          <h5>Amount:</h5>
+        </div>
+        <div class="col-sm">
+          <h5>Unit:</h5>
+        </div>
+    </div>
+
+    {%for ingredient in recipe.ingredients%}
+    <div class="row">
+        <div class="col-sm">
+          <input type="text" name="name-{{loop.index}}" value="{{ingredient.ingredient}}">
+        </div>
+        <div class="col-sm">
+          <input type="text" name="value-{{loop.index}}" value="{{ingredient.amount}}">
+        </div>
+        <div class="col-sm">
+          <input type="text" name="unit-{{loop.index}}" value="{{ingredient.unit}}">
+        </div>
+    </div>
+    {%endfor%}
+    <button type="submit" class="btn btn-primary mb-2">Update</button>
+    
+</form>
+
+
+<form action="/recipe/add_ingredient" method="POST">
+    <div class="row">
+      <input type="hidden" name="doc_id" value="{{recipe.doc_id}}">
+        <div class="col-sm">
+          <input type="text" name="name">
+        </div>
+        <div class="col-sm">
+          <input type="text" name="value">
+        </div>
+        <div class="col-sm">
+          <input type="text" name="unit">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Add ingredient</button>
+</form>
+
+
+{% endblock %}
