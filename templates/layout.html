@@ -16,6 +16,32 @@
     {% block javascript %}
     {% endblock %}
 <body>
+
+{% set navigation_bar = [
+    ('/recipe', 'recipes', 'Recipes'),
+    ('/ingredient', 'ingredients', 'Ingredients'),
+    ('#', 'menus', 'Menus'),
+] -%}
+
+{% set active_page = active_page|default('none') -%}
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Menu editor</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          {% for href, id, caption in navigation_bar %}
+            <li class="nav-item">
+              <a class="nav-link{% if id == active_page %} active{% endif%}" aria-current="page" href="{{href}}" >{{caption}}</a>
+            </li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+</nav>
+    
+    
+    
     
 <main role="main">
 
@@ -24,6 +50,7 @@
 {% block content %}{% endblock %}
     
 </div>
+</main>
 </body>
 
 </html>
