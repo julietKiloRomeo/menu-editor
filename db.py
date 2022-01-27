@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, Union
 from enum import Enum
 
+
 class DB:
     FILE = "db.json"
     TABLES = ["ingredient", "recipe", "menu"]
@@ -18,6 +19,10 @@ class DB:
 
     def add_from_api(self, table_name, item):
         self._db.table(table_name).insert(item)
+
+    def update_recipe(self, doc_id, recipe):
+        recipes = self._db.table("recipe")
+        recipes.update(recipe, doc_ids=[doc_id])
 
 
 class IngredientCategory(str, Enum):
@@ -58,12 +63,14 @@ class RecipeAmount(BaseModel):
     amount: float
     unit: Unit
 
+
 class Recipe(BaseModel):
     name: str
     placement: str
     rating: Rating
     ingredients: list[IngredientAmount]
-        
+
+
 class MenuEntry(BaseModel):
     recipe: Union[IngredientAmount, RecipeAmount]
     day: str

@@ -62,9 +62,8 @@ def upsert_recipe(doc_id: int, item: database.Recipe):
     make_new = doc_id == -1
     if make_new:
         menu_db.add_from_api("recipe", item.dict())
-        print("recipe created")
-        return "recipe added"
-    print(item.dict())
+        return "recipe created"
+    menu_db.update_recipe(doc_id=doc_id, recipe=item.dict())
     return "recipe updated"
 
 #-----------------------------------------------------
