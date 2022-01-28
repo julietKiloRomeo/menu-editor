@@ -16,6 +16,12 @@
 
 
 {% block content %}
+  <input class="form-control" id="namesearchbox" type="text" placeholder="Search..">
+  <select id="categoryfilter">
+      <option value="--" active>--</option>
+          {% for cat in categories %} <option value={{cat}}>{{cat}}</option>
+          {%endfor%} </select>
+  <br>
 
 <div class="table-wrapper">
     <div class="table-title">
