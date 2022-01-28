@@ -1,15 +1,29 @@
 {% extends "layout.html" %}
 {% set active_page = "recipes" %}
 
+{% block javascript %}
+    <script>
+        const recipes = {{recipes|safe}};
+    </script>
+    <script src="{{ url_for('static', path='/recipe_list.js') }}"></script>
+{% endblock %}
+
+
 {% block content %}
 
-{%for recipe in recipes%}
-    <div class="col">
-        <a href="/recipe/{{recipe.doc_id}}">{{recipe.name }}</a>
-    </div>
-{%endfor%}
-    <div class="col">
-        <a href="/recipe/-1">New</h1> </a>
-    </div>
+
+<div class="container">
+  <input class="form-control" id="myInput" type="text" placeholder="Search..">
+  <br>
+  <ul class="list-group" id="recipe-list">
+        {%for recipe in recipes%}
+            <li class="list-group-item">
+                <a href="/recipe/{{recipe.doc_id}}">{{recipe.name }}</a>
+            </li>
+        {%endfor%}
+  </ul>  
+</div>
+
+
 
 {% endblock %}
