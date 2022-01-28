@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% set active_page = "recipes" %}
+
+{% block javascript %}
+    <script>
+        const recipes = {{recipes|safe}};
+    </script>
+    <script src="{{ url_for('static', path='/recipe_list.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container">
+  <input class="form-control" id="myInput" type="text" placeholder="Search..">
+  <br>
+  <ul class="list-group" id="recipe-list">
+        {%for recipe in recipes|sort(attribute='name')%}
+            <li class="list-group-item">
+                <a href="/recipe/{{recipe.doc_id}}">{{recipe.name }}</a>
+            </li>
+        {%endfor%}
+  </ul>  
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% set active_page = "menus" %}
+
+{% block javascript %}
+    <script>
+        const menus = {{menus|safe}};
+    </script>
+    <script src="{{ url_for('static', path='/menu_list.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container">
+  <input class="form-control" id="myInput" type="text" placeholder="Search..">
+  <br>
+  <ul class="list-group" id="recipe-list">
+        {%for menu in menus|sort(attribute='name')%}
+            <li class="list-group-item">
+                <a href="/menu/{{menu.doc_id}}">{{menu.name }}</a>
+            </li>
+        {%endfor%}
+  </ul>  
+</div>
+
+{% endblock %}

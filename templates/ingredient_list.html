@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% set active_page = "ingredients" %}
+
+{% block javascript %}
+    <script>
+        const ingredients = {{ingredients|safe}};
+        const categories = {{categories|safe}};
+        var deleted_ingredients = [];
+        const categories_select = '<select name="category">'+
+          {% for cat in categories %} '<option value={{cat}}>{{cat}}</option>'+ 
+          {%endfor%} '</select>'
+    </script>
+    <script src="{{ url_for('static', path='/ingredient_list.js') }}"></script>
+{% endblock %}
+
+
+
+{% block content %}
+  <input class="form-control" id="namesearchbox" type="text" placeholder="Search..">
+  <select id="categoryfilter">
+      <option value="--" active>--</option>
+          {% for cat in categories %} <option value={{cat}}>{{cat}}</option>
+          {%endfor%} </select>
+  <br>
+
+<div class="table-wrapper">
+    <div class="table-title">
+        <div class="row">
+            <div class="col-sm-8"><h2>Ingredienser</h2></div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i>Tilføj</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary update">Update</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 25%">Navn</th>
+                <th>Kategori</th>
+                <th>Alii</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}
