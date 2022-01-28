@@ -18,9 +18,9 @@
 <body>
 
 {% set navigation_bar = [
-    ('/recipe', 'recipes', 'Recipes'),
     ('/ingredient', 'ingredients', 'Ingredients'),
-    ('#', 'menus', 'Menus'),
+    ('/recipe', 'recipes', 'Recipes'),
+    ('/menu', 'menus', 'Menus'),
 ] -%}
 
 {% set active_page = active_page|default('none') -%}

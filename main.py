@@ -83,6 +83,20 @@ def upsert_recipe(doc_id: int, item: database.Recipe):
     menu_db.update_recipe(doc_id=doc_id, recipe=item.dict())
     return "recipe updated"
 
+
+@app.post("/api/menu/delete")
+def delete_ingredient(to_delete: dict):
+    table = menu_db._db.table("menu")
+    table.remove(doc_ids=[to_delete["doc_id"]])
+    return "menu deleted"
+
+@app.post("/api/menu/{doc_id}")
+def upsert_menu(doc_id: int, item: dict):
+    menu_db._db.table("menu").update(item, doc_ids=[doc_id])
+    return "menu updated"
+
+
+
 #-----------------------------------------------------
 # HTML
 #-----------------------------------------------------
@@ -96,44 +110,6 @@ def ingredient_list(request: Request):
     categories = [e.name for e in database.IngredientCategory]
     return templates.TemplateResponse("ingredient_list.html", {"request": request, "ingredients": ingredients, "categories": categories})
 
-@app.post("/ingredient")
-async def ingredient_update(
-        request: Request,
-        recipe: database.Recipe
-    ):
-    update_data = dict(
-        name=name,
-        category=category,
-        alii = [s.strip() for s in alii.split(",")],
-    )    
-    menu_db._db.table("ingredient").update(update_data, doc_ids=[doc_id, ])
-    
-    return RedirectResponse(url="/ingredient", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@app.post("/ingredient/new")
-async def ingredient_insert(
-        request: Request,
-        name: str = Form(...),
-        category: str = Form(...),
-        alii: str = Form(...)
-    ):
-    data = dict(
-        name=name,
-        category=category,
-        alii =  [s.strip() for s in alii.split(",")],
-    )
-    
-    menu_db._db.table("ingredient").insert(data)
-    
-    return RedirectResponse(url="/ingredient", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@app.post("/ingredient/delete/{doc_id}")
-def ingredient_delete(request: Request, doc_id: int):
-    recipe = menu_db._db.table("ingredient").remove(doc_ids=[doc_id, ])
-    return RedirectResponse(url="/ingredient", status_code=status.HTTP_303_SEE_OTHER)
-
 # recipe
 @app.get("/recipe", response_class=HTMLResponse)
 def recipe_list(request: Request):
@@ -141,24 +117,10 @@ def recipe_list(request: Request):
     return templates.TemplateResponse("recipe_list.html", {"request": request, "recipes": recipes})
 
 
-
-@app.post("/recipe/add_ingredient", response_class=HTMLResponse)
-def recipe_add_ingredient(
-    request: Request,
-    doc_id: int = Form(...),
-    name: str = Form(...),
-    value: float = Form(...),
-    unit: str = Form(...),
-):
-    DB.add_ingredient_to_recipe(self, doc_id, name, value, unit)
-    return RedirectResponse(url=f"/recipe/{doc_id}", status_code=status.HTTP_303_SEE_OTHER)
-
 @app.get("/recipe/{doc_id}", response_class=HTMLResponse)
 def recipe_details(request: Request, doc_id: int):
     recipe_or_none = menu_db._db.table("recipe").get(doc_id=doc_id)
-    
     recipe = recipe_or_none if recipe_or_none else {"name":"", "placement":"", "rating":0, "ingredients":[]}
-    
     ratings = [e.value for e in database.Rating]
     return templates.TemplateResponse(
         "recipe_detail.html",
@@ -169,3 +131,27 @@ def recipe_details(request: Request, doc_id: int):
         }
     )
 
+# menu
+@app.get("/menu", response_class=HTMLResponse)
+def recipe_list(request: Request):
+    menus = menu_db._db.table("menu").all()
+    return templates.TemplateResponse(
+        "menu_list.html",
+        {
+            "request": request,
+            "menus": menus,
+        }
+    )
+
+@app.get("/menu/{doc_id}", response_class=HTMLResponse)
+def recipe_list(request: Request, doc_id: int):
+    menu = menu_db._db.table("menu").get(doc_id=doc_id)
+    ratings = [e.value for e in database.Rating]
+    return templates.TemplateResponse(
+        "menu_detail.html",
+        {
+            "request": request,
+            "menu": menu,
+            "ratings": ratings,
+        }
+    )

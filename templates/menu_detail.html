@@ -2,10 +2,11 @@
 
 {% block javascript %}
     <script>
-        var recipe = {{recipe|safe}};
-        const url = "/api/recipe/{{recipe.doc_id or -1}}";
+        var menu = {{menu|safe}};
+        const url = "/api/menu/{{menu.doc_id or -1}}";
+        const doc_id = {{menu.doc_id or -1}};
     </script>
-    <script src="{{ url_for('static', path='/recipe_detail.js') }}"></script>
+    <script src="{{ url_for('static', path='/menu_detail.js') }}"></script>
 {% endblock %}
 
 
@@ -15,20 +16,15 @@
 <div class="form-group mb-2">
   <label for="nameinput">Name:</label>
     <h2>
-  <input type="text" id="nameinput" name="name" value="{{recipe.name }}" class="form-control" >
+  <input type="text" id="nameinput" name="name" value="{{menu.name }}" class="form-control" >
         </h2>
-</div>
-
-<div class="form-group mb-2">
-  <label for="placementinput">Placement:</label>
-  <input type="text" id="placementinput" name="placement" value="{{recipe.placement }}">
 </div>
 
 <div class="form-group mb-2">
   <label for="ratinginput">Rating:</label>
   <select id="ratinginput" name="rating">
     {% for rat in ratings %}
-        <option value={{rat}} {{"selected" if recipe.rating==rat else ""}}>{{rat}}</option>
+        <option value={{rat}} {{"selected" if menu.rating==rat else ""}}>{{rat}}</option>
     {%endfor%}
   </select>
 </div>
@@ -38,7 +34,7 @@
 <div class="table-wrapper">
     <div class="table-title">
         <div class="row">
-            <div class="col-sm-8"><h2>Ingredienser</h2></div>
+            <div class="col-sm-8"><h2>Opskrifter</h2></div>
             <div class="col-sm-4">
                 <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i>Tilføj</button>
             </div>
@@ -47,9 +43,10 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Ingrediens</th>
+                <th>Navn</th>
                 <th>Mængde</th>
                 <th>Enhed</th>
+                <th>Ugedage</th>
                 <th></th>
             </tr>
         </thead>
@@ -59,6 +56,7 @@
 </div>
 
 <button type="submit" class="btn btn-primary mb-2 update">Update</button>
+<button type="submit" class="btn btn-primary mb-2 delete">Delete</button>
 
 
 
