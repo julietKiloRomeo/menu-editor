@@ -26,6 +26,7 @@ class DB:
 
 
 class IngredientCategory(str, Enum):
+    none = "none"
     køl = "køl"
     frys = "frys"
     frugt = "frugt"
@@ -36,8 +37,12 @@ class IngredientCategory(str, Enum):
 
 class Unit(str, Enum):
     g = "g"
-    l = "l"
     kg = "kg"
+    l = "l"
+    ml = "ml"
+    dl = "dl"
+    tsk = "tsk"
+    spsk = "spsk"
     stk = "stk"
     portioner = "portioner"
 
@@ -53,6 +58,16 @@ class Ingredient(BaseModel):
     category: IngredientCategory
     alii: list[str]
 
+class IngredientData(BaseModel):
+    doc_id: int
+    name: str
+    category: IngredientCategory
+    alii: list[str]
+    
+    def id_and_dict(self):
+        return self.doc_id, {"name":self.name, "category":self.category, "alii":self.alii}
+
+    
 class IngredientAmount(BaseModel):
     ingredient: str # hopefully matches an ingredient
     amount: float

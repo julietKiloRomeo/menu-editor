@@ -1,59 +1,48 @@
 {% extends "layout.html" %}
 {% set active_page = "ingredients" %}
 
+{% block javascript %}
+    <script>
+        const ingredients = {{ingredients|safe}};
+        const categories = {{categories|safe}};
+        var deleted_ingredients = [];
+        const categories_select = '<select name="category">'+
+          {% for cat in categories %} '<option value={{cat}}>{{cat}}</option>'+ 
+          {%endfor%} '</select>'
+    </script>
+    <script src="{{ url_for('static', path='/ingredient_list.js') }}"></script>
+{% endblock %}
+
+
+
 {% block content %}
-    
-{%for ingredient in ingredients%}
-<div class="row">
-      <form action="/ingredient" method="POST" class="form-inline" style="display: inline-block;">
-        <div class="form-group mb-2">
-          <input type="hidden" name="doc_id" value="{{ingredient.doc_id}}">
-          <label for="nameinput" class="sr-only">Name:</label>
-          <input type="text" id="nameinput" name="name" value="{{ingredient.name }}">
-        </div>
 
-        <div class="form-group mx-sm-3 mb-2">
-          <label for="catinput" class="sr-only">Category:</label>
-          <select id="catinput" name="category">
-            {% for cat in categories %}
-                <option value={{cat}} {{"selected" if ingredient.category==cat else ""}}>{{cat}}</option>
-            {%endfor%}
-          </select>
+<div class="table-wrapper">
+    <div class="table-title">
+        <div class="row">
+            <div class="col-sm-8"><h2>Ingredienser</h2></div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i>Tilføj</button>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary update">Update</button>
+            </div>
         </div>
-
-        <div class="form-group mx-sm-3 mb-2">
-          <label for="aliiinput" class="sr-only">Alii:</label>
-          <input type="text" id="aliiinput" name="alii" value="{{", ".join(ingredient.alii) }}">
-        </div>
-        <button type="submit" class="btn btn-primary mb-2">Update</button>
-      </form>
-
-      <form action="/ingredient/delete/{{ingredient.doc_id}}" method="POST" class="form-inline" style="display: inline-block;">
-        <button type="submit" class="btn btn-primary mb-2">Delete</button>
-      </form>
     </div>
-{%endfor%}
-
-<div class="row">
-    <form action="/ingredient/new" method="POST" class="form-inline">
-      <div class="form-group mb-2">
-        <label for="nameinput" class="sr-only">Name:</label>
-        <input type="text" id="nameinput" name="name">
-      </div>
-      <div class="form-group mb-2">
-        <label for="catinput" class="sr-only">Category:</label>
-        <select id="catinput" name="category">
-          {% for cat in categories %}
-              <option value={{cat}}>{{cat}}</option>
-          {%endfor%}
-        </select>
-      </div>
-      <div class="form-group mb-2">
-        <label for="aliiinput" class="sr-only">Alii:</label>
-        <input type="text" id="aliiinput" name="alii" value="">
-        <button type="submit" class="btn btn-primary mb-2">New</button>
-      </div>
-    </form>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 25%">Navn</th>
+                <th>Kategori</th>
+                <th>Alii</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
+
+
 
 {% endblock %}

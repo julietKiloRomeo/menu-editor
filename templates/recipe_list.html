@@ -16,7 +16,7 @@
   <input class="form-control" id="myInput" type="text" placeholder="Search..">
   <br>
   <ul class="list-group" id="recipe-list">
-        {%for recipe in recipes%}
+        {%for recipe in recipes|sort(attribute='name')%}
             <li class="list-group-item">
                 <a href="/recipe/{{recipe.doc_id}}">{{recipe.name }}</a>
             </li>

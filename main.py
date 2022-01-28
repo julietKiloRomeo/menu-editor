@@ -44,9 +44,26 @@ def list_ingredients(page: int = -1, search: str = None):
     )
 
 @app.post("/api/ingredient")
-def add_ingredient(item: database.Ingredient):
-    #db_id = menu_db.add_from_api("ingredient", item.dict())
-    return { "success": db_id }
+def add_ingredient(ingredients: list[database.IngredientData]):
+    table = menu_db._db.table("ingredient")
+    for ingredient in ingredients:
+        doc_id, ingredient = ingredient.id_and_dict()
+
+        is_new = doc_id == -1
+        if is_new:
+            table.insert(ingredient)
+        else:
+            table.update(ingredient, doc_ids=[doc_id])
+        
+    return "ingredients updated"
+
+
+@app.post("/api/ingredient/delete")
+def delete_ingredient(to_delete: list[int]):
+    table = menu_db._db.table("ingredient")
+    table.remove(doc_ids=to_delete)
+    return "ingredients deleted"
+
 
 @app.get("/api/recipe")
 def list_recipies(page: int = -1, search: str = None):
@@ -75,6 +92,7 @@ def upsert_recipe(doc_id: int, item: database.Recipe):
 @app.get("/ingredient", response_class=HTMLResponse)
 def ingredient_list(request: Request):
     ingredients = menu_db._db.table("ingredient").all()
+    ingredients = [{**ing, "doc_id":ing.doc_id} for ing in ingredients]
     categories = [e.name for e in database.IngredientCategory]
     return templates.TemplateResponse("ingredient_list.html", {"request": request, "ingredients": ingredients, "categories": categories})
 
