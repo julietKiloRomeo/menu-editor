@@ -12,8 +12,8 @@
 
 
 <script>
-	import MenuDetail from './MenuDetail.svelte';
 	import MenuList from './MenuList.svelte';
+	import IngredientList from './IngredientList.svelte';
 
 	let navigation_bar = [
 		{caption: "ingredient", navid: "ingredient"},
@@ -49,13 +49,9 @@
 
     
 {#if navchoice === "plan"}
-	{#if doc_id > 0}
-	    <MenuDetail choice={doc_id} on:message={handleMessage}/>
-	{:else}
-	    <MenuList doc_id=doc_id on:message={handleMessage}/>
-    {/if}
+    <MenuList/>
 {:else if navchoice === "ingredient"}
-	<p>under construction</p>
+	<IngredientList/>
 {:else}
 	<p>unknown choice</p>
 {/if}

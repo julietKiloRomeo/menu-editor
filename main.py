@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 import pathlib
 
-
+# allow connecting from other local ips than the fastapi server
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -49,15 +49,12 @@ def paginated_search(table, page, pagination, search):
     }
 
     
-    
+
 @app.get("/api/ingredient")
-def list_ingredients(page: int = -1, search: str = None):
-    return paginated_search(
-        table=menu_db._db.table("ingredient"),
-        page=page,
-        search=search,
-        pagination = 20,
-    )
+def get_ingredients():
+    ingredients = menu_db._db.table("ingredient").all()
+    return [{**ingredient, "id":ingredient.doc_id} for ingredient in  ingredients]
+
 
 @app.post("/api/ingredient")
 def add_ingredient(ingredients: list[database.IngredientData]):
@@ -114,7 +111,6 @@ def upsert_menu(doc_id: int, item: dict):
 @app.get("/api/menu")
 def get_menu():
     menus = menu_db._db.table("plan").all()
-
     return [{**menu, "id":menu.doc_id} for menu in  menus]
 
 @app.get("/api/menu/{doc_id}")
