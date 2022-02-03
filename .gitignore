@@ -131,3 +131,8 @@ dmypy.json
 # tinydb
 db.json
 database.json
+
+svelte-test/node_modules/
+svelte-test//public/build/
+
+svelte-test/.DS_Store

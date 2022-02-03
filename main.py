@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Form, status, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from tinydb import TinyDB, Query
 import json
 import db as database
@@ -8,10 +9,25 @@ from fastapi.templating import Jinja2Templates
 
 import pathlib
 
+# allow connecting from other local ips than the fastapi server
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+
 STATIC_DIR = pathlib.Path(__file__).parent / "static"
 print(STATIC_DIR)
 menu_db = database.DB()
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -33,15 +49,12 @@ def paginated_search(table, page, pagination, search):
     }
 
     
-    
+
 @app.get("/api/ingredient")
-def list_ingredients(page: int = -1, search: str = None):
-    return paginated_search(
-        table=menu_db._db.table("ingredient"),
-        page=page,
-        search=search,
-        pagination = 20,
-    )
+def get_ingredients():
+    ingredients = menu_db._db.table("ingredient").all()
+    return [{**ingredient, "id":ingredient.doc_id} for ingredient in  ingredients]
+
 
 @app.post("/api/ingredient")
 def add_ingredient(ingredients: list[database.IngredientData]):
@@ -95,11 +108,30 @@ def upsert_menu(doc_id: int, item: dict):
     menu_db._db.table("menu").update(item, doc_ids=[doc_id])
     return "menu updated"
 
+@app.get("/api/menu")
+def get_menu():
+    menus = menu_db._db.table("plan").all()
+    return [{**menu, "id":menu.doc_id} for menu in  menus]
+
+@app.get("/api/menu/{doc_id}")
+def get_menu(doc_id: int):
+    menu = menu_db._db.table("plan").get(doc_id=doc_id)
+    return menu
 
 
 #-----------------------------------------------------
 # HTML
 #-----------------------------------------------------
+
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+        }
+    )
 
 
 # ingredient
@@ -133,7 +165,7 @@ def recipe_details(request: Request, doc_id: int):
 
 # menu
 @app.get("/menu", response_class=HTMLResponse)
-def recipe_list(request: Request):
+def menu_list(request: Request):
     menus = menu_db._db.table("menu").all()
     return templates.TemplateResponse(
         "menu_list.html",
@@ -144,14 +176,16 @@ def recipe_list(request: Request):
     )
 
 @app.get("/menu/{doc_id}", response_class=HTMLResponse)
-def recipe_list(request: Request, doc_id: int):
-    menu = menu_db._db.table("menu").get(doc_id=doc_id)
+def menu_detail(request: Request, doc_id: int):
+    menu = menu_db._db.table("plan").get(doc_id=doc_id)
     ratings = [e.value for e in database.Rating]
+    units = [e.value for e in database.Unit]
     return templates.TemplateResponse(
         "menu_detail.html",
         {
             "request": request,
             "menu": menu,
             "ratings": ratings,
+            "units": units,
         }
     )
