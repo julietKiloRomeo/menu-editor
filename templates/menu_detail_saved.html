@@ -46,48 +46,43 @@
                 <th>Navn</th>
                 <th>Mængde</th>
                 <th>Enhed</th>
+                <th>Ugedage</th>
                 <th></th>
             </tr>
         </thead>
         <tbody data-bind="foreach: recipes">
-            <tr>
-                <td data-bind="foreach: $parent.weekdays" colspan="4">
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" value=$data data-bind="checked: $parent.days, value: $data" />
-                        <label class="form-check-label" for=$data data-bind="text: $data" />
-                    </div>
+
+            <tr data-bind="foreach: $parent.days">
+                <td class="form-check form-check-inline">
+                    <input type="checkbox" value=$data data-bind="checked: days, value: $data" />
+                    <label class="form-check-label" for=$data data-bind="text: $data" />
                 </td>
             </tr>
-            <div data-bind="foreach: $data.parts">
-                <tr> <td> <span data-bind="text: $data.ingredient"></span></td> </tr>
+
+
+            <div data-bind="foreach: parts">
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" data-bind="value: $data.ingredient"/>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" data-bind="value: $data.amount"/>
+                    </td>
+                    <td>
+                        <select class="form-control" data-bind="options: units, value: $data.unit"></select>
+                    </td>
+                    <td>
+                        <td><a data-bind="click: $parent.removeRecipe"><i class="material-icons">&#xE872;</i></a></td>
+                    </td>
+                </tr>
             </div>
         </tbody>
     </table>
 </div>
 
+
+
 <script type="text/javascript">
-
-
-var observable_part = function(data){
-    return {
-        ingredient: ko.observable(data.ingredient),
-        amount: ko.observable(data.amount),
-        unit: ko.observable(data.unit),
-    };
-};
-
-var observable_parts = function(data){
-    var parts = ko.observableArray();
-    data.map(part => parts.push( observable_part(part) ));
-    return parts;
-};
-
-var observable_plan = function(data){
-    return {
-        days: ko.observableArray(data.days),
-        parts: observable_parts(data.parts),
-    };
-};
 
 
 function AppViewModel() {
@@ -96,13 +91,11 @@ function AppViewModel() {
     self.doc_id = doc_id;
     self.name = ko.observable(menu.name);
     self.rating = ko.observable(menu.rating);
-    self.recipes = ko.observableArray()
-    
-    menu.menus.map(rec => self.recipes.push( observable_plan(rec) ));
+    self.recipes = ko.observableArray(menu.menus);
 
     self.units = ko.observable(units);
     self.ratings = ko.observable(ratings);
-    self.weekdays = ko.observable(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
+    self.days = ko.observable(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
     
     self.addRecipe = function() {
         self.recipes.push(
@@ -123,7 +116,7 @@ function AppViewModel() {
         }
     self.to_dict = function () {
         return {
-            name: ko.toJSON(self.recipes),
+            name: ko.toJS(self.recipes),
         };
     }
 

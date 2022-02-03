@@ -28,6 +28,7 @@ class DB:
 class IngredientCategory(str, Enum):
     none = "none"
     køl = "køl"
+    kød = "kød"
     frys = "frys"
     frugt = "frugt"
     vin = "vin"
@@ -87,13 +88,13 @@ class Recipe(BaseModel):
 
 
 class MenuEntry(BaseModel):
-    recipe: Union[IngredientAmount, RecipeAmount]
-    day: str
+    recipe: list[Union[IngredientAmount, RecipeAmount]]
+    days: list[str]
 
 class Menu(BaseModel):
     name: str
     rating: Rating
-    recipies: list[MenuEntry]
+    menus: list[MenuEntry]
         
 class Plan(BaseModel):
     name: str

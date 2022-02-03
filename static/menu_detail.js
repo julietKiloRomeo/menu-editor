@@ -43,6 +43,32 @@ $(document).ready(function () {
         $(".add-new").removeAttr("disabled");
     });
 
+    const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+    const unit_dropdown = function(val=units[0]){
+        var select = $('<select>', { class: "myselect" });
+        select.append(
+            units.map(unit => 
+                $("<option>").text(unit))
+        );
+        select.val(val);
+        return select;
+    };
+    const day_select = function(tr){
+        var cell = $('td');
+        cell.append(
+            days.map(day => 
+                $(
+                    '<div>', { class: "form-check form-check-inline"}
+                ).append(
+                    $('<input>', { class: "form-check-input", type: "checkbox", id: day, value: day})
+                ).append(
+                    $('<label>', { class: "form-check-label", for: day}).text(day)
+                )
+            )
+        );
+        cell.appendTo($(tr));
+    };
+    
     function row_html(recipe) {
         return (
             "<tr>" +
@@ -106,17 +132,23 @@ $(document).ready(function () {
     $(".add-new").click(function () {
         var recipe = {"recipe":{"ingredient":"", "amount":0, "unit":""}}
         var row = row_html(recipe);
+        row = $('<tr>').append($('<td>').text("ghj"));
         $("table > tbody").append(row);
+        //var row = $('<tr>').text('asdadad')
+        //day_select(row);
+        //$("table > tbody").append(row);
     });
 
-    menu.recipes.forEach( recipe => {
-        var row = $(row_html(recipe));
-        console.log(row)
-        row.appendTo("table > tbody");
-        recipe.day.forEach(day => row.find("#"+day).prop( "checked", true ))
-        
-    });
+    // menu.recipes.forEach( recipe => {
+    //     var row = $(row_html(recipe));
+    //     row.appendTo("table > tbody");
+    //     recipe.day.forEach(day => row.find("#"+day).prop( "checked", true ))
+    // });
     
+
+
 
     
 });
+
+
