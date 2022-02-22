@@ -3,7 +3,7 @@
     import Collapsible from './Collapsible.svelte';
 
 	let ingredientlist = [];
-    let categories = ["kød", "øl", "køl", "tilbehør", "frugt"];
+    export let categories;
 
     // fetch all plans and fill plan-list
 	fetch(`http://localhost:8000/api/ingredient`)
@@ -11,19 +11,30 @@
 	.then(data => ingredientlist=data );
 
     let new_ingredient = () => {
-        var min_id = Math.min( 0, ...ingredientlist.map(ingredient => ingredient.id) )
+        var min_id = Math.min( 0, ...ingredientlist.map(ingredient => ingredient.doc_id) )
         var dummy = {
             name: "",
             category: "",
             alii: [],
-            id: min_id - 1,
+            doc_id: min_id - 1,
         };
         ingredientlist.push(dummy);
         ingredientlist = ingredientlist;
     };
 
     let delete_ingredient = (doc_id) => {
-        ingredientlist = ingredientlist.filter( ingredient => ingredient.id != doc_id  );
+
+        fetch('http://localhost:8000/api/ingredient/delete', {
+            method: 'POST', // or 'PUT'
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify([doc_id]),
+        })
+        .then(response => response.json())
+    	.then(data => ingredientlist=data );        
+        
     };
 
     let ingredient_search = "";
@@ -37,14 +48,25 @@
 
 
     let to_json = () => {
-        var json_ingredients = JSON.stringify(ingredientlist);
+        var json_ingredients = JSON.stringify(active_ingredients);
         console.log(json_ingredients);
+
+        fetch('http://localhost:8000/api/ingredient', {
+            method: 'POST', // or 'PUT'
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: json_ingredients,
+        })
+        .then(response => response.json())
+    	.then(data => ingredientlist=data );
     };
 
 </script>
 
 
-<div class="row">
+<div class="row pb-5">
     <div class="col-4">
         <h1>Ingredients</h1>
     </div>
@@ -73,7 +95,7 @@
 </div>
 
 {#each active_ingredients as ingredient}
-    <div class="row">
+    <div class="row justify-content-end">
         <div class="col-2">
             <input type="text" class="form-control form-control-lg inline col-sm" bind:value={ingredient.name} />
         </div>
@@ -90,22 +112,18 @@
             <input type="text" class="form-control form-control-lg inline col-sm" bind:value={ingredient.alii} />
         </div>
         <div class="col-2">
-            <button on:click={() => delete_ingredient(ingredient.id)}>
+            <button on:click={() => delete_ingredient(ingredient.doc_id)}>
                 <svg viewBox="0 0 20 20" fill="none" >
-                    <path d="M10 1V19" stroke="black" stroke-width="2"/>
-                    <path d="M1 10L19 10" stroke="black" stroke-width="2"/>
-                </svg>                
+                    <path d="M2 2L19 19" stroke="black" stroke-width="2"/>
+                    <path d="M2 19L19 2" stroke="black" stroke-width="2"/>
+                </svg>                  
             </button>
         </div>
     </div>
 {/each}
 
 <button on:click={() => to_json()}>
-    send
-    <svg viewBox="0 0 20 20" fill="none" >
-        <path d="M10 1V19" stroke="black" stroke-width="2"/>
-        <path d="M1 10L19 10" stroke="black" stroke-width="2"/>
-    </svg>                
+    send            
 </button>
 
 

@@ -1,6 +1,35 @@
 # menu-editor
 Create and manage menu plans
 
+```bash
+gh repo clone julietKiloRomeo/menu-editor
+cd menu-editor
+git checkout initial_work
+conda env create --file conda-env.yml
+```
+
+to fill db
+```bash
+conda activate menu-editor
+python dev.py
+```
+
+to start backend
+```bash
+conda activate menu-editor
+uvicorn main:app --reload
+```
+
+to start frontend
+```bash
+conda activate menu-editor
+cd svelte-test
+npm install
+npm run dev
+```
+
+
+
 
 # svelte app
 

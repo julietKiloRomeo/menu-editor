@@ -1,19 +1,19 @@
 from tinydb import TinyDB, Query
 from pydantic import BaseModel
 from typing import Optional, Union
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class DB:
     FILE = "db.json"
     TABLES = ["ingredient", "recipe", "menu"]
-    
+
     def __init__(self):
         self._db = TinyDB(self.FILE)
-    
+
     def _clear(self):
         self._db.drop_tables()
-    
+
     def tables(self):
         return self._db.tables()
 
@@ -26,15 +26,20 @@ class DB:
 
 
 class IngredientCategory(str, Enum):
-    none = "none"
-    køl = "køl"
-    kød = "kød"
-    frys = "frys"
-    frugt = "frugt"
-    vin = "vin"
-    tilbehør = "tilbehør"
+    bad = "bad"
+    bryggers = "bryggers"
     brød = "brød"
+    fisk = "fisk"
+    frugt = "frugt"
+    frys = "frys"
+    kød = "kød"
+    køl = "køl"
+    krydderi = "krydderi"
+    none = "none"
+    tilbehør = "tilbehør"
+    vin = "vin"
     øl = "øl"
+
 
 class Unit(str, Enum):
     g = "g"
@@ -47,40 +52,52 @@ class Unit(str, Enum):
     stk = "stk"
     portioner = "portioner"
 
-class Rating(int, Enum):
-    one=1
-    two=2
-    three=3
-    four=4
-    five=5
-        
-class Ingredient(BaseModel):
-    name: str
-    category: IngredientCategory
-    alii: list[str]
 
-class IngredientData(BaseModel):
+class Rating(IntEnum):
+    one = 1
+    two = 2
+    three = 3
+    four = 4
+    five = 5
+
+
+class APIBase(BaseModel):
+    def _preprocess(self):
+        pass
+
+    def id_and_dict(self):
+        self._preprocess()
+        datadict = self.dict()
+        doc_id = self.doc_id
+        del datadict["doc_id"]
+        return doc_id, datadict
+
+
+class Ingredient(BaseModel):
     doc_id: int
     name: str
     category: IngredientCategory
-    alii: list[str]
-    
-    def id_and_dict(self):
-        return self.doc_id, {"name":self.name, "category":self.category, "alii":self.alii}
+    alii: str
 
-    
+    def id_and_dict(self):
+        alii = [s.strip() for s in self.alii.split(",") if len(s.strip())]
+        return self.doc_id, {"name": self.name, "category": self.category, "alii": alii}
+
+
 class IngredientAmount(BaseModel):
-    ingredient: str # hopefully matches an ingredient
+    ingredient: str  # hopefully matches an ingredient
     amount: float
     unit: Unit
 
+
 class RecipeAmount(BaseModel):
-    ingredient: str # hopefully matches a recipe
+    ingredient: str  # hopefully matches a recipe
     amount: float
     unit: Unit
 
 
 class Recipe(BaseModel):
+    doc_id: int
     name: str
     placement: str
     rating: Rating
@@ -91,11 +108,13 @@ class MenuEntry(BaseModel):
     recipe: list[Union[IngredientAmount, RecipeAmount]]
     days: list[str]
 
+
 class Menu(BaseModel):
     name: str
     rating: Rating
     menus: list[MenuEntry]
-        
+
+
 class Plan(BaseModel):
     name: str
     year: int
@@ -103,4 +122,3 @@ class Plan(BaseModel):
     menu: Menu
     from_freezer: list[str]
     shopping: list[IngredientAmount]
-        

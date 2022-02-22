@@ -1,67 +1,79 @@
 <script>
     import Collapsible from "./Collapsible.svelte";
-    import MenuDetail from "./MenuDetail.svelte";
+    import RecipeDetail from "./RecipeDetail.svelte";
 
     export let units;
-    let planlist = [];
+    let recipelist = [];
 
     // fetch all plans and fill plan-list
-    fetch(`http://localhost:8000/api/plan`)
+    fetch(`http://localhost:8000/api/recipe`)
         .then((response) => response.json())
-        .then((data) => (planlist = data));
+        .then((data) => (recipelist = data));
 
-    let new_plan = () => {
-        var min_id = Math.min(0, ...planlist.map((plan) => plan.doc_id));
+    let new_recipe = () => {
+        var min_id = Math.min(0, ...recipelist.map((recipe) => recipe.doc_id));
         var dummy = {
             name: "",
+            placement: "",
             rating: 0,
-            menus: [],
+            ingredients: [],
             doc_id: min_id - 1,
         };
-        planlist.push(dummy);
-        planlist = planlist;
-    };
-    let delete_plan = (doc_id) => {
-        planlist = planlist.filter((plan) => plan.doc_id != doc_id);
+        recipelist.push(dummy);
+        recipelist = recipelist;
     };
 
+    let delete_recipe = (doc_id) => {
+        recipelist = recipelist.filter((plan) => plan.doc_id != doc_id);
+    };
 
-    let plan_search = "";
+    let recipe_search = "";
 
-    $: active_plans = planlist.filter(
-        (plan) => plan.name.indexOf(plan_search) > -1
+    let recipe_is_match = (recipe, query) => {
+        let title_matches = recipe.name.indexOf(query) > -1;
+        let ingredients_match = recipe.ingredients.some(
+            (rec) => rec.ingredient.indexOf(query) > -1
+        );
+        return title_matches || ingredients_match;
+    };
+
+    $: active_recipes = recipelist.filter((rec) =>
+        recipe_is_match(rec, recipe_search)
     );
 
     let to_json = () => {
-        var json_plans = JSON.stringify(active_plans);
-        console.log(json_plans);
+        // post updated recipes
+        // then update local version with returned
+        // data with new id's
+        var json_recipes = JSON.stringify(active_recipes);
+        console.log(json_recipes);
 
-        fetch("http://localhost:8000/api/plan", {
+        fetch("http://localhost:8000/api/recipe", {
             method: "POST", // or 'PUT'
             mode: "cors",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: json_plans,
+            body: json_recipes,
         })
             .then((response) => response.json())
-            .then((data) => (planlist = data));
+            .then((data) => (recipelist = data));
     };
 </script>
 
 <div class="row">
     <div class="col-4">
-        <h1>Plans</h1>
+        <h1>Recipes</h1>
     </div>
     <div class="col-2">
         <input
             type="text"
             class="form-control inline"
-            bind:value={plan_search}
+            bind:value={recipe_search}
         />
     </div>
     <div class="col-2">
-        <button on:click={() => new_plan()}>
+        <button on:click={() => new_recipe()}>
             <svg viewBox="0 0 20 20" fill="none">
                 <path d="M10 1V19" stroke="black" stroke-width="2" />
                 <path d="M1 10L19 10" stroke="black" stroke-width="2" />
@@ -70,12 +82,12 @@
     </div>
 </div>
 
-{#each active_plans as plan}
-    <div class="plan-container">
+{#each active_recipes as recipe}
+    <div class="recipe-container">
         <Collapsible>
-            <div slot="static" class="row">
+            <div slot="static" class="row  justify-content-end">
                 <div class="col-2">
-                    <button on:click={() => delete_plan(plan.doc_id)}>
+                    <button on:click={() => delete_recipe(recipe.doc_id)}>
                         <svg viewBox="0 0 20 20" fill="none">
                             <path
                                 d="M2 2L19 19"
@@ -90,16 +102,30 @@
                         </svg>
                     </button>
                 </div>
-                <div class="col-10">
+                <div class="col-5">
                     <input
                         type="text"
                         class="form-control form-control-lg inline col-sm"
-                        bind:value={plan.name}
+                        bind:value={recipe.name}
+                    />
+                </div>
+                <div class="col-3">
+                    <input
+                        type="text"
+                        class="form-control form-control-lg inline col-sm"
+                        bind:value={recipe.placement}
+                    />
+                </div>
+                <div class="col-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-lg inline col-sm"
+                        bind:value={recipe.rating}
                     />
                 </div>
             </div>
             <div slot="collapsible">
-                <MenuDetail menu={plan} {units} />
+                <RecipeDetail {recipe} {units} />
             </div>
         </Collapsible>
     </div>

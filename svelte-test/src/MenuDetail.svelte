@@ -2,7 +2,7 @@
     import Collapsible from './Collapsible.svelte';
 
 	let weekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun", ];
-	let units = ["portioner", "ml", "g", "kg", ];
+	export let units;
 
     export let menu;
 

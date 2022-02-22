@@ -1,59 +1,42 @@
 import db
 
 dummy_data = {
-    "menu" : [
+    "plan": [
+        {
+            "name": "bolo uge",
+            "rating": 4,
+            "menus": [
                 {
-                    "name":"bolo uge",
-                    "rating":4,
-                    "recipes":[
-                        {
-                            "recipe": {"ingredient":"bolognese", "amount":4, "unit": "plates"},
-                            "day": ["tue", "wed"],
-                        },
-                        {
-                            "recipe": {"ingredient":"fettuccine", "amount":4, "unit": "plates"},
-                            "day": ["tue", "wed"],
-                        }
-                    ],
-                },
-                {
-                    "name":"grød uge",
-                    "rating":4,
-                    "recipes":[
-                        {
-                            "recipe": {"ingredient":"havregrød", "amount":4, "unit": "plates"},
-                            "day": ["mon", "thur"],
-                        },
-                        {
-                            "recipe": {"ingredient":"risengrød", "amount":4, "unit": "plates"},
-                            "day": ["tue", "wed"],
-                        }
+                    "title": "Bolo",
+                    "days": ["tue", "wed"],
+                    "parts": [
+                        {"ingredient": "bolognese", "amount": 4, "unit": "plates",},
+                        {"ingredient": "fettuccine", "amount": 400, "unit": "g",},
                     ],
                 },
             ],
+        },
+    ],
     "recipe": [
         {
             "name": "mælkesuppe",
-            "placement":"let mad",
-            "rating":3,
-            "ingredients": [{"ingredient":"mælk", "amount":2, "unit":"dl"},],
+            "placement": "let mad",
+            "rating": 3,
+            "ingredients": [{"ingredient": "mælk", "amount": 2, "unit": "dl"},],
         }
     ],
-    "ingredient":[
-        {
-            "name": "gulerod",
-            "category": "frugt",
-            "alii": ["gulerødder"],
-        },
+    "ingredient": [
+        {"name": "gulerod", "category": "frugt", "alii": ["gulerødder", "rødder"],},
+        {"name": "havregryn", "category": "tilbehør", "alii": ["gryn"],},
+        {"name": "fettuccine", "category": "tilbehør", "alii": [],},
     ],
 }
 
 database = db.DB()
-
+database._clear()
 for tablename, dummies in dummy_data.items():
     table = database._db.table(tablename)
-    
+
     for dummy in dummies:
         table.insert(dummy)
-
 
