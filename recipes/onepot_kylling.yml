@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 75.0
+    unit: g
+  basilikum:
+    amount: 0.5
+    unit: bundt
+  cherrytomat:
+    amount: 100.0
+    unit: g
+  "gr\xF8ntsagsbouillon":
+    amount: 2.0
+    unit: stk
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  kyllingebryst:
+    amount: 2.0
+    unit: stk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  oregano:
+    amount: 1.0
+    unit: tsk
+  parmesan:
+    amount: 100.0
+    unit: g
+  pasta:
+    amount: 400.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  squash:
+    amount: 1.0
+    unit: stk
+  timian:
+    amount: 2.0
+    unit: tsk
+navn: onepot med kylling og bacon
+placering: valdemarsro s. 115

@@ -1,0 +1,37 @@
+antal: 1
+ingredienser:
+  fine gryn:
+    amount: 1
+    unit: poser
+  kaffe:
+    amount: 2
+    unit: poser
+  smørresmør:
+    amount: 1
+    unit: pakke
+  peanutbutter:
+    amount: 1
+    unit: glas
+  rosiner:
+    amount: 1
+    unit: pakke
+  madpakkefrugt:
+    amount: 2
+    unit: slags
+  madpakkebrød:
+    amount: 1
+    unit: pakke
+  pålæg:
+    amount: 2
+    unit: pakker
+  mælk:
+    amount: 2
+    unit: l
+  banan:
+    amount: 1
+    unit: klase
+  fløde:
+    amount: 0.25
+    unit: l
+navn: "standard"
+placering: 

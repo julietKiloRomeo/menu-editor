@@ -1,0 +1,16 @@
+navn: Kylling i ovn
+placering: Tung Mad / Fugl
+antal: 4
+ingredienser:
+    kylling:
+        amount: 1500
+        unit: g
+    timian:
+        amount: 1
+        unit: bundt
+    paprika:
+        amount: 1
+        unit: spsk
+    smør:
+        amount: 15
+        unit: g

@@ -1,0 +1,54 @@
+Jordskokkesuppe:
+    - jordskokkesuppe:
+        amount: 4
+        unit: plates
+Pita med karry fyld:
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepitabrød:
+        amount: 8
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Chili:
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 8
+        unit: plates
+    - revet ost:
+        amount: 300
+        unit: g
+    - creme fraiche:
+        amount: 4
+        unit: dl
+Kotetter i fad:
+    - koteletter_i_fad:
+        amount: 8
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - ris:
+        amount: 1
+        unit: pakke
+

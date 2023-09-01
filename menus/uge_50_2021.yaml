@@ -1,0 +1,50 @@
+Pita med karry fyld (søndag + tirsdag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepita:
+        amount: 4
+        unit: stk
+    - agurk:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 1
+        unit: pose
+Tomatsuppe (mandag):
+    - tomatsuppe:
+        amount: 4
+        unit: plates
+    - flutes:
+        amount: 6
+        unit: stk
+Pølser med æble (onsdag + fredag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - dadelbar:
+        amount: 6
+        unit: stk
+    - pirogger:
+        amount: 14
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - tran:
+        amount: 1
+        unit: flaske
+    - hvid sytråd:
+        amount: 1
+        unit: rulle

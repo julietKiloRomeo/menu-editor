@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  babyspinat:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  dijonsennep:
+    amount: 1.0
+    unit: tsk
+  honning:
+    amount: 1.0
+    unit: spsk
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  olivenolie:
+    amount: 5.0
+    unit: spsk
+  pinjekerner:
+    amount: 0.5
+    unit: dl
+  rucola:
+    amount: 125.0
+    unit: g
+  "sm\xE5 tomater":
+    amount: 200.0
+    unit: g
+  "\xE6blecidereddike":
+    amount: 2.0
+    unit: spsk
+navn: Rucolasalat med bagte tomater
+placering: Valdemarsro s. 309

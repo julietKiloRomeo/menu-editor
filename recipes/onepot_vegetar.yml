@@ -1,0 +1,47 @@
+navn: One pot vegetar
+placering: Valdemarsro side 114
+antal: 4
+ingredienser:
+    penne:
+        amount: 400
+        unit: g
+    grønsagsbouillon:
+        amount: 2
+        unit: stk
+    løg:
+        amount: 2
+        unit: stk
+    hvidløg:
+        amount: 3
+        unit: fed
+    squash:
+        amount: 1
+        unit: stk
+    cherrytomater:
+        amount: 100
+        unit: g
+    champignon:
+        amount: 300
+        unit: g
+    rød peberfrugt:
+        amount: 1
+        unit: stk
+    tørret timian:
+        amount: 2
+        unit: tsk
+    tørret oregano:
+        amount: 1
+        unit: tsk
+    røget paprika:
+        amount: 1
+        unit: tsk
+    piskefløde:
+        amount: 2
+        unit: dl
+    parmesan:
+        amount: 150
+        unit: g
+    bredbladet persille:
+        amount: 0.5
+        unit: bundt
+        

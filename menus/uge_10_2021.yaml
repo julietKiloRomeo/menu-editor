@@ -1,0 +1,71 @@
+MacNCheese:
+    - macncheese:
+        amount: 4
+        unit: plates
+Bolo:
+    - bolognese:
+        amount: 0
+        unit: plates
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Risotto:
+    - risotto_salvie:
+        amount: 3
+        unit: plates
+Hot Dogs:
+    - pølser:
+        amount: 6
+        unit: stk
+    - pølsebrød:
+        amount: 6
+        unit: stk
+    - ristet løg:
+        amount: 1
+        unit: stk
+    - ketchup:
+        amount: 1
+        unit: stk
+    - løg:
+        amount: 1
+        unit: stk
+Lasagne:
+    - lasagne:
+        amount: 0
+        unit: plates
+    - frisk mozzarella:
+        amount: 125.0
+        unit: g
+Massaman:
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - naan:
+        amount: 4
+        unit: stk
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 2
+        unit: L
+    - rugboller:
+        amount: 32
+        unit: stk
+    - lakerol:
+        amount: 2
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - øl:
+        amount: 6
+        unit: stk
+    - vin:
+        amount: 1
+        unit: flaske
+

@@ -1,0 +1,29 @@
+navn: Sesamlaks
+placering: Valdemarsro side 70
+antal: 4
+ingredienser:
+    laksefileter:
+        amount: 4
+        unit: stk
+    sesamfrø:
+        amount: 1
+        unit: spsk
+    økologisk citron:
+        amount: 1
+        unit: stk
+    dild:
+        amount: 1
+        unit: bundt
+    smør:
+        amount: 15
+        unit: g
+    olivenolie:
+        amount: 1
+        unit: spsk
+    creme fraiche:
+        amount: 0.5
+        unit: dl
+    honning:
+        amount: 1
+        unit: tsk
+

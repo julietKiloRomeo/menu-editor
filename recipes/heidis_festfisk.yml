@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  champignon:
+    amount: 5.0
+    unit: stk
+  citronpeber:
+    amount: 1.0
+    unit: tsk
+  creme fraiche:
+    amount: 1.0
+    unit: dl
+  fiskebouillon:
+    amount: 1.0
+    unit: stk
+  hakkede tomater:
+    amount: 1.0
+    unit: dl
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  lys fisk:
+    amount: 600.0
+    unit: g
+  "m\xE6lk":
+    amount: 3.0
+    unit: dl
+  porre:
+    amount: 0.5
+    unit: stk
+  "r\xF8d peber":
+    amount: 1.0
+    unit: stk
+  salt:
+    amount: 1.0
+    unit: tsk
+  "sm\xF8r":
+    amount: 20.0
+    unit: g
+navn: Heidis festfisk
+placering: jenter s. 73

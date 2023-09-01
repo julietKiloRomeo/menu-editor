@@ -1,0 +1,65 @@
+Omelet med gedeost (lørdag):
+  - omelet_m_gedeost:
+      amount: 4
+      unit: plates
+Boller i karry (søndag):
+  - boller_i_karry:
+      amount: 4
+      unit: plates
+  - ris:
+      amount: 250
+      unit: g
+Karry kødfyld (mandag):
+  - karry_kødfyld:
+      amount: 0
+      unit: plates
+  - købepitabrød:
+      amount: 8
+      unit: stk
+  - agurk:
+      amount: 250
+      unit: g
+  - rød peber:
+      amount: 1
+      unit: stk
+  - revet ost:
+      amount: 200
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+Citron pasta (tirsdag):
+  - citronpasta:
+      amount: 4
+      unit: plates
+Chili con carne (onsdag):
+  - chili_con_carne:
+      amount: 0
+      unit: plates
+  - ris:
+      amount: 250
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+  - revet cheddar:
+      amount: 200
+      unit: g
+Spaghetti Genovese (torsdag):
+  - spaghetti-genovese:
+      amount: 4
+      unit: plates
+Pizza med græskar (fredag):
+  - pumpkin_pizza:
+      amount: 4
+      unit: plates
+Andet:
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

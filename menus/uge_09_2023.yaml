@@ -1,0 +1,56 @@
+Pizza m. chorizo og mango (lørdag):
+  - pizza_mango:
+      amount: 0
+      unit: plates
+Massaman (søndag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+Kyllingesalat med æble (mandag):
+  - kyllingesalat:
+      amount: 4
+      unit: plates
+Havregrød (tirsdag):
+  - æble:
+      amount: 2
+      unit: stk
+Spaghetti Genovese (onsdag):
+  - spaghetti-genovese:
+      amount: 4
+      unit: plates
+Gratineret tortillini (torsdag):
+  - gratineret_tortillini:
+      amount: 4
+      unit: plates
+Pita med karry fyld (fredag):
+  - karry_kødfyld:
+      amount: 0
+      unit: plates
+  - købepitabrød:
+      amount: 2
+      unit: stk
+  - agurk:
+      amount: 1
+      unit: stk
+  - rød peber:
+      amount: 1
+      unit: stk
+  - revet ost:
+      amount: 200
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+Andet:
+  - mælk:
+      amount: 1
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l
+  - madpakkefrugt:
+      amount: 1
+      unit: stk

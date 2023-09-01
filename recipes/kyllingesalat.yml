@@ -1,0 +1,52 @@
+antal: 2
+ingredienser:
+  bacon:
+    amount: 60.0
+    unit: g
+  cremefraiche 18:
+    amount: 1.0
+    unit: dl
+  dild:
+    amount: 1.0
+    unit: bundt
+  "groft br\xF8d":
+    amount: 1.0
+    unit: stk
+  honning:
+    amount: 1.0
+    unit: tsk
+  karry:
+    amount: 1.0
+    unit: tsk
+  kyllingebryst m skind:
+    amount: 2.0
+    unit: stk
+  mayonnaise:
+    amount: 3.0
+    unit: spsk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "purl\xF8g":
+    amount: 1.0
+    unit: bundt
+  rucola:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  salat:
+    amount: 125.0
+    unit: g
+  "sm\xF8r":
+    amount: 1.0
+    unit: spsk
+  "\xE6ble":
+    amount: 1.0
+    unit: stk
+  "\xE6blecidereddike":
+    amount: 1.0
+    unit: tsk
+navn: "Kyllingesalat med \xE6ble"
+placering: Valdemarsro s. 59

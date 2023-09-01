@@ -1,0 +1,31 @@
+antal: 8
+ingredienser:
+  flagesalt:
+    amount: 1.0
+    unit: nip
+  glukosesirup:
+    amount: 2.0
+    unit: spsk
+  hvedemel:
+    amount: 200.0
+    unit: g
+  kakao:
+    amount: 40.0
+    unit: g
+  "m\xF8rk chokolade":
+    amount: 200.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 3.5
+    unit: dl
+  "r\xF8rsukker":
+    amount: 210.0
+    unit: g
+  "sm\xF8r":
+    amount: 150.0
+    unit: g
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: "Chokoladet\xE6rte med saltkaramel"
+placering: Tung mad / dessert

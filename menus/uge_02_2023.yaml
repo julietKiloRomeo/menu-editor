@@ -1,0 +1,48 @@
+One pot med spinat og ærter (søndag + mandag):
+    - onepot_spinat:
+        amount: 4
+        unit: plates
+Chili con carne (tirsdag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - revet ost:
+        amount: 300
+        unit: g
+    - creme fraiche:
+        amount: 4
+        unit: dl   
+Vagabondens livret (onsdag):
+    - vagabondens_livret:
+        amount: 4
+        unit: plates
+Enebærgryde (torsdag):
+    - enebærgryde:
+        amount: 0
+        unit: plates
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+Salade Nicoise (fredag):
+    - salade_nicoise:
+        amount: 3
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l

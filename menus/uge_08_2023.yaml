@@ -1,0 +1,55 @@
+Pita med karry fyld (søndag):
+  - karry_kødfyld:
+      amount: 8
+      unit: plates
+  - købepitabrød:
+      amount: 8
+      unit: stk
+  - agurk:
+      amount: 250
+      unit: g
+  - rød peber:
+      amount: 1
+      unit: stk
+  - revet ost:
+      amount: 200
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+Kyllingesalat med æble (mandag):
+  - kyllingesalat:
+      amount: 4
+      unit: plates
+Havregrød (tirsdag):
+  - æble:
+      amount: 2
+      unit: stk
+Spaghetti Genovese (onsdag):
+  - spaghetti-genovese:
+      amount: 4
+      unit: plates
+Gratineret tortillini (torsdag):
+  - gratineret_tortillini:
+      amount: 4
+      unit: plates
+Pizza m. chorizo og mango (fredag):
+  - pizza_mango:
+      amount: 4
+      unit: plates
+Andet:
+  - mælk:
+      amount: 1
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l
+  - madpakkefrugt:
+      amount: 1
+      unit: stk
+  - hørfrø:
+      amount: 1
+      unit: pakke

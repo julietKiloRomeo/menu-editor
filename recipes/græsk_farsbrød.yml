@@ -1,0 +1,47 @@
+navn: Græsk farsbrød
+placering: Valdemarsro side 42
+antal: 4
+ingredienser:
+    hakket lam:
+        amount: 500
+        unit: g
+    løg:
+        amount: 2
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    mælk:
+        amount: 1
+        unit: dl
+    piskefløde:
+        amount: 0.5
+        unit: dl
+    æg:
+        amount: 2
+        unit: stk
+    havregryn:
+        amount: 1
+        unit: dl
+    frisk timian:
+        amount: 1
+        unit: bundt
+    frisk rosmarin:
+        amount: 1
+        unit: bundt
+    soltørrede tomater i olie:
+        amount: 3
+        unit: spk
+    sorte oliven uden sten:
+        amount: 10
+        unit: stk
+    feta:
+        amount: 75
+        unit: g
+    kartofler:
+        amount: 800
+        unit: g
+    smør:
+        amount: 25
+        unit: g
+            

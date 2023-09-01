@@ -1,0 +1,46 @@
+Boller i Karry (lørdag+mandag):
+    - boller_i_karry:
+        amount: 8
+        unit: plates
+Massaman Curry (søndag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+    - naan brød:
+        amount: 4
+        unit: stk
+Pølser med æblesaute (tirsdag+onsdag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Koldskål (torsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+Citronpasta (fredag):
+    - citronpasta:
+        amount: 4
+        unit: plates
+Andet:
+    - tiktok_oats:
+        amount: 2
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 2
+        unit: L
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - danskvand:
+        amount: 1
+        unit: pakke
+    - madpakkefrugt:
+        amount: 1
+        unit: pakke
+    

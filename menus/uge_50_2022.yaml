@@ -1,0 +1,70 @@
+Enebærgryde (søndag):
+    - enebærgryde:
+        amount: 12
+        unit: plates
+    - kartoffelmos:
+        amount: 12
+        unit: plates
+    - tyttebærsyltetøj:
+        amount: 1
+        unit: glas
+Onepot vegetar (mandag):
+    - onepot_vegetar:
+        amount: 4
+        unit: plates
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Massaman (onsdag):
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - koriander:
+        amount: 1
+        unit: bundt
+    - naan brød:
+        amount: 2
+        unit: stk
+Pita med karry fyld (torsdag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepita:
+        amount: 4
+        unit: stk
+    - agurk:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 1
+        unit: pose
+Bean wraps (fredag):
+    - bean_burritos:
+        amount: 8
+        unit: plates
+    - tortilla:
+        amount: 6
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 250
+        unit: ml
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker

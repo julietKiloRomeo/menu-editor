@@ -1,0 +1,64 @@
+Chili con carne:
+    - chili_con_carne:
+        amount: 4
+        unit: plates
+
+Pizza med græskar:
+    - pumpkin_pizza:
+        amount: 4
+        unit: plates
+
+Heidis festfisk:
+    - heidis_festfisk:
+        amount: 0
+        unit: plates
+
+Massaman Curry:
+    - massaman_curry:
+        amount: 0
+        unit: plates
+
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Boller i karry:
+    - boller_i_karry:
+        amount: 0
+        unit: plates
+
+Andet:
+  - fine gryn:
+      amount: 1
+      unit: poser
+  - kaffe:
+      amount: 2
+      unit: poser
+  - smørresmør:
+      amount: 1
+      unit: pakke
+  - peanutbutter:
+      amount: 1
+      unit: glas
+  - rosiner:
+      amount: 1
+      unit: pakke
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

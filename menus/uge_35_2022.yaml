@@ -1,0 +1,49 @@
+Taco suppe (mandag):
+    - taco_suppe:
+        amount: 4
+        unit: plates
+Koldskål (tirsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 400
+        unit: g
+Lasagne (onsdag+torsdag):
+    - færdiglasagne:
+        amount: 1
+        unit: pakke
+    - hakket okse:
+        amount: 400
+        unit: g
+    - tomat:
+        amount: 200
+        unit: g
+    - frisk mozarella:
+        amount: 100
+        unit: g
+    - revet ost:
+        amount: 300
+        unit: g
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 3
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - kaffe:
+        amount: 2
+        unit: poser
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - madpakkepålæg:
+        amount: 1
+        unit: slags

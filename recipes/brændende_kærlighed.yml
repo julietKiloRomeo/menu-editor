@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 150.0
+    unit: g
+  "l\xF8g":
+    amount: 4.0
+    unit: stk
+  olie:
+    amount: 2.0
+    unit: tsk
+  rodfrugter:
+    amount: 1.3
+    unit: kg
+  "rugbr\xF8d":
+    amount: 4.0
+    unit: skiver
+  "sm\xF8r":
+    amount: 100
+    unit: g
+  store kartofler:
+    amount: 2.0
+    unit: stk
+  mælk:
+    amount: 100
+    unit: ml
+navn: "Br\xE6ndende K\xE6rlighed"
+placering: let mad / nemt

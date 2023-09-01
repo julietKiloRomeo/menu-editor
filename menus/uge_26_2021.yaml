@@ -1,0 +1,59 @@
+Pastasalat (lørdag):
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+Lam bhuna (søndag):
+    - lam_bhuna:
+        amount: 4
+        unit: plates
+    - naan brød:
+        amount: 2
+        unit: stk
+    - rucolasalat_med_tomat:
+        amount: 4
+        unit: plates
+Jordskoksuppe med fisk (mandag):
+    - torsk:
+        amount: 400
+        unit: g
+Pasta med salvie (tirsdag):
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Pita med karryfyld (onsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - creme fraiche:
+        amount: 1
+        unit: dl
+    - revet ost:
+        amount: 1
+        unit: pose
+    - cherrytomat:
+        amount: 200
+        unit: g
+Bønnegryde (torsdag):
+    - naan:
+        amount: 2
+        unit: stk
+Pizza (fredag):
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - madpakkefrugt:
+        amount: 1
+        unit: pakke

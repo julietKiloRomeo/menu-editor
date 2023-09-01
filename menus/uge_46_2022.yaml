@@ -1,0 +1,50 @@
+
+Kålsuppe (lørdag):
+    - kålsuppe:
+        amount: 4
+        unit: plates
+Chili (søndag+onsdag):
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    - revet cheddar:
+        amount: 200
+        unit: g
+Tomatsuppe (mandag):
+    - tomatsuppe:
+        amount: 1
+        unit: pakke
+    - groft brød:
+        amount: 1
+        unit: stk
+Pasta med salvie (tirsdag):
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Fried Rice (torsdag):
+    - fried_rice:
+        amount: 4
+        unit: plates
+Mexi Bowl (fredag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - pølse:
+        amount: 1
+        unit: stk
+    - banan:
+        amount: 2
+        unit: klaser
+    - madpakkefrugt:
+        amount: 1
+        unit: pose

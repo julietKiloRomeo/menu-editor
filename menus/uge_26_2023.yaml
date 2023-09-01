@@ -1,0 +1,31 @@
+Kikærtegryde med linser:
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+Lun pastasalat med bacon:
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+Koldskål:
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 4
+        unit: plates
+Spaghetti Genovese:
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

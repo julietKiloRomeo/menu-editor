@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: stk
+  gulerod:
+    amount: 350.0
+    unit: g
+  hakket svin:
+    amount: 600.0
+    unit: g
+  hakket tomat:
+    amount: 1.0
+    unit: ds
+  oregano:
+    amount: 2.0
+    unit: tsk
+  peberfrugt:
+    amount: 1.0
+    unit: stk
+  rasp:
+    amount: 4.0
+    unit: spsk
+  revet mozzarella:
+    amount: 1.0
+    unit: pose
+  salt:
+    amount: 1.0
+    unit: tsk
+  "solt\xF8rret tomatpure":
+    amount: 4.0
+    unit: spsk
+  spaghetti:
+    amount: 200.0
+    unit: g
+navn: Vagabondens livret
+placering: let mad / nemt

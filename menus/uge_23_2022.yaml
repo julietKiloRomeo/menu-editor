@@ -1,0 +1,97 @@
+Broccoli tærte (lørdag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Fiskefrikadeller (søndag):
+    - fiskefrikadeller:
+        amount: 400
+        unit: g
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - remoulade:
+        amount: 1
+        unit: tube
+Pita med karry fyld (mandag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købe pita:
+        amount: 4
+        unit: plates
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Vagabondens livret (tirsdag):
+    - vagabondens_livret:
+        amount: 4
+        unit: plates
+Suppe (onsdag):
+    - suppe:
+        amount: 0
+        unit: plates        
+Koldskål (torsdag):
+    - købe koldskål:
+        amount: 1
+        unit: l
+    - kammerjunker:
+        amount: 1
+        unit: pose
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - smør:
+        amount: 1
+        unit: pakke
+    - citron:
+        amount: 1
+        unit: stk
+    - ingefærkiks:
+        amount: 200
+        unit: g
+    - lime:
+        amount: 1
+        unit: stk
+    - neutral flødeost:
+        amount: 1
+        unit: pakke
+    - piskefløde:
+        amount: 3
+        unit: dl
+    - hindbær:
+        amount: 200
+        unit: g
+    - jordbær:
+        amount: 200
+        unit: g
+    - husblas:
+        amount: 4
+        unit: blade
+    - købe koldskål:
+        amount: 1
+        unit: l
+    - madpakkefrugt:
+        amount: 1
+        unit: slags
+    - pålæg:
+        amount: 2
+        unit: slags

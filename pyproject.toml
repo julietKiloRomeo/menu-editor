@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "recipes"
+version = "0.1.0"
+description = ""
+authors = ["jkr <jimmy.kjaersgaard@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyYAML = "^6.0"
+click = "^8.1.3"
+peewee = "^3.16.2"
+jupyterlab = "^4.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,19 @@
+navn: Pita brød
+placering: Tung Mad / Bagværk
+antal: 6
+ingredienser:
+    A38:
+        amount: 1.5
+        unit: dl
+    salt:
+        amount: 1
+        unit: tsk
+    gær:
+        amount: 30
+        unit: g
+    olivenolie:
+        amount: 2
+        unit: spsk
+    hvedemel:
+        amount: 500
+        unit: g

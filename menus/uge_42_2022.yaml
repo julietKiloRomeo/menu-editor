@@ -1,0 +1,65 @@
+Stroganoff (søndag + tirsdag):
+    - stroganoff:
+        amount: 8
+        unit: plates
+    - kartoffelmos:
+        amount: 8
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Dhal (mandag + onsdag):
+    - dhal:
+        amount: 12
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - raita:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 500
+        unit: g
+Pita (torsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepita:
+        amount: 6
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - agurk:
+        amount: 1
+        unit: stk
+Rugbrød (fredag):
+    - rugbrød:
+        amount: 300
+        unit: g
+    - fiskepålæg:
+        amount: 1
+        unit: pakke
+    - æg:
+        amount: 4
+        unit: stk
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - kaffe:
+        amount: 2
+        unit: poser

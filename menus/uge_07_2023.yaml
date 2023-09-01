@@ -1,0 +1,42 @@
+Broccoli tærte (tirsdag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Sprø Pitadrøm (onsdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Chili con carne (torsdag):
+    - chili_con_carne:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    - revet cheddar:
+        amount: 200
+        unit: g
+Æggekage (fredag):
+    - æggekage:
+        amount: 4
+        unit: plates
+Gulerodssuppe (lørdag):
+    - gulerodssuppe:
+        amount: 4
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Andet:
+    - madpakkeboller:
+        amount: 1
+        unit: pose
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags

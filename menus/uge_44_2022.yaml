@@ -1,0 +1,54 @@
+Græskar suppe (søndag):
+    - hokkaidosuppe:
+        amount: 4
+        unit: plates
+    - flutes:
+        amount: 8
+        unit: stk
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Stroganoff (onsdag):
+    - stroganoff:
+        amount: 0
+        unit: plates
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+Pita med karry fyld (torsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepita:
+        amount: 4
+        unit: stk
+    - agurk:
+        amount: 1
+        unit: stk
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 1
+        unit: pose
+Citronpasta (fredag):
+    - citronpasta:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - madpakkebrød:
+        amount: 1
+        unit: pakke
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker

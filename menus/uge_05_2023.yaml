@@ -1,0 +1,56 @@
+Boller i karry (lørdag):
+    - boller_i_karry:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+Broccoli tærte (søndag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Dhal (mandag):
+    - dhal:
+        amount: 8
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - raita:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 500
+        unit: g
+MacNcheese (tirsdag):
+    - macncheese:
+        amount: 4
+        unit: plates
+Tacosuppe (onsdag):
+    - taco_suppe:
+        amount: 4
+        unit: plates
+Mexi Salatbowl (torsdag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Andet:
+    - madpakkeboller:
+        amount: 1
+        unit: pose
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l
+    - fine gryn:
+        amount: 1
+        unit: pakke
+    - smørresmør:
+        amount: 1
+        unit: pakke

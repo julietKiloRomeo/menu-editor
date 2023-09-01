@@ -1,0 +1,67 @@
+Heidis festfisk (lørdag + søndag):
+    - heidis_festfisk:
+        amount: 4
+        unit: plates
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+Bean wraps (mandag + tirsdag):
+    - bean_burritos:
+        amount: 8
+        unit: plates
+    - wraps:
+        amount: 10
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 250
+        unit: ml
+Bolo (onsdag):
+    - bolognese:
+        amount: 0
+        unit: plates
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Onepot vegetar (torsdag):
+    - onepot_vegetar:
+        amount: 4
+        unit: plates
+Pizza med græskar (fredag):
+    - pizza sovs:
+        amount: 1
+        unit: dåse
+    - peperoni:
+        amount: 1
+        unit: pakke
+    - pizzadej: 
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - kødpølse:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 1
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - øl:
+        amount: 6
+        unit: stk
+

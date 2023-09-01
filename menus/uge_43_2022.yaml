@@ -1,0 +1,60 @@
+Sprø pitadrøm (søndag + mandag):
+    - pitadrøm:
+        amount: 8
+        unit: plates
+Pølser med æble (onsdag + fredag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Risengrød (tirdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Pita med karryfyld (torsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - creme fraiche:
+        amount: 1
+        unit: dl
+    - revet ost:
+        amount: 1
+        unit: pose
+    - cherrytomat:
+        amount: 200
+        unit: g
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - bagepapir i ark:
+        amount: 1
+        unit: pakke
+    - rosin:
+        amount: 1
+        unit: bøtte
+    - hvidløgspølse:
+        amount: 1
+        unit: stk
+    - pålæg:
+        amount: 1
+        unit: pakke
+    - mælk:
+        amount: 2
+        unit: L
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - tykmælk:
+        amount: 1
+        unit: l
+    - flormelis:
+        amount: 1
+        unit: pakke
+

@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  frisk timian:
+    amount: 1.0
+    unit: bundt
+  gedeost:
+    amount: 100.0
+    unit: g
+  "groft br\xF8d":
+    amount: 8.0
+    unit: skiver
+  "m\xE6lk":
+    amount: 1.0
+    unit: dl
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  svampe:
+    amount: 150.0
+    unit: g
+  "\xE6g":
+    amount: 8.0
+    unit: stk
+navn: Omelet med gedeost
+placering: let mad / nemt

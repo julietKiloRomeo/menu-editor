@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  frisk salvie:
+    amount: 1.0
+    unit: bundt
+  parmesan:
+    amount: 100.0
+    unit: g
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  spaghetti:
+    amount: 250.0
+    unit: g
+navn: Pasta med salvie
+placering: valdemarsro s. 128

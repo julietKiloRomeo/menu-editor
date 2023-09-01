@@ -1,0 +1,57 @@
+Kartoffel-porre suppe (lørdag):
+    - kartoffelporresuppe:
+        amount: 4
+        unit: plates
+
+Spaghetti Genovese (søndag):
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+
+Dhal (mandag):
+    - dhal:
+        amount: 4
+        unit: plates
+
+Broccoli tærte (tirsdag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Pasta med salvie (onsdag):
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+
+Gratineret tortillini (torsdag):
+    - gratineret_tortillini:
+        amount: 4
+        unit: plates
+
+Gratineret tortillini (fredag):
+    - gratineret_tortillini:
+        amount: 0
+        unit: plates
+
+Andet:
+  - kaffe:
+      amount: 2
+      unit: poser
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

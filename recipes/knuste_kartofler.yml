@@ -1,0 +1,19 @@
+antal: 4
+ingredienser:
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  kartofler:
+    amount: 1000.0
+    unit: g
+  parmesan:
+    amount: 150.0
+    unit: g
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  "t\xF8rret rosmarin":
+    amount: 2.0
+    unit: spsk
+navn: Knuste Kartofler
+placering: tung mad

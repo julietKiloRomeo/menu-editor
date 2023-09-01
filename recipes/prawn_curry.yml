@@ -1,0 +1,58 @@
+antal: 8
+ingredienser:
+  ananas:
+    amount: 1.0
+    unit: stk
+  coconut flesh:
+    amount: 100.0
+    unit: g
+  frisk koriander:
+    amount: 1.0
+    unit: bundt
+  "hvidl\xF8g":
+    amount: 6.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 1.0
+    unit: tommelfinger
+  kanel:
+    amount: 1.0
+    unit: stang
+  kardemomme:
+    amount: 3.0
+    unit: stk
+  karry blade:
+    amount: 7.0
+    unit: stk
+  king prawns:
+    amount: 24.0
+    unit: stk
+  "kokosm\xE6lk":
+    amount: 400.0
+    unit: ml
+  mild karry:
+    amount: 1.5
+    unit: spsk
+  nellike:
+    amount: 6.0
+    unit: stk
+  puddersukker:
+    amount: 1.0
+    unit: spsk
+  ris:
+    amount: 400.0
+    unit: g
+  "skalottel\xF8g":
+    amount: 6.0
+    unit: stk
+  solsikke olie:
+    amount: 130.0
+    unit: ml
+  stjerneanis:
+    amount: 1.0
+    unit: stk
+  tamarind pasta:
+    amount: 3.0
+    unit: spsk
+navn: Penang prawn curry
+placering: Nem mad

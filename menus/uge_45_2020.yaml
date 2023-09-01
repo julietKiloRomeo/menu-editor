@@ -1,0 +1,71 @@
+Korma med naan og ris (lørdag):
+    - kylling_korma:
+        amount: 0
+        unit: plates
+    - naan:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 4
+        unit: plates
+Heidis festfisk (søndag + mandag):
+    - heidis_festfisk:
+        amount: 6
+        unit: plates
+    - kartoffelmos:
+        amount: 500
+        unit: g
+Bolo (tirsdag):
+    - lynbolo:
+        amount: 0
+        unit: plates
+    - spaghetti:
+        amount: 400
+        unit: g
+Bean wraps (onsdag + fredag):
+    - bean_burritos:
+        amount: 8
+        unit: plates
+    - spinat_pandekager:
+        amount: 8
+        unit: plates
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 250
+        unit: ml
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Boller:
+    - rugboller:
+        amount: 16
+        unit: stk
+Kanelsnegle:
+    - anders_and_kanelsnegle:
+        amount: 24
+        unit: stk
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 3
+        unit: l
+    - kødpølse:
+        amount: 1
+        unit: stk
+    - ost:
+        amount: 1
+        unit: stk
+    - citronsyre:
+        amount: 1
+        unit: stk
+    - blomstervandkande:
+        amount: 1
+        unit: stk
+    - håndsprit:
+        amount: 1
+        unit: stk

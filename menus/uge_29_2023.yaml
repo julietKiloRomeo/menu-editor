@@ -1,0 +1,50 @@
+Broccoli tærte (søndag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Dhal (mandag):
+    - dhal:
+        amount: 8
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - ris:
+        amount: 500
+        unit: g
+
+Bao med nakkekotelet:
+  - bao-med-nakkekotelet:
+      amount: 4
+      unit: plates
+  - wraps:
+      amount: 6
+      unit: stk
+
+Pita (søndag):
+  - karry_kødfyld:
+      amount: 0
+      unit: plates
+  - købepitabrød:
+      amount: 8
+      unit: stk
+  - agurk:
+      amount: 250
+      unit: g
+  - rød peber:
+      amount: 1
+      unit: stk
+  - revet ost:
+      amount: 200
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+  - leverpostej:
+      amount: 1
+      unit: stk

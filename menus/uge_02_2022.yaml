@@ -1,0 +1,51 @@
+Pasta med laks (mandag):
+    - pasta_med_laks:
+        amount: 4
+        unit: plates
+Tomatsuppe (tirsdag):
+    - tomatsuppe:
+        amount: 1
+        unit: pakke
+    - groft brød:
+        amount: 1
+        unit: stk
+Citronpasta (onsdag):
+    - citronpasta:
+        amount: 4
+        unit: plates
+Chili (torsdag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    - revet cheddar:
+        amount: 200
+        unit: g
+Mexi Bowl (fredag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Andet:
+    - madpakkeboller:
+        amount: 6
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    - fine gryn:
+        amount: 1
+        unit: pose
+    - mandler:
+        amount: 1
+        unit: pose
+    - fløde:
+        amount: 1
+        unit: karton

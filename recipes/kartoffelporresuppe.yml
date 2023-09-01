@@ -1,0 +1,33 @@
+navn: Kartoffel-porre suppe
+placering: Let Mad / Suppe
+antal: 4
+ingredienser:
+    kartofler:
+        amount: 1
+        unit: kg
+    porrer:
+        amount: 4
+        unit: stk
+    æbler:
+        amount: 2
+        unit: stk
+    chili:
+        amount: 1
+        unit: stk
+    olie:
+        amount: 6
+        unit: tsk
+    grønsagsbouillon:
+        amount: 4
+        unit: stk
+    lufttørret skinke:
+        amount: 8
+        unit: skiver
+    creme fraiche:
+        amount: 2
+        unit: dl
+    rugbrød:
+        amount: 7
+        unit: skiver
+    
+                

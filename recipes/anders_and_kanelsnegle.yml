@@ -1,0 +1,28 @@
+antal: 24
+ingredienser:
+  "g\xE6r":
+    amount: 50.0
+    unit: g
+  kanel:
+    amount: 4.0
+    unit: tsk
+  mel:
+    amount: 500.0
+    unit: g
+  "m\xE6lk":
+    amount: 0.25
+    unit: l
+  salt:
+    amount: 0.5
+    unit: tsk
+  "sm\xF8r":
+    amount: 150.0
+    unit: g
+  sukker:
+    amount: 6.0
+    unit: spsk
+  "\xE6g":
+    amount: 2.0
+    unit: stk
+navn: Anders Ands kanelsnegle
+placering: Anders And s. 10

@@ -1,0 +1,31 @@
+antal: 16
+ingredienser:
+  fuldkorns rugmel:
+    amount: 120.0
+    unit: g
+  "g\xE6r":
+    amount: 10.0
+    unit: g
+  hvedemel:
+    amount: 480.0
+    unit: g
+  maltsirup:
+    amount: 40.0
+    unit: g
+  "m\xF8rk \xF8l":
+    amount: 400.0
+    unit: g
+  olie:
+    amount: 18.0
+    unit: g
+  salt:
+    amount: 10.0
+    unit: g
+  "tykm\xE6lk":
+    amount: 200.0
+    unit: g
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: Rugboller
+placering: "tung mad / br\xF8d"

@@ -1,0 +1,42 @@
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Svensk pølseret:
+    - svensk-pølseret:
+        amount: 4
+        unit: plates
+
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Stegt flæsk med persillesauce:
+    - stegt_flæsk:
+        amount: 4
+        unit: plates
+    - rødbeder:
+        amount: 1
+        unit: glas
+    - persillesovs:
+        amount: 1
+        unit: pakke
+Pizza med chorizo og mango:
+    - pizza_mango:
+        amount: 4
+        unit: plates
+
+Omelet med gedeost:
+    - omelet_m_gedeost:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+  - afløbsrens:
+      amount: 1
+      unit: flaske

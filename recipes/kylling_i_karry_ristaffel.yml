@@ -1,0 +1,52 @@
+antal: 4
+ingredienser:
+  basmatiris:
+    amount: 2.5
+    unit: dl
+  gurkemeje:
+    amount: 0.5
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  "h\xF8nsebouillon":
+    amount: 1.0
+    unit: stk
+  kardemomme:
+    amount: 0.5
+    unit: tsk
+  kardemommekapsler:
+    amount: 2.0
+    unit: stk
+  karry:
+    amount: 1.0
+    unit: spsk
+  koriander:
+    amount: 0.5
+    unit: tsk
+  kyllingebryst:
+    amount: 2.0
+    unit: stk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  majsstivelse:
+    amount: 2.0
+    unit: spsk
+  "m\xE6lk":
+    amount: 3.0
+    unit: dl
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 0.5
+    unit: dl
+  spidskommen:
+    amount: 1.0
+    unit: tsk
+  "\xE6ble":
+    amount: 1.0
+    unit: stk
+navn: Kylling i karry a la ristaffel
+placering: Valdemarsro s. 14

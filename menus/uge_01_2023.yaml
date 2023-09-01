@@ -1,0 +1,84 @@
+Lasagne (onsdag+fredag):
+    - lasagne:
+        amount: 0
+        unit: plates
+    - hvidløgsflute:
+        amount: 2
+        unit: stk
+Risoni (torsdag):
+    - græsk-risoni:
+        amount: 4
+        unit: plates
+Nytår (lørdag):
+    - sushi:
+        amount: 0
+        unit: plates
+    - creme brulé:
+        amount: 0
+        unit: plates
+Pita (søndag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 8
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Spaghetti Genovese (mandag):
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+Enebærgryde (tirsdag):
+    - enebærgryde:
+        amount: 0
+        unit: plates
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+Chili (onsdag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 8
+        unit: plates
+    - revet ost:
+        amount: 300
+        unit: g
+    - creme fraiche:
+        amount: 4
+        unit: dl    
+Salade Nicoise (torsdag):
+    - salade_nicoise:
+        amount: 3
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Mexi Bowl (fredag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - mælk:
+        amount: 2
+        unit: l
+
+

@@ -1,0 +1,37 @@
+antal: 50
+ingredienser:
+  bagepulver:
+    amount: 1.0
+    unit: tsk
+  hvedemel:
+    amount: 275.0
+    unit: g
+  kakao:
+    amount: 1.0
+    unit: tsk
+  kanel:
+    amount: 1.0
+    unit: tsk
+  kardemomme:
+    amount: 1.0
+    unit: tsk
+  peber:
+    amount: 0.5
+    unit: tsk
+  "r\xF8rsukker":
+    amount: 125.0
+    unit: g
+  sirup:
+    amount: 3.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 130.0
+    unit: g
+  "st\xF8dt ingef\xE6r":
+    amount: 0.5
+    unit: tsk
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: Peberkager
+placering: tung mad / dessert

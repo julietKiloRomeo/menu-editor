@@ -1,0 +1,34 @@
+navn: Grove pølser med æblesaute og mos
+placering: Tung mad / gris
+antal: 4
+ingredienser:
+    grove pølser:
+        amount: 6
+        unit: stk
+    æbler:
+        amount: 2
+        unit: stk
+    rød peberfrugt:
+        amount: 2
+        unit: stk
+    porre:
+        amount: 2
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    tørret timian:
+        amount: 2
+        unit: tsk
+    rapsolie:
+        amount: 10
+        unit: ml
+    kartofler:
+        amount: 600
+        unit: g
+    hønsebouillon:
+        amount: 3
+        unit: stk
+    sennep:
+        amount: 1
+        unit: dl

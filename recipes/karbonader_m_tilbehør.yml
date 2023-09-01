@@ -1,0 +1,34 @@
+antal: 3
+ingredienser:
+  gulerod:
+    amount: 350.0
+    unit: g
+  hakket svin:
+    amount: 450.0
+    unit: g
+  kartofler:
+    amount: 750.0
+    unit: g
+  mel:
+    amount: 2.0
+    unit: spsk
+  olie:
+    amount: 1.0
+    unit: spsk
+  persille:
+    amount: 1.0
+    unit: bundt
+  rasp:
+    amount: 1.0
+    unit: dl
+  "slik\xE6rter":
+    amount: 200.0
+    unit: g
+  "sm\xF8r":
+    amount: 15.0
+    unit: g
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: "Karbonader med stuvede gr\xF8ntsager"
+placering: tung mad / gris

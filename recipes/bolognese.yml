@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 50
+    unit: g
+  balsamico:
+    amount: 2
+    unit: spsk
+  frisk timian:
+    amount: 0.1
+    unit: bundt
+  hakkede tomater:
+    amount: 2
+    unit: ds
+  hakket okse:
+    amount: 500
+    unit: g
+  "hvidl\xF8g":
+    amount: 2
+    unit: fed
+  "l\xF8g":
+    amount: 2
+    unit: stk
+  olivenolie:
+    amount: 2
+    unit: spsk
+  parmesan:
+    amount: 200.0
+    unit: g
+  "r\xF8dvin":
+    amount: 200
+    unit: ml
+  "solt\xF8rrede tomater":
+    amount: 100
+    unit: g
+  spaghetti:
+    amount: 400
+    unit: g
+navn: Spaghetti Bolognese
+placering: Valdemarsro side 131

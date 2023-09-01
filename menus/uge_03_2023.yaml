@@ -1,0 +1,48 @@
+Kyllingesalat med æble (mandag):
+    - kyllingesalat:
+        amount: 4
+        unit: plates
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Camillas bolo (onsdag):
+    - lynbolo:
+        amount: 6
+        unit: plates
+Æggekage (torsdag):
+    - æggekage:
+        amount: 4
+        unit: plates
+Pizza mad chorizo og mango (fredag):
+    - pizza_mango:
+        amount: 4
+        unit: plates
+Andet:
+    - madpakkeboller:
+        amount: 1
+        unit: pose
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l
+    - chiafrø:
+        amount: 1
+        unit: pose
+    - rosiner:
+        amount: 1
+        unit: pakke
+    - fine gryn:
+        amount: 1
+        unit: pakke
+    - peanutsmør:
+        amount: 2
+        unit: glas
+    - vaskemiddel (kulørt):
+        amount: 1
+        unit: flaske

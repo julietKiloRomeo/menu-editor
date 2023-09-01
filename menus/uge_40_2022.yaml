@@ -1,0 +1,57 @@
+Pita (lørdag + tirsdag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - pita:
+        amount: 6
+        unit: plates
+    - revet ost:
+        amount: 200
+        unit: g
+    - agurk:
+        amount: 1
+        unit: stk
+Kylling (søndag + mandag):
+    - kylling:
+        amount: 4
+        unit: plates
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+Onepot vegetar (onsdag):
+    - onepot_vegetar:
+        amount: 4
+        unit: plates
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Tomatsuppe (fredag):
+    - tomatsuppe:
+        amount: 4
+        unit: plates
+    - kødboller:
+        amount: 1
+        unit: pose
+    - flutes:
+        amount: 6
+        unit: stk
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - rosiner:
+        amount: 1
+        unit: dåse
+    - mælk:
+        amount: 3
+        unit: l
+    - kødpølse:
+        amount: 1
+        unit: stk
+    - ost:
+        amount: 1
+        unit: stk

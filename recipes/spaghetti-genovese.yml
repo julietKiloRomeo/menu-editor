@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  frisk basilikum:
+    amount: 1.0
+    unit: bdt
+  "gr\xF8nne b\xF8nner":
+    amount: 200.0
+    unit: g
+  kartoffel:
+    amount: 400.0
+    unit: g
+  pappardelle:
+    amount: 500.0
+    unit: g
+  parmesan:
+    amount: 50.0
+    unit: g
+  pesto:
+    amount: 100.0
+    unit: g
+  pinjekerner:
+    amount: 2.0
+    unit: spsk
+navn: Spaghetti Genovese
+placering: funky 77

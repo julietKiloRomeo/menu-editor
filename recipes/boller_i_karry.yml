@@ -1,0 +1,43 @@
+navn: Boller i karry
+placering: Valdemarsro side 13
+antal: 4
+ingredienser:
+    hakket svin:
+        amount: 400
+        unit: g
+    løg:
+        amount: 1
+        unit: stk
+    mælk:
+        amount: 3.5
+        unit: dl
+    æg:
+        amount: 1
+        unit: stk
+    havregryn:
+        amount: 1
+        unit: dl
+    karry:
+        amount: 3
+        unit: tsk
+    stødt koriander:
+        amount: 1
+        unit: tsk
+    hvedemel:
+        amount: 3
+        unit: spsk
+    grønsagsbouillon:
+        amount: 1
+        unit: stk
+    smør:
+        amount: 20
+        unit: g
+    mango:
+        amount: 1
+        unit: stk
+    bredbladet persille:
+        amount: 1
+        unit: bundt
+    ris:
+        amount: 200
+        unit: g

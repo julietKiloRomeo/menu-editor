@@ -1,0 +1,68 @@
+Brændende Kærlighed (dag):
+    - brændende_kærlighed:
+        amount: 4
+        unit: plates
+Tacosuppe (dag):
+    - taco_suppe:
+        amount: 0
+        unit: plates
+Boller i karry (dag):
+    - boller_i_karry:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - æbler:
+        amount: 2
+        unit: stk
+Pasta med salvie (dag):
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Vagabondens livret (dag):
+    - vagabondens_livret:
+        amount: 0
+        unit: plates
+    - pasta:
+        amount: 250
+        unit: g
+Heidis festfisk (dag):
+    - heidis_festfisk:
+        amount: 4
+        unit: plates
+
+Andet:
+  - fine gryn:
+      amount: 1
+      unit: poser
+  - kaffe:
+      amount: 2
+      unit: poser
+  - smørresmør:
+      amount: 1
+      unit: pakke
+  - peanutbutter:
+      amount: 1
+      unit: glas
+  - rosiner:
+      amount: 1
+      unit: pakke
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

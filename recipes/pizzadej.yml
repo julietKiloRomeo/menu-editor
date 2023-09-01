@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  "g\xE6r":
+    amount: 5.0
+    unit: g
+  hvedemel tipo00:
+    amount: 600.0
+    unit: g
+  olie:
+    amount: 4.0
+    unit: spsk
+  salt:
+    amount: 1.0
+    unit: tsk
+navn: Pizzadej
+placering: valdemarsro s. 145

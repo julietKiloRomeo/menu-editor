@@ -1,0 +1,49 @@
+Sprø pitadrøm (lørdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Bolo (lørdag):
+    - bolognese:
+        amount: 8
+        unit: plates
+    - tagliatelle:
+        amount: 200
+        unit: g
+Pita med karry fyld:
+    - pitabrød:
+        amount: 6
+        unit: stk
+    - agurk:
+        amount: 1
+        unit: stk
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet cheddar:
+        amount: 1
+        unit: pose
+Andet:
+    - kaffe:
+        amount: 2
+        unit: poser
+    - leverpostej:
+        amount: 1
+        unit: stk
+    - ost:
+        amount: 1
+        unit: stk
+    - pølse:
+        amount: 1
+        unit: stk
+    - mælk:
+        amount: 1
+        unit: stk
+    - stout:
+        amount: 6
+        unit: stk
+    - skumfiduser:
+        amount: 1
+        unit: pose
+    - chu chum:
+        amount: 1
+        unit: glas

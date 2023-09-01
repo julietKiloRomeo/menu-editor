@@ -1,0 +1,56 @@
+navn: Kyllinge Shawarma
+placering: Valdemarsro side 210
+antal: 4
+ingredienser:
+    kyllingebryst filet:
+        amount: 700
+        unit: g
+    kærnemælk:
+        amount: 2
+        unit: dl
+    hvidløg:
+        amount: 4
+        unit: fed
+    stødt koriander:
+        amount: 1
+        unit: tsk
+    stødt kardemomme:
+        amount: 1
+        unit: tsk
+    stødt kanel:
+        amount: 1
+        unit: tsk
+    sød paprika:
+        amount: 1
+        unit: tsk
+    røget paprika:
+        amount: 1
+        unit: tsk
+    stødt spidskommen:
+        amount: 1
+        unit: tsk
+    stødt cayennepeber:
+        amount: 0.5
+        unit: tsk
+    lime:
+        amount: 1
+        unit: stk
+    olivenolie:
+        amount: 3
+        unit: spsk
+    rødløg:
+        amount: 1
+        unit: stk
+    frisk koriander:
+        amount: 1
+        unit: bundt
+    frisk mynte:
+        amount: 1
+        unit: bundt
+    salat:
+        amount: 1
+        unit: stk
+    fladbrød:
+        amount: 6
+        unit: stk
+                                

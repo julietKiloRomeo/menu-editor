@@ -1,0 +1,51 @@
+Massaman (lørdag + mandag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+    - naan:
+        amount: 4
+        unit: stk
+Kylling Korma (søndag + tirsdag):
+    - kylling_korma:
+        amount: 8
+        unit: plates
+    - naan:
+        amount: 4
+        unit: stk
+Bolo (onsdag):
+    - bolognese:
+        amount: 0
+        unit: plates
+    - tagliatelle:
+        amount: 200
+        unit: g
+Pita med karry fyld (torsdag):
+    - købepitabrød:
+        amount: 6
+        unit: stk
+kikærtegryde (fredag):
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 250
+        unit: ml
+    - æbler:
+        amount: 6
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - kaffe:
+        amount: 2
+        unit: poser
+    - håndsæbe:
+        amount: 1
+        unit: flaske

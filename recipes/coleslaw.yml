@@ -1,0 +1,31 @@
+antal: 10
+ingredienser:
+  cremefraiche 18:
+    amount: 3.0
+    unit: dl
+  dijonsennep:
+    amount: 2.0
+    unit: spsk
+  gulerod:
+    amount: 5.0
+    unit: stk
+  honning:
+    amount: 1.0
+    unit: tsk
+  "hvidk\xE5l":
+    amount: 1.0
+    unit: stk
+  mayonnaise:
+    amount: 1.0
+    unit: dl
+  spidskommen:
+    amount: 1.0
+    unit: tsk
+  sukker:
+    amount: 3.0
+    unit: tsk
+  "\xE6blecidereddike":
+    amount: 0.5
+    unit: dl
+navn: Coleslaw
+placering: valdemar s. 171

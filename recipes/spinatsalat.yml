@@ -1,0 +1,37 @@
+navn: Spinatsalat med feta og granatæble
+placering: Valdemarsro side 310
+antal: 4
+ingredienser:
+    parmaskinke:
+        amount: 70
+        unit: g
+    babyspinat:
+        amount: 125
+        unit: g
+    rucola:
+        amount: 60
+        unit: g
+    feta:
+        amount: 50
+        unit: g
+    saltede mandler:
+        amount: 1
+        unit: dl
+    granatæble:
+        amount: 1
+        unit: stk
+    purløg:
+        amount: 1
+        unit: bundt
+    æblecidereddike:
+        amount: 2
+        unit: spsk
+    honning:
+        amount: 1
+        unit: spsk
+    dijonsennep:
+        amount: 1
+        unit: tsk
+    olivenolie:
+        amount: 4
+        unit: spsk

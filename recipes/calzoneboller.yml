@@ -1,0 +1,43 @@
+antal: 14
+ingredienser:
+  fine gryn:
+    amount: 50.0
+    unit: g
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  frisk mozzarella:
+    amount: 125.0
+    unit: g
+  grahamsmel:
+    amount: 120.0
+    unit: g
+  "g\xE6r":
+    amount: 25.0
+    unit: g
+  peperoni:
+    amount: 75.0
+    unit: g
+  pizzasauce:
+    amount: 1.0
+    unit: dl
+  rugmel:
+    amount: 100.0
+    unit: g
+  salt:
+    amount: 1.0
+    unit: tsk
+  "sesamfr\xF8":
+    amount: 1.0
+    unit: spsk
+  speltmel:
+    amount: 350.0
+    unit: g
+  youghurt naturel:
+    amount: 1.0
+    unit: dl
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: Calzoneboller
+placering: Let mad

@@ -1,0 +1,41 @@
+Laks (lørdag + mandag):
+    - laks_med_sesam:
+        amount: 4
+        unit: plates
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Pizza (søndag + tirsdag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Fiskeburger (onsdag):
+    - fiskeburger:
+        amount: 4
+        unit: plates
+Kikærtegryde (torsdag):
+    - kikærtegryde:
+        amount: 8
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - kødpølse:
+        amount: 1
+        unit: pakke
+    - kødpølse:
+        amount: 1
+        unit: pakke
+    - pålægschokolade:
+        amount: 1
+        unit: pakke
+    - ris:
+        amount: 1
+        unit: pakke
+    - æg:
+        amount: 1
+        unit: pakke

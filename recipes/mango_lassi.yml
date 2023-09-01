@@ -1,0 +1,19 @@
+antal: 2
+ingredienser:
+  honning:
+    amount: 1.0
+    unit: spsk
+  isterninger:
+    amount: 10.0
+    unit: stk
+  kardemomme:
+    amount: 1.0
+    unit: tsk
+  mango:
+    amount: 1.0
+    unit: stk
+  yoghurt:
+    amount: 0.5
+    unit: l
+navn: Mango lassi
+placering: valdemarsro s. 277

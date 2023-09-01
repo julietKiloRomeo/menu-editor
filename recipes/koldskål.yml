@@ -1,0 +1,22 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 0.5
+    unit: stk
+  "k\xE6rnem\xE6lk":
+    amount: 1.0
+    unit: l
+  sukker:
+    amount: 2.0
+    unit: spsk
+  vanillestang:
+    amount: 0.5
+    unit: stk
+  ymer:
+    amount: 3.0
+    unit: dl
+  "\xE6ggeblommer":
+    amount: 3.0
+    unit: stk
+navn: "Koldsk\xE5l"
+placering: Let mad / nemt

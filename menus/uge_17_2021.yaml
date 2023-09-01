@@ -1,0 +1,48 @@
+Boller i karry (søndag + tirsdag):
+    - boller_i_karry:
+        amount: 4
+        unit: plates
+Laks med sesam (mandag):
+    - laks_med_sesam:
+        amount: 4
+        unit: plates
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Koldskål (onsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 1
+        unit: pose
+Salade Nicoise (torsdag):
+    - salade_nicoise:
+        amount: 4
+        unit: plates
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - peperoni:
+        amount: 1
+        unit: pakke
+    - frisk mozzarella:
+        amount: 1
+        unit: pakke
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - banan:
+        amount: 2
+        unit: klase
+    - kaffe:
+        amount: 4
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    - rosin:
+        amount: 1
+        unit: dåse

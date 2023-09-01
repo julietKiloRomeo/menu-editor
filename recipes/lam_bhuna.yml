@@ -1,0 +1,52 @@
+antal: 8
+ingredienser:
+  chilipulver:
+    amount: 1.0
+    unit: tsk
+  citron:
+    amount: 1.0
+    unit: stk
+  garam masala:
+    amount: 2.0
+    unit: tsk
+  gurkemeje:
+    amount: 1.0
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  "h\xF8nsebouillon":
+    amount: 1.0
+    unit: stk
+  "ingef\xE6r":
+    amount: 4.0
+    unit: cm
+  kanel:
+    amount: 0.5
+    unit: tsk
+  kardemomme:
+    amount: 1.0
+    unit: tsk
+  stødt koriander:
+    amount: 1.0
+    unit: tsk
+  lammebov:
+    amount: 1.0
+    unit: kg
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  madraskarry:
+    amount: 1.0
+    unit: spsk
+  spidskommen:
+    amount: 0.5
+    unit: tsk
+  tomat:
+    amount: 2.0
+    unit: stk
+  youghurt naturelle:
+    amount: 3.0
+    unit: dl
+navn: Lam Bhuna
+placering: tung mad / lam

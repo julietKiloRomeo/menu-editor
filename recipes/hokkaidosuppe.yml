@@ -1,0 +1,55 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 1.0
+    unit: stk
+  "gr\xE6sk youghurt":
+    amount: 1.0
+    unit: dl
+  "gr\xE6skarkerner":
+    amount: 1.0
+    unit: dl
+  "gr\xF8ntsagsbouillon":
+    amount: 2.0
+    unit: stk
+  gulerod:
+    amount: 2.0
+    unit: store
+  "hokkaidogr\xE6skar":
+    amount: 1.0
+    unit: stk
+  honning:
+    amount: 0.5
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 1.0
+    unit: cm
+  kartoffel:
+    amount: 4.0
+    unit: stk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 1.5
+    unit: dl
+  "r\xF8d chili":
+    amount: 1.0
+    unit: stk
+  "sm\xF8r":
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt spidskommen":
+    amount: 0.5
+    unit: tsk
+  "\xE6ble":
+    amount: 1.0
+    unit: stk
+navn: Hokkaidosuppe
+placering: valdemar s. 102

@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  chiliflager:
+    amount: 0.5
+    unit: tsk
+  hakkede tomater:
+    amount: 1.0
+    unit: "d\xE5se"
+  hakket okse:
+    amount: 350.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "kidney b\xF8nner":
+    amount: 2.0
+    unit: "d\xE5ser"
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  "m\xF8rk chokolade":
+    amount: 40.0
+    unit: g
+  oksebouillon:
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 3.0
+    unit: spsk
+  "solt\xF8rret tomat":
+    amount: 3.0
+    unit: spsk
+  "st\xF8dt kanel":
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt spidskommen":
+    amount: 1.0
+    unit: tsk
+  "t\xF8rret koriander":
+    amount: 1.0
+    unit: tsk
+navn: Chili con carne
+placering: valdemarsro s. 231

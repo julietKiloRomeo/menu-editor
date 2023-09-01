@@ -1,0 +1,51 @@
+Bolo (mandag + onsdag):
+    - bolognese:
+        amount: 8
+        unit: plates
+    - pasta:
+        amount: 500
+        unit: g
+    - revet ost:
+        amount: 300
+        unit: g
+Pasta med laks (tirsdag):
+    - pasta_med_laks:
+        amount: 4
+        unit: plates
+Sushi (torsdag):
+    - sushi:
+        amount: 0
+        unit: plates
+Pizza (fredag):
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+    - pizzadej:
+        amount: 4
+        unit: plates
+
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - rosin:
+        amount: 1
+        unit: pakke
+    - papir:
+        amount: 1
+        unit: pakke
+    - toiletpapir:
+        amount: 1
+        unit: pakke
+    - kaffe:
+        amount: 2
+        unit: pakke
+    - mælk:
+        amount: 2
+        unit: l
+    - pålæg:
+        amount: 1
+        unit: pakke

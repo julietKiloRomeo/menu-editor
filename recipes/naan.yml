@@ -1,0 +1,37 @@
+antal: 4
+ingredienser:
+  "græsk youghurt":
+    amount: 1.0
+    unit: dl
+  "gær":
+    amount: 25.0
+    unit: g
+  hvedemel:
+    amount: 500.0
+    unit: g
+  "hvidløg":
+    amount: 1.0
+    unit: fed
+  "mælk":
+    amount: 1.0
+    unit: dl
+  "nigellafrø":
+    amount: 1.0
+    unit: spsk
+  olivenolie:
+    amount: 3.0
+    unit: spsk
+  salt:
+    amount: 1.0
+    unit: tsk
+  "smør":
+    amount: 50.0
+    unit: g
+  sukker:
+    amount: 1.0
+    unit: tsk
+  "æg":
+    amount: 1.0
+    unit: stk
+navn: Naan
+placering: Valdemarsro s. 274

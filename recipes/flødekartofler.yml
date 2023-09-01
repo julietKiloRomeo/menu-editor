@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  frisk timian:
+    amount: 1.0
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  kartofler:
+    amount: 1.0
+    unit: kg
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 0.5
+    unit: l
+  "sm\xF8r":
+    amount: 1.0
+    unit: spsk
+  "s\xF8d paprika":
+    amount: 1.0
+    unit: tsk
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: "Fl\xF8dekartofler"
+placering: valdemarsro p. 330

@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  hakket svin:
+    amount: 500.0
+    unit: g
+  hvedemel:
+    amount: 1.0
+    unit: spsk
+  olie:
+    amount: 1.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 15.0
+    unit: g
+navn: Karbonader
+placering: Suhr mad p. 201

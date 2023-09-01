@@ -1,0 +1,61 @@
+Lasagne (lørdag + mandag):
+    - lasagne:
+        amount: 0
+        unit: plates
+    - rucolasalat_med_tomat:
+        amount: 4
+        unit: plates
+    - mornay_sauce:
+        amount: 1
+        unit: portion
+Suppe (søndag):
+    - suppe:
+        amount: 4
+        unit: plates
+Færdigretter (tirsdag):
+    - færdigretter:
+        amount: 0
+        unit: plates
+Hot dogs (onsdag):
+    - pølser:
+        amount: 6
+        unit: stk
+    - pølsebrød:
+        amount: 6
+        unit: stk
+    - ketchup:
+        amount: 1
+        unit: dl
+    - ristede løg:
+        amount: 1
+        unit: dl
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Chili pita(fredag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - tomat:
+        amount: 800
+        unit: g
+    - salat:
+        amount: 800
+        unit: g
+    - creme fraiche:
+        amount: 1
+        unit: dl
+Andet:
+    - calzoneboller:
+        amount: 14
+        unit: stk
+    - banan:
+        amount: 6
+        unit: stk
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    
+
+

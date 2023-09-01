@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  andebryst:
+    amount: 2.0
+    unit: stk
+  appelsin:
+    amount: 4.0
+    unit: stk
+  citron:
+    amount: 0.5
+    unit: stk
+  frisk timian:
+    amount: 1.0
+    unit: "st\xE6ngel"
+  honning:
+    amount: 1.0
+    unit: spsk
+  kanel:
+    amount: 1.0
+    unit: stang
+  "r\xF8rsukker":
+    amount: 1.0
+    unit: spsk
+  "st\xF8dt kardemomme":
+    amount: 1.0
+    unit: knvsps
+navn: Andebryst a l'orange
+placering: tung mad

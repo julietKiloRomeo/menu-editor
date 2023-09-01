@@ -1,0 +1,55 @@
+antal: 4
+ingredienser:
+  bladselleri:
+    amount: 5.0
+    unit: stilke
+  frisk mozzarella:
+    amount: 125.0
+    unit: g
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: stk
+  gulerod:
+    amount: 4.0
+    unit: stk
+  hakket tomat:
+    amount: 2.0
+    unit: ds
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  lasagneplader:
+    amount: 9.0
+    unit: stk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: knvsps
+  "oksek\xF8d":
+    amount: 400.0
+    unit: g
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "r\xF8dvin":
+    amount: 1.0
+    unit: dl
+  "sm\xF8r":
+    amount: 2.0
+    unit: spsk
+  squash:
+    amount: 1.0
+    unit: stk
+  "tomatpur\xE9":
+    amount: 1.0
+    unit: dl
+  "t\xF8rret oregano":
+    amount: 2.0
+    unit: tsk
+navn: Lasagne
+placering: Valdemarsro s. 136

@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 0.5
+    unit: stk
+  frisk mynte:
+    amount: 1.0
+    unit: bundt
+  "gr\xE6sk yoghurt":
+    amount: 2.0
+    unit: dl
+  spidskommen:
+    amount: 0.5
+    unit: tsk
+navn: Raita
+placering: valdemar s. 277

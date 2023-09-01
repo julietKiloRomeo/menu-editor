@@ -1,0 +1,31 @@
+antal: 12
+ingredienser:
+  bagepulver:
+    amount: 2.0
+    unit: tsk
+  flormelis:
+    amount: 3.0
+    unit: spsk
+  hvedemel:
+    amount: 150.0
+    unit: g
+  kakao:
+    amount: 2.0
+    unit: spsk
+  rasp:
+    amount: 2.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 150.0
+    unit: g
+  sukker:
+    amount: 250.0
+    unit: g
+  vanillesukker:
+    amount: 1.0
+    unit: tsk
+  "\xE6g":
+    amount: 3.0
+    unit: stk
+navn: Bedstemor ands chokoladekage
+placering: anders and s. 12

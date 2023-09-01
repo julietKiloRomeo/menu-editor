@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  chiliflager:
+    amount: 0.5
+    unit: tsk
+  frisk koriander:
+    amount: 1.0
+    unit: bundt
+  "gr\xF8ntsagsbouillon":
+    amount: 6.0
+    unit: dl
+  hakkede tomater:
+    amount: 2.0
+    unit: "d\xE5ser"
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 3.0
+    unit: cm
+  karry:
+    amount: 3.0
+    unit: tsk
+  mandler:
+    amount: 100.0
+    unit: g
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "r\xF8de linser":
+    amount: 200.0
+    unit: g
+  spidskommen:
+    amount: 1.0
+    unit: spsk
+  "st\xF8dt kardemomme":
+    amount: 0.5
+    unit: tsk
+  "st\xF8dt koriander":
+    amount: 0.5
+    unit: spsk
+navn: Dhal
+placering: valdemar s. 261

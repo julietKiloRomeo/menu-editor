@@ -1,0 +1,25 @@
+antal: 6
+ingredienser:
+  havregryn:
+    amount: 50.0
+    unit: g
+  kakao:
+    amount: 2.0
+    unit: spsk
+  kanel:
+    amount: 1.0
+    unit: spsk
+  mandler:
+    amount: 30.0
+    unit: g
+  medjool dadler:
+    amount: 150.0
+    unit: g
+  "sesamfr\xF8":
+    amount: 1.0
+    unit: spsk
+  "st\xF8dt kardemomme":
+    amount: 0.5
+    unit: tsk
+navn: Raw muslibar
+placering: let med

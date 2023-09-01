@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  avocado:
+    amount: 2.0
+    unit: stk
+  cherrytomat:
+    amount: 150.0
+    unit: g
+  chiliflager:
+    amount: 2.0
+    unit: tsk
+  creme fraiche:
+    amount: 100.0
+    unit: ml
+  garam masala:
+    amount: 2.0
+    unit: tsk
+  "hvide b\xF8nner":
+    amount: 1.0
+    unit: ds
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "kik\xE6rter":
+    amount: 2.0
+    unit: "d\xE5ser"
+  frisk koriander:
+    amount: 0.5
+    unit: bundt
+  lime:
+    amount: 1.0
+    unit: stk
+  olie:
+    amount: 4.0
+    unit: spsk
+  "pitabr\xF8d":
+    amount: 6.0
+    unit: stk
+  salt:
+    amount: 2.0
+    unit: tsk
+navn: "Spr\xF8 Pitadr\xF8m"
+placering: Let mad / veggie

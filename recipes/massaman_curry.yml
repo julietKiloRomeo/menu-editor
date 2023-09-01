@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  bredbladet persille:
+    amount: 1.0
+    unit: bundt
+  fishsauce:
+    amount: 1.0
+    unit: spsk
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: dl
+  gul karrypasta:
+    amount: 2.0
+    unit: spsk
+  gulerod:
+    amount: 2.0
+    unit: stk
+  kartofler:
+    amount: 500.0
+    unit: g
+  "kokosm\xE6lk":
+    amount: 4.0
+    unit: dl
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  peanuts:
+    amount: 1.0
+    unit: dl
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  "r\xF8rsukker":
+    amount: 1.0
+    unit: tsk
+  soja:
+    amount: 1.0
+    unit: spsk
+  "s\xF8d kartoffel":
+    amount: 2.0
+    unit: stk
+navn: Massaman Curry
+placering: valdemarsro s. 188

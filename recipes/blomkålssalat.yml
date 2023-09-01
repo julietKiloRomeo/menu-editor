@@ -1,0 +1,29 @@
+navn: Blomkålssalat med æbler og mandler
+placering: Valdemarsro side 306
+antal: 4
+ingredienser:
+    blomkål:
+        amount: 1
+        unit: stk
+    saltede mandler:
+        amount: 0.5
+        unit: dl
+    æble:
+        amount: 1
+        unit: stk
+    blåbær:
+        amount: 1
+        unit: dl
+    bredbladet persille:
+        amount: 1
+        unit: bundt
+    grøn pesto:
+        amount: 1
+        unit: dl
+    creme fraiche:
+        amount: 0.5
+        unit: dl
+    honning:
+        amount: 1
+        unit: tsk
+

@@ -1,0 +1,55 @@
+antal: 14
+ingredienser:
+  gulerod:
+    amount: 3.0
+    unit: stk
+  "g\xE6r":
+    amount: 25.0
+    unit: g
+  honning:
+    amount: 1.0
+    unit: spsk
+  hvedemel:
+    amount: 500.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  "m\xE6lk":
+    amount: 3.0
+    unit: dl
+  "oksek\xF8d":
+    amount: 350.0
+    unit: g
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  paprika:
+    amount: 1.0
+    unit: tsk
+  salt:
+    amount: 1.0
+    unit: tsk
+  "sm\xF8r":
+    amount: 40.0
+    unit: g
+  spidskommen:
+    amount: 1.0
+    unit: tsk
+  squash:
+    amount: 0.5
+    unit: stk
+  tomatpure:
+    amount: 140.0
+    unit: g
+  worcestershire sauce:
+    amount: 1.0
+    unit: dryp
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: "Pirogger med oksek\xF8d"
+placering: let mad

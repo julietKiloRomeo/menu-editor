@@ -1,0 +1,25 @@
+antal: 6
+ingredienser:
+  bacon i tern:
+    amount: 1.0
+    unit: pakke
+  blegselleri:
+    amount: 4.0
+    unit: stk
+  champignon i glas:
+    amount: 1.0
+    unit: stk
+  dolmio pastasovs:
+    amount: 1.0
+    unit: stk
+  "hakket oksek\xF8d":
+    amount: 450.0
+    unit: g
+  "k\xE5l":
+    amount: 0.25
+    unit: stk
+  peberfrugt:
+    amount: 1.0
+    unit: stk
+navn: Camillas bolo
+placering: let mad / nemt

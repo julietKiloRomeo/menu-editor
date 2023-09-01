@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  "fl\xF8deost":
+    amount: 2.0
+    unit: spsk
+  laksefilet:
+    amount: 2.0
+    unit: stk
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  frisk pasta:
+    amount: 250.0
+    unit: g
+  mandler:
+    amount: 65.0
+    unit: g
+  olivenolie:
+    amount: 3.0
+    unit: spsk
+  parmesan:
+    amount: 30.0
+    unit: g
+navn: Pasta med laks
+placering: let mad / fisk

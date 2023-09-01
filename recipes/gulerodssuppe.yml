@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  bredbladet persille:
+    amount: 60.0
+    unit: g
+  gulerod:
+    amount: 600.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  rapsolie:
+    amount: 2.0
+    unit: spsk
+  timian:
+    amount: 20.0
+    unit: g
+  youghurt naturelle:
+    amount: 2.0
+    unit: dl
+  "\xE6blecidereddike":
+    amount: 1.0
+    unit: dl
+  "\xE6blemost":
+    amount: 2.0
+    unit: dl
+navn: Gulerodssuppe
+placering: nordisk hverdagsmad s. 37

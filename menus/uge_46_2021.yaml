@@ -1,0 +1,78 @@
+Dhal (søndag + fredag):
+    - dhal:
+        amount: 12
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - raita:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 500
+        unit: g
+Græskar suppe (mandag):
+    - hokkaidosuppe:
+        amount: 4
+        unit: plates
+    - flutes:
+        amount: 8
+        unit: stk
+Kylling korma (tirsdag):
+    - korma:
+        amount: 0
+        unit: plates
+    - købe naan:
+        amount: 2
+        unit: stk
+    - ris:
+        amount: 250
+        unit: g
+Rugbrød (onsdag):
+    - pølsehorn:
+        amount: 8
+        unit: plates
+    - rugbrød:
+        amount: 300
+        unit: g
+    - fiskepålæg:
+        amount: 1
+        unit: pakke
+    - æg:
+        amount: 4
+        unit: stk
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - skyr m kokos:
+        amount: 1
+        unit: stk
+    - smør:
+        amount: 1
+        unit: pakke
+    - smørresmør:
+        amount: 1
+        unit: pakke
+    - rosiner:
+        amount: 1
+        unit: pakke
+    - kaffe:
+        amount: 2
+        unit: poser

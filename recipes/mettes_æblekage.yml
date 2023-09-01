@@ -1,0 +1,31 @@
+antal: 8
+ingredienser:
+  bagepulver:
+    amount: 1.0
+    unit: tsk
+  creme fraiche:
+    amount: 200.0
+    unit: g
+  hvedemel:
+    amount: 200.0
+    unit: g
+  kanel:
+    amount: 1.0
+    unit: spsk
+  "mad\xE6bler":
+    amount: 3.0
+    unit: stk
+  "sm\xF8r":
+    amount: 115.0
+    unit: g
+  sukker:
+    amount: 250.0
+    unit: g
+  vanillesukker:
+    amount: 1.0
+    unit: spsk
+  "\xE6g":
+    amount: 2.0
+    unit: stk
+navn: "Mettes \xC6blekage"
+placering: tung mad

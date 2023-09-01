@@ -1,0 +1,46 @@
+antal: 4
+ingredienser:
+  chiliflager:
+    amount: 0.5
+    unit: tsk
+  frisk koriander:
+    amount: 1.0
+    unit: bundt
+  garam masala:
+    amount: 1.0
+    unit: spsk
+  "græsk youghurt":
+    amount: 1.0
+    unit: dl
+  gurkemeje:
+    amount: 1.0
+    unit: tsk
+  "hvidløg":
+    amount: 4.0
+    unit: fed
+  "ingefær":
+    amount: 2.0
+    unit: cm
+  "kokosmælk":
+    amount: 1.0
+    unit: "dåse"
+  kokosolie:
+    amount: 1.0
+    unit: spsk
+  kyllingebryst:
+    amount: 4.0
+    unit: stk
+  lime:
+    amount: 1.0
+    unit: stk
+  mandler:
+    amount: 1.0
+    unit: dl
+  "rødløg":
+    amount: 2.0
+    unit: stk
+  "tomatpurè":
+    amount: 75.0
+    unit: g
+navn: Kylling Korma
+placering: Valdemarsro s. 265

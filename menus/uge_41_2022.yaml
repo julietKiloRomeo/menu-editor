@@ -1,0 +1,63 @@
+Stroganoff (lørdag + mandag):
+    - stroganoff:
+        amount: 8
+        unit: plates
+    - kartoffelmos:
+        amount: 8
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Bønnegryde (søndag + onsdag):
+    - bønnegryde:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 4
+        unit: poser
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Tomatsuppe (torsdag):
+    - tomatsuppe:
+        amount: 4
+        unit: plates
+    - kødboller:
+        amount: 1
+        unit: pose
+    - flutes:
+        amount: 6
+        unit: stk
+Mexi Bowl (fredag):
+    - mexibowl:
+        amount: 6
+        unit: plates
+Andet:
+    - mettes_æblekage:
+        amount: 8
+        unit: plates
+    - rugboller:
+        amount: 16
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - rosiner:
+        amount: 1
+        unit: dåse
+    - mælk:
+        amount: 3
+        unit: l
+    - kødpølse:
+        amount: 1
+        unit: stk
+    - ost:
+        amount: 1
+        unit: stk
+    - smør:
+        amount: 1
+        unit: pakke
+    - kaffe:
+        amount: 2
+        unit: pakker

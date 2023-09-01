@@ -1,0 +1,58 @@
+navn: Chipotle Bean Burritos
+placering: Let mad / veggie
+antal: 6
+ingredienser:
+    rapsolie:
+        amount: 1
+        unit: spsk
+    hvidløg:
+        amount: 1
+        unit: fed
+    chipotle salt:
+        amount: 2
+        unit: tsk
+    spidskommen:
+        amount: 1
+        unit: tsk
+    salt:
+        amount: 1
+        unit: tsk
+    sorte bønner:
+        amount: 1
+        unit: ds
+    kidney bønner:
+        amount: 1
+        unit: ds
+    salsa:
+        amount: 0.5
+        unit: dl
+    blomme tomater:
+        amount: 1
+        unit: bakke
+    salat:
+        amount: 1
+        unit: stk
+    revet ost:
+        amount: 200
+        unit: g
+    creme fraiche:
+        amount: 2
+        unit: dl
+    rødløg:
+        amount: 1
+        unit: stk
+    wraps:
+        amount: 6
+        unit: stk
+    små tomater:
+        amount: 200
+        unit: g
+    agurk:
+        amount: 1
+        unit: stk
+    revet cheddar:
+        amount: 250
+        unit: g
+    creme fraiche:
+        amount: 2
+        unit: dl

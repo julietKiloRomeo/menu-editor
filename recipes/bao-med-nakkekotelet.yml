@@ -1,0 +1,58 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 1.0
+    unit: stk
+  fishsauce:
+    amount: 2.0
+    unit: spsk
+  "for\xE5rsl\xF8g":
+    amount: 2.0
+    unit: stk
+  frisk koriander:
+    amount: 1.0
+    unit: bundt
+  gulerod:
+    amount: 5.0
+    unit: stk
+  "g\xE6r":
+    amount: 10.0
+    unit: g
+  hoisin sauce:
+    amount: 1.0
+    unit: spsk
+  hvedemel:
+    amount: 400.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 1.0
+    unit: spsk
+  lime:
+    amount: 1.0
+    unit: stk
+  nakkekotelet:
+    amount: 250.0
+    unit: g
+  "sesamfr\xF8":
+    amount: 1.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  sriracha:
+    amount: 1.0
+    unit: spsk
+  sukker:
+    amount: 2.0
+    unit: spsk
+  gulerod:
+    amount: 3.0
+    unit: stk
+  agurk:
+    amount: 1.0
+    unit: stk
+navn: Bao med nakkekotelet
+placering: tung mad / gris

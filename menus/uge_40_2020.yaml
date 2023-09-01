@@ -1,0 +1,20 @@
+Boller i Karry:
+    - boller_i_karry:
+        amount: 8
+        unit: plates
+Pølser med æblesaute:
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Kartoffel/porre suppe:
+    - flutes:
+        amount: 8
+        unit: stk
+Andet:
+    - banan:
+        amount: 5
+        unit: stk
+    - rosin:
+        amount: 500
+        unit: g
+    

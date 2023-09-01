@@ -1,0 +1,58 @@
+Hot Dogs (lørdag):
+    - pølser:
+        amount: 6
+        unit: stk
+    - pølsebrød:
+        amount: 6
+        unit: stk
+    - løg:
+        amount: 1
+        unit: stk
+Kylling Korma (søndag + tirsdag):
+    - kylling_korma:
+        amount: 8
+        unit: plates
+    -  naan brød:
+        amount: 4
+        unit: stk
+MacNCheese (mandag):
+    - macncheese:
+        amount: 4
+        unit: plates
+Massaman (onsdag):
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - naan:
+        amount: 4
+        unit: stk
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - peperoni:
+        amount: 1
+        unit: pakke
+    - frisk mozzarella:
+        amount: 1
+        unit: pakke
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - kaffe:
+        amount: 4
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    - fredagsproviant:
+        amount: 1
+        unit: kg

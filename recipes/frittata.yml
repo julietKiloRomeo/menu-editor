@@ -1,0 +1,19 @@
+antal: 4
+ingredienser:
+  courgetter:
+    amount: 2.0
+    unit: stk
+  feta:
+    amount: 75.0
+    unit: g
+  frisk mynte:
+    amount: 1.0
+    unit: bundt
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "\xE6g":
+    amount: 8.0
+    unit: stk
+navn: Frittata med courgetter
+placering: vegetarisk s. 27

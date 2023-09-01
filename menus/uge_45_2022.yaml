@@ -1,0 +1,77 @@
+Massaman (lørdag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+Broccolitærte (søndag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Pasta med salvie (mandag):
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Fiskefrikadeller (onsdag):
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - fiskefars:
+        amount: 300
+        unit: g
+Bean wraps (torsdag):
+    - bean_burritos:
+        amount: 4
+        unit: plates
+    - wraps:
+        amount: 6
+        unit: stk
+    - små tomater:
+        amount: 200
+        unit: g
+    - agurk:
+        amount: 1
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Æggekage (fredag):
+    - æggekage:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: l
+    - kødpølse:
+        amount: 1
+        unit: pakke
+    - ost:
+        amount: 1
+        unit: stk
+    - skoleagurk:
+        amount: 1
+        unit: pakke
+    - fine gryn:
+        amount: 1
+        unit: pakke
+    - grove gryn:
+        amount: 1
+        unit: pakke
+    - rosiner:
+        amount: 1
+        unit: pakke

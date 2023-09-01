@@ -1,0 +1,66 @@
+Broccoli tærte (dag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Græskarrisotto (dag):
+    - græskarrisotto:
+        amount: 4
+        unit: plates
+
+Massaman Curry (dag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+    - købe naan:
+        amount: 4
+        unit: stk
+
+Fried rice med kylling (dag):
+    - fried_rice:
+        amount: 4
+        unit: plates
+
+Kylling i karry a la ristaffel (dag):
+    - kylling_i_karry_ristaffel:
+        amount: 4
+        unit: plates
+
+Sprø Pitadrøm (dag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Andet:
+  - fine gryn:
+      amount: 1
+      unit: poser
+  - kaffe:
+      amount: 2
+      unit: poser
+  - smørresmør:
+      amount: 1
+      unit: pakke
+  - peanutbutter:
+      amount: 1
+      unit: glas
+  - rosiner:
+      amount: 1
+      unit: pakke
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

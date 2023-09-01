@@ -1,0 +1,55 @@
+Broccoli tærte:
+  - broccolitærte:
+      amount: 4
+      unit: plates
+Karry kødfyld:
+  - karry_kødfyld:
+      amount: 0
+      unit: plates
+  - købepitabrød:
+      amount: 2
+      unit: stk
+  - agurk:
+      amount: 1
+      unit: stk
+  - rød peber:
+      amount: 1
+      unit: stk
+  - revet ost:
+      amount: 200
+      unit: g
+  - creme fraiche:
+      amount: 2
+      unit: dl
+Massaman Curry:
+  - massaman_curry:
+      amount: 0
+      unit: plates
+  - købe naan:
+      amount: 4
+      unit: stk
+One pot med spinat og ærter:
+  - onepot_spinat:
+      amount: 4
+      unit: plates
+Grove pølser med æblesaute og mos:
+  - pølser_med_æblesaute:
+      amount: 4
+      unit: plates
+
+Andet:
+  - gryn:
+      amount: 2
+      unit: pakker
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l
+  - madpakkefrugt:
+      amount: 1
+      unit: stk
+  - madpakkebrød:
+      amount: 1
+      unit: stk

@@ -1,0 +1,44 @@
+Lasagne (lørdag + mandag):
+    - lasagne:
+        amount: 0
+        unit: plates
+    - hvidløgsbrød:
+        amount: 4
+        unit: stk
+Lam Bhuna (søndag + tirsdag):
+    - lam_bhuna:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 4
+        unit: poser
+    - købe naan:
+        amount: 4
+        unit: stk
+Laksesteak (onsdag):
+    - laksesteak_med_couscous:
+        amount: 4
+        unit: plates
+Pizza (torsdag + fredag):
+    - pizza_med_chorizo:
+        amount: 8
+        unit: plates
+Andet:
+    - grønne æbler:
+        amount: 6
+        unit: stk
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 1
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l

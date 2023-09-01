@@ -1,0 +1,75 @@
+Lasagne (lørdag + mandag):
+    - lasagne:
+        amount: 4
+        unit: plates
+    - rucolasalat_med_tomat:
+        amount: 4
+        unit: plates
+Chili (søndag + torsdag):
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 800
+        unit: g
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Massaman (onsdag):
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - koriander:
+        amount: 1
+        unit: bundt
+    - naan brød:
+        amount: 2
+        unit: stk
+Burger (fredag):
+    - burgerboller:
+        amount: 6
+        unit: stk
+    - hakket oksekød:
+        amount: 400
+        unit: g
+    - pølser:
+        amount: 6
+        unit: stk
+    - tomat:
+        amount: 2
+        unit: stk
+    - løg:
+        amount: 1
+        unit: stk
+    - ost:
+        amount: 6
+        unit: skiver
+    - bacon:
+        amount: 6
+        unit: skiver
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - kanel:
+        amount: 1
+        unit: dåse
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - mælk:
+        amount: 2
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    
+
+

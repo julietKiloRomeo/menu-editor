@@ -1,0 +1,80 @@
+Pizza (lørdag):
+    - pizza_med_chorizo:
+        amount: 6
+        unit: plates
+Massaman (søndag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+    - naan brød:
+        amount: 4
+        unit: stk
+Bolo (mandag):
+    - bolognese:
+        amount: 8
+        unit: plates
+    - tagliatelle:
+        amount: 1
+        unit: pakke
+Boller i karry (tirsdag):
+    - boller_i_karry:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+Mysterie gryde (onsdag):
+    - ris:
+        amount: 250
+        unit: g
+Koldskål (torsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 1
+        unit: pose
+Pita med karryfyld (fredag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - creme fraiche:
+        amount: 1
+        unit: dl
+    - revet ost:
+        amount: 1
+        unit: pose
+    - cherrytomat:
+        amount: 200
+        unit: g
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - vin:
+        amount: 1
+        unit: l
+    - øl:
+        amount: 6
+        unit: stk
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - fredagsfrugt:
+        amount: 1
+        unit: kg
+    - rosin:
+        amount: 1
+        unit: pakke

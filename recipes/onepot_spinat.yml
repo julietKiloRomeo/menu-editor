@@ -1,0 +1,44 @@
+navn: One pot med spinat og ærter
+placering: Valdemarsro side 114
+antal: 4
+ingredienser:
+    spaghetti:
+        amount: 400
+        unit: g
+    løg:
+        amount: 1
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    squash:
+        amount: 2
+        unit: stk
+    spinat:
+        amount: 125
+        unit: g
+    frosne ærter:
+        amount: 200
+        unit: g
+    frisk basilikum:
+        amount: 1
+        unit: bundt
+    piskefløde:
+        amount: 1
+        unit: dl
+    grønsagsbouillon:
+        amount: 2
+        unit: stk
+    olivenolie:
+        amount: 1
+        unit: spsk
+    pinjekerner:
+        amount: 30
+        unit: g
+    parmesan:
+        amount: 200
+        unit: g
+    citron:
+        amount: 1
+        unit: stk
+

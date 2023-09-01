@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 8.0
+    unit: skiver
+  kartofler:
+    amount: 800.0
+    unit: g
+  "m\xE6lk":
+    amount: 1.5
+    unit: dl
+  "purl\xF8g":
+    amount: 1.0
+    unit: bundt
+  "rugbr\xF8d":
+    amount: 6.0
+    unit: skiver
+  tomat:
+    amount: 4.0
+    unit: stk
+  "\xE6g":
+    amount: 10.0
+    unit: stk
+navn: "\xC6ggekage"
+placering: Valdemarsro s. 38

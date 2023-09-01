@@ -1,0 +1,46 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 1.0
+    unit: stk
+  burgerboller:
+    amount: 4.0
+    unit: stk
+  citron:
+    amount: 2.0
+    unit: stk
+  creme fraiche:
+    amount: 2.0
+    unit: dl
+  frisk dild:
+    amount: 1.0
+    unit: bundt
+  "frisk purl\xF8g":
+    amount: 1.0
+    unit: bundt
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  mayonnaise:
+    amount: 2.0
+    unit: spsk
+  pillede rejer:
+    amount: 100.0
+    unit: g
+  rasp:
+    amount: 1.0
+    unit: dl
+  "r\xF8dsp\xE6ttefilet":
+    amount: 4.0
+    unit: stk
+  salat:
+    amount: 1.0
+    unit: stk
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: Fiskeburger
+placering: valdemarsro s. 162

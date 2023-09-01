@@ -1,0 +1,41 @@
+Pizza med græskar (lørdag):
+  - pumpkin_pizza:
+      amount: 4
+      unit: plates
+Stegt flæsk med persillesauce (søndag):
+  - stegt_flæsk:
+      amount: 4
+      unit: plates
+Broccoli tærte (mandag):
+  - broccolitærte:
+      amount: 4
+      unit: plates
+Kyllingesalat med æble (tirsdag):
+  - kyllingesalat:
+      amount: 4
+      unit: plates
+Tacosuppe (onsdag):
+  - taco_suppe:
+      amount: 4
+      unit: plates
+Spaghetti Genovese (torsdag):
+  - spaghetti-genovese:
+      amount: 4
+      unit: plates
+Dahl (fredag):
+  - dahl:
+      amount: 0
+      unit: plates
+Andet:
+  - kaffe:
+      amount: 2
+      unit: poser
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

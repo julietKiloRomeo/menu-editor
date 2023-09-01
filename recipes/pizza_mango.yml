@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  chorizo:
+    amount: 75.0
+    unit: g
+  "for\xE5rsl\xF8g":
+    amount: 2.0
+    unit: stk
+  frisk mozzarella:
+    amount: 125.0
+    unit: g
+  frisk salvie:
+    amount: 1.0
+    unit: bundt
+  mango:
+    amount: 1.0
+    unit: stk
+  pizzadej:
+    amount: 2.0
+    unit: ruller
+  rucola:
+    amount: 1.0
+    unit: pose
+  "s\xF8de kartofler":
+    amount: 2.0
+    unit: stk
+  yoghurt naturelle:
+    amount: 2.0
+    unit: spsk
+navn: Pizza med chorizo og mango
+placering: let / nemt

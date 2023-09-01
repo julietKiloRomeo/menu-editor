@@ -1,0 +1,31 @@
+antal: 2
+ingredienser:
+  bacon:
+    amount: 75.0
+    unit: g
+  "groft br\xF8d":
+    amount: 2.0
+    unit: stk
+  hakket okse:
+    amount: 150.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  kartofler:
+    amount: 300.0
+    unit: g
+  "k\xE5l":
+    amount: 300.0
+    unit: g
+  "l\xF8g":
+    amount: 0.5
+    unit: stk
+  parmesan:
+    amount: 50.0
+    unit: g
+  persille:
+    amount: 0.5
+    unit: bdt
+navn: "k\xE5lsuppe"
+placering: tung mad

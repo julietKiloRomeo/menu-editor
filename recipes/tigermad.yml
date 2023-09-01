@@ -1,0 +1,37 @@
+antal: 4
+ingredienser:
+  broccoli:
+    amount: 1.0
+    unit: stk
+  gulerod:
+    amount: 350.0
+    unit: g
+  hakket svin:
+    amount: 600.0
+    unit: g
+  havregryn:
+    amount: 1.5
+    unit: dl
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  oregano:
+    amount: 2.0
+    unit: tsk
+  pasta:
+    amount: 400.0
+    unit: g
+  "pasteuriseret \xE6g":
+    amount: 1.5
+    unit: stk
+  pesto:
+    amount: 1.0
+    unit: glas
+  "sm\xF8r":
+    amount: 25.0
+    unit: g
+  tomatpure:
+    amount: 2.0
+    unit: tsk
+navn: Tigermad
+placering: let mad / nemt

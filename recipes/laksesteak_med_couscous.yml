@@ -1,0 +1,37 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 1.0
+    unit: stk
+  broccoli:
+    amount: 1.0
+    unit: stk
+  citron:
+    amount: 1.0
+    unit: stk
+  couscous:
+    amount: 3.0
+    unit: dl
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  laksesteak:
+    amount: 550.0
+    unit: g
+  olie:
+    amount: 3.0
+    unit: spsk
+  persille:
+    amount: 1.0
+    unit: bundt
+  rosiner:
+    amount: 50.0
+    unit: g
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  yoghurt naturelle:
+    amount: 2.0
+    unit: dl
+navn: "Laksesteak med gr\xF8n couscous"
+placering: let mad / fisk

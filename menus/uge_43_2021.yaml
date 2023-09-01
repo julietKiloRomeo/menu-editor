@@ -1,0 +1,64 @@
+Enebærgryde (lørdag):
+    - enebærgryde:
+        amount: 12
+        unit: plates
+    - kartoffelmos:
+        amount: 12
+        unit: plates
+Pølser med æble (søndag + tirsdag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Onepot vegetar (mandag):
+    - onepot_vegetar:
+        amount: 4
+        unit: plates
+Mexi Bowl (onsdag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Fiskefrikadeller (torsdag):
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - fiskefars:
+        amount: 300
+        unit: g
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - skyr m kokos:
+        amount: 1
+        unit: stk
+    - sundt crusli:
+        amount: 1
+        unit: pose
+    - olivenolie:
+        amount: 1
+        unit: flaske
+    - sodavand:
+        amount: 3
+        unit: flasker
+    - småkager:
+        amount: 2
+        unit: pakker

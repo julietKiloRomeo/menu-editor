@@ -1,0 +1,45 @@
+Sprø Pitadrøm (lørdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Citron pasta (søndag):
+    - citronpasta:
+        amount: 4
+        unit: plates
+Spaghetti Bolognese (mandag):
+    - bolognese:
+        amount: 0
+        unit: plates
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Pizza med chorizo og tomat (tirsdag):
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Dhal (onsdag):
+    - dhal:
+        amount: 4
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - raita:
+        amount: 4
+        unit: plates
+Andet:
+  - toiletpapir:
+      amount: 1
+      unit: pakke
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

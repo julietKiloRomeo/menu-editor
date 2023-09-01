@@ -1,0 +1,52 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 100.0
+    unit: g
+  citron:
+    amount: 1.0
+    unit: stk
+  frisk timian:
+    amount: 0.1
+    unit: bundt
+  honning:
+    amount: 1.0
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  "h\xF8nsebouillon":
+    amount: 2.0
+    unit: stk
+  jordskokker:
+    amount: 350.0
+    unit: g
+  kartofler:
+    amount: 300.0
+    unit: g
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: tsk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  torskefilet:
+    amount: 600.0
+    unit: g
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+  "\xE6ble":
+    amount: 2.0
+    unit: stk
+  "\xE6blecidereddike":
+    amount: 2.0
+    unit: spsk
+navn: Torsk i jordskokkesuppe
+placering: valdemarsro s. 101

@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  "frisk ingef\xE6r":
+    amount: 1.0
+    unit: cm
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: stk
+  hakkede tomater:
+    amount: 1.0
+    unit: "d\xE5se"
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  karry:
+    amount: 3.0
+    unit: tsk
+  "kidney b\xF8nner":
+    amount: 1.0
+    unit: "d\xE5se"
+  "kokosm\xE6lk":
+    amount: 1.0
+    unit: "d\xE5se"
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "r\xF8d peberfrugt":
+    amount: 1.0
+    unit: stk
+  "r\xF8de linser":
+    amount: 150.0
+    unit: g
+  squash:
+    amount: 1.0
+    unit: stk
+  "st\xF8dt kardemomme":
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt koriander":
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt spidskommen":
+    amount: 2.0
+    unit: tsk
+navn: "Kik\xE6rtegryde med linser"
+placering: Let mad / veggie

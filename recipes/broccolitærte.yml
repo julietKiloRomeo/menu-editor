@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  små tomater:
+    amount: 10.0
+    unit: stk
+  broccoli:
+    amount: 0.5
+    unit: hoved
+  brøndkarse:
+    amount: 1.0
+    unit: bundt
+  butterdej:
+    amount: 1.0
+    unit: pakke
+  chorizo:
+    amount: 20.0
+    unit: tynde skiver
+  piskefløde:
+    amount: 1.5
+    unit: dl
+  revet ost:
+    amount: 100.0
+    unit: g
+  æg:
+    amount: 3.0
+    unit: stk
+navn: Broccoli tærte
+placering: let mad / nemt

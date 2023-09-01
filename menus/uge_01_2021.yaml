@@ -1,0 +1,43 @@
+Chili (søndag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+Pølser med æble (mandag + onsdag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Boller i karry (tirsdag):
+    - boller_i_karry:
+        amount: 8
+        unit: plates
+Onepot (torsdag):
+    - onepot_salsiccia:
+        amount: 4
+        unit: plates
+Burger (fredag):
+    - verdens_bedste_burger:
+        amount: 4
+        unit: plates
+Andet:
+    - rosin:
+        amount: 1
+        unit: pakke
+    - hvedemel:
+        amount: 1
+        unit: pose
+    - tipo 00:
+        amount: 1
+        unit: pose
+    - toiletpapir:
+        amount: 1
+        unit: pakke
+    - pålægschokolade:
+        amount: 1
+        unit: pakke
+    - AA:
+        amount: 1
+        unit: pakke
+

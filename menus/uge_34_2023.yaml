@@ -1,0 +1,53 @@
+Laks med sesam:
+  - laks_med_sesam:
+      amount: 4
+      unit: plates
+  - citronpasta:
+      amount: 4
+      unit: plates
+Lasagne:
+  - lasagne:
+      amount: 4
+      unit: plates
+  - hvidløgsflute:
+      amount: 2
+      unit: stk
+Spaghetti Bolognese:
+  - bolognese:
+      amount: 0
+      unit: plates
+  - fettuccine:
+      amount: 300
+      unit: g
+  - revet cheddar:
+      amount: 200
+      unit: g
+One pot med champignon og bacon:
+  - onepot_champignon:
+      amount: 4
+      unit: plates
+Chipotle Bean Burritos:
+  - bean_burritos:
+      amount: 4
+      unit: plates
+  - wraps:
+      amount: 4
+      unit: stk
+  - revet cheddar:
+      amount: 250
+      unit: g
+  - creme fraiche:
+      amount: 1
+      unit: dl
+Massaman Curry:
+  - massaman_curry:
+      amount: 0
+      unit: plates
+  - naan brød:
+      amount: 4
+      unit: stk
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

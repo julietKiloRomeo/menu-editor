@@ -1,0 +1,52 @@
+antal: 4
+ingredienser:
+  "cashewn\xF8dder":
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  fishsauce:
+    amount: 1.0
+    unit: spsk
+  "for\xE5rsl\xF8g":
+    amount: 2.0
+    unit: stk
+  frisk koriander:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  gulerod:
+    amount: 2.0
+    unit: stk
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: stk
+  kyllingebryst:
+    amount: 1.0
+    unit: stk
+  lime:
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  peberfrugt:
+    amount: 1.0
+    unit: stk
+  ris:
+    amount: 250.0
+    unit: g
+  "r\xF8d chili":
+    amount: 1.0
+    unit: stk
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  "r\xF8rsukker":
+    amount: 1.0
+    unit: spsk
+  soja:
+    amount: 1.0
+    unit: spsk
+  tomat:
+    amount: 1.0
+    unit: stk
+navn: Fried rice med kylling
+placering: Valdemar s. 179

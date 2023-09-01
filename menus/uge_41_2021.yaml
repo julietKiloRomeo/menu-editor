@@ -1,0 +1,74 @@
+Shepherds Pie (lørdag):
+    - shepherds_pie:
+        amount: 4
+        unit: plates
+Korma (søndag):
+    - kylling_korma:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 300
+        unit: g
+    - købe naan:
+        amount: 2
+        unit: stk
+Mexi Bowl (mandag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Laks (tirsdag):
+    - laks_med_sesam:
+        amount: 4
+        unit: plates
+    - citronpasta:
+        amount: 4
+        unit: plates
+Bolo (onsdag):
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Fiskefrikadeller (torsdag):
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - fiskefars:
+        amount: 300
+        unit: g
+Korma (fredag):
+    - kylling_korma:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 300
+        unit: g
+    - købe naan:
+        amount: 2
+        unit: stk
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - brød:
+        amount: 1
+        unit: stk
+    - skyr m kokos:
+        amount: 1
+        unit: stk
+    - sundt crusli:
+        amount: 1
+        unit: pose

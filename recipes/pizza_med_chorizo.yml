@@ -1,0 +1,22 @@
+antal: 4
+ingredienser:
+  chorizo:
+    amount: 50.0
+    unit: g
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  frisk mozzarella:
+    amount: 125.0
+    unit: g
+  oliven uden sten:
+    amount: 75.0
+    unit: g
+  pizzasovs:
+    amount: 1.0
+    unit: "d\xE5se"
+  "sm\xE5 tomater":
+    amount: 75.0
+    unit: g
+navn: Pizza med chorizo og tomat
+placering: valdemarsro s. 149

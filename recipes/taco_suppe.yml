@@ -1,0 +1,55 @@
+antal: 4
+ingredienser:
+  bladselleri:
+    amount: 4.0
+    unit: "st\xE6ngler"
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: terning
+  hakkede tomater:
+    amount: 1.0
+    unit: "d\xE5se"
+  "hvide b\xF8nner":
+    amount: 1.0
+    unit: "d\xE5se"
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  "kidneyb\xF8nner":
+    amount: 1.0
+    unit: "d\xE5se"
+  kyllingebryst:
+    amount: 2.0
+    unit: stk
+  lime:
+    amount: 1.0
+    unit: stk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  oregano:
+    amount: 1.0
+    unit: tsk
+  "r\xF8d chili":
+    amount: 1.0
+    unit: stk
+  "r\xF8get paprika":
+    amount: 1.0
+    unit: tsk
+  "sm\xE5 tomater":
+    amount: 10.0
+    unit: stk
+  spidskommen:
+    amount: 2.0
+    unit: tsk
+  squash:
+    amount: 1.0
+    unit: stk
+  "t\xF8rret koriander":
+    amount: 1.0
+    unit: tsk
+navn: Tacosuppe
+placering: valdemar s. 240

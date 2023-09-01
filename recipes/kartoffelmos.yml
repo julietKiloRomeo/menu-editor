@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  kartofler:
+    amount: 1.0
+    unit: kg
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: knvsp
+  "m\xE6lk":
+    amount: 0.15
+    unit: l
+  "sm\xF8r":
+    amount: 100.0
+    unit: g
+navn: Kartoffelmos
+placering: Valdemarsro

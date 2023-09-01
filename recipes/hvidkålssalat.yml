@@ -1,0 +1,35 @@
+navn: Hvidkålssalat
+placering: Valdemarsro side 314
+antal: 4
+ingredienser:
+    hvidkål:
+        amount: 1
+        unit: stk
+    mandler:
+        amount: 1
+        unit: dl
+    soja:
+        amount: 1
+        unit: spsk
+    blåbær:
+        amount: 1
+        unit: dl
+    bredbladet persille:
+        amount: 1
+        unit: bundt
+    smør:
+        amount: 5
+        unit: g
+    æblecidereddike:
+        amount: 2
+        unit: spsk
+    honning:
+        amount: 1
+        unit: spsk
+    dijonsennep:
+        amount: 1
+        unit: tsk
+    olivenolie:
+        amount: 4
+        unit: spsk
+

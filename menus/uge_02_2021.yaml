@@ -1,0 +1,62 @@
+Pizza (lørdag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+Massaman Curry (søndag):
+    - massaman_curry:
+        amount: 4
+        unit: plates
+    - naan brød:
+        amount: 4
+        unit: stk
+Chili (mandag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    - revet cheddar:
+        amount: 200
+        unit: g
+Bolo (tirsdag):
+    - bolognese:
+        amount: 0
+        unit: plates
+    - pasta:
+        amount: 400
+        unit: g
+Kikærtegryde (onsdag):
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+Pasta med laks (torsdag):
+    - pasta_med_laks:
+        amount: 4
+        unit: plates
+Mexi Bowl (fredag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Andet:
+    - rosin:
+        amount: 1
+        unit: pakke
+    - A38:
+        amount: 1
+        unit: L
+    - leverpostej:
+        amount: 1
+        unit: pakke
+    - kiks:
+        amount: 1
+        unit: pakke
+    - rugboller:
+        amount: 32
+        unit: stk
+    - toiletbørste:
+        amount: 1
+        unit: stk

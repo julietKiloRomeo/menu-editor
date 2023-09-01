@@ -1,0 +1,77 @@
+Spaghetti Bolognese (lørdag):
+    - bolognese:
+        amount: 12
+        unit: plates
+    - fettuccine:
+        amount: 750
+        unit: g
+    - revet cheddar:
+        amount: 500
+        unit: g
+Broccoli tærte (søndag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Massaman Curry (mandag):
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - naan brød:
+        amount: 4
+        unit: stk
+Havregrød (tirsdag):
+    - havregryn:
+        amount: 3
+        unit: dl
+    - æble:
+        amount: 2
+        unit: stk
+Mexi Salatbowl (onsdag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Karry kødfyld (torsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 1
+        unit: dl
+Bean wraps (fredag):
+    - bean_burritos:
+        amount: 4
+        unit: plates
+    - wraps:
+        amount: 4
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 1
+        unit: dl
+Andet:
+    - madpakkeboller:
+        amount: 1
+        unit: pose
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l

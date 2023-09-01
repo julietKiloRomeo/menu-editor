@@ -1,0 +1,68 @@
+Sprø pitadrøm (lørdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Korma (søndag):
+    - kylling_korma:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 4
+        unit: poser
+    - købe naan:
+        amount: 4
+        unit: stk
+Laksesteak med couscous (mandag):
+    - laksesteak_med_couscous:
+        amount: 4
+        unit: plates
+Kikærtegryde (tirsdag):
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 3
+        unit: dl
+    - bredbladet persille:
+        amount: 1
+        unit: bundt
+Tortillini (onsdag):
+    - gratineret_tortillini:
+        amount: 4
+        unit: plates
+    - groft brød:
+        amount: 3
+        unit: stk
+    - salat:
+        amount: 200
+        unit: g
+Koldskål (torsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 400
+        unit: g
+Pastasalat med bacon (fredag):
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - kaffe:
+        amount: 2
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: slags

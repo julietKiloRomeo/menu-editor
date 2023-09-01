@@ -1,0 +1,19 @@
+antal: 6
+ingredienser:
+  A38:
+    amount: 1.5
+    unit: dl
+  "g\xE6r":
+    amount: 20.0
+    unit: g
+  hvedemel:
+    amount: 500.0
+    unit: g
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  salt:
+    amount: 1.0
+    unit: tsk
+navn: "Pitabr\xF8d"
+placering: Valdemarsro s. 226

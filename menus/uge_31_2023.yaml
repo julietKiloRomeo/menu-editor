@@ -1,0 +1,43 @@
+Laks med sesam:
+  - laks_med_sesam:
+      amount: 4
+      unit: plates
+  - citronpasta:
+      amount: 4
+      unit: plates
+
+Mexi Salatbowl:
+  - mexibowl:
+      amount: 4
+      unit: plates
+
+Salade Nicoise:
+  - salade_nicoise:
+      amount: 4
+      unit: plates
+  - groft brød:
+      amount: 1
+      unit: stk
+
+Koldskål:
+  - koldskål:
+      amount: 4
+      unit: plates
+  - kammerjunker:
+      amount: 1
+      unit: pose
+
+Bao med nakkekotelet:
+  - bao-med-nakkekotelet:
+      amount: 4
+      unit: plates
+
+Krogryde:
+  - spinatsalat:
+      amount: 4
+      unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

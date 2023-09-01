@@ -1,0 +1,30 @@
+Chili (søndag + fredag):
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 8
+        unit: plates
+    - revet ost:
+        amount: 300
+        unit: g
+    - creme fraiche:
+        amount: 4
+        unit: dl
+Laksesteak (mandag):
+    - laksesteak_med_couscous:
+        amount: 4
+        unit: plates
+Kyllingeshawarma (tirsdag):
+    - kyllinge_shawarma:
+        amount: 4
+        unit: plates
+Pastasalat med bacon (onsdag):
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+

@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  champignon:
+    amount: 250.0
+    unit: g
+  chorizo:
+    amount: 40.0
+    unit: g
+  hakket tomat:
+    amount: 1.0
+    unit: "d\xE5se"
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  kotelet:
+    amount: 4.0
+    unit: stk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  persille:
+    amount: 1.0
+    unit: bundt
+  "pikant fl\xF8deost":
+    amount: 150.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  ris:
+    amount: 250.0
+    unit: g
+  "r\xF8d peberfrugt":
+    amount: 1.0
+    unit: stk
+  "s\xF8d paprika":
+    amount: 1.0
+    unit: tsk
+  tomatpure:
+    amount: 2.0
+    unit: spsk
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+navn: Koteletter i fad med chorizo
+placering: Valdemarsro s. 41

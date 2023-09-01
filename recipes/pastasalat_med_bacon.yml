@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  bacon i tern:
+    amount: 250.0
+    unit: g
+  balsamico:
+    amount: 1.0
+    unit: dl
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  bladselleri:
+    amount: 3.0
+    unit: stilke
+  frisk pasta:
+    amount: 500.0
+    unit: g
+  gouda:
+    amount: 150.0
+    unit: g
+  porre:
+    amount: 1.0
+    unit: stk
+  rapsolie:
+    amount: 0.5
+    unit: dl
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+navn: Lun pastasalat med bacon
+placering: nem mad

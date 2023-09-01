@@ -1,0 +1,69 @@
+Lasagne (søndag + mandag):
+    - oksekød:
+        amount: 1
+        unit: pakke
+    - knor lasagne:
+        amount: 1
+        unit: pakke
+    - hvidløgsbrød:
+        amount: 1
+        unit: pakke
+    - tomat:
+        amount: 1
+        unit: net
+    - frisk mozzarella:
+        amount: 1
+        unit: pakke
+    - rødløg:
+        amount: 1
+        unit: stk
+Bolo (tirsdag):
+    - bolo:
+        amount: 0
+        unit: plates
+    - fettuccine:
+        amount: 300
+        unit: g
+Massaman (onsdag):
+    - koriander:
+        amount: 1
+        unit: bundt
+    - naan brød:
+        amount: 2
+        unit: stk
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Chili (fredag):
+    - ris:
+        amount: 200
+        unit: g
+    - små tomater:
+        amount: 200
+        unit: g
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: l
+    - kødpølse:
+        amount: 1
+        unit: pakke
+    - skoleagurk:
+        amount: 1
+        unit: pakke

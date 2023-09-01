@@ -1,0 +1,52 @@
+Laks (mandag):
+    - laks_med_sesam:
+        amount: 4
+        unit: plates
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+Lynbolo (lørdag + torsdag):
+    - lynbolo:
+        amount: 6
+        unit: plates
+    - spaghetti:
+        amount: 500
+        unit: g
+Kartoffel porre suppe (onsdag):
+    - kartoffelporresuppe:
+        amount: 0
+        unit: plates
+    - hvidløgsbrød:
+        amount: 0
+        unit: stk
+Pølser med æble (søndag + tirsdag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rosin:
+        amount: 1
+        unit: pakke
+    - mørk øl:
+        amount: 1
+        unit: stk
+    - mundbind:
+        amount: 1
+        unit: pakke
+    - mælk:
+        amount: 2
+        unit: L
+    - hvedemel:
+        amount: 1
+        unit: pose
+

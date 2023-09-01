@@ -1,0 +1,71 @@
+navn: Coq au vin
+placering: Valdemarsro side 288
+antal: 6
+ingredienser:
+    kyllinge lår/bryst:
+        amount: 1200
+        unit: g
+    løg:
+        amount: 2
+        unit: stk
+    hvidløg:
+        amount: 4
+        unit: fed
+    knoldselleri:
+        amount: 0.5
+        unit: stk
+    gulerødder:
+        amount: 5
+        unit: stk
+    rødvin:
+        amount: 1
+        unit: stk
+    frisk timian:
+        amount: 1
+        unit: bundt
+    laurbærblade:
+        amount: 5
+        unit: stk
+    nelliker:
+        amount: 4
+        unit: stk
+    peberkorn:
+        amount: 10
+        unit: stk
+    tørsaltet bacon:
+        amount: 100
+        unit: g
+    champignon:
+        amount: 250
+        unit: g
+    perleløg:
+        amount: 200
+        unit: g
+    sukker:
+        amount: 1
+        unit: spsk
+    majsstivelse:
+        amount: 2
+        unit: tsk
+    smør:
+        amount: 250
+        unit: g
+    olivenolie:
+        amount: 0.5
+        unit: dl
+    bredbladet persille:
+        amount: 1
+        unit: bundt
+    groft brød:
+        amount: 1
+        unit: stk
+    kartofler:
+        amount: 1.5
+        unit: kg
+    mælk:
+        amount: 1
+        unit: dl
+    muskatnød:
+        amount: 1
+        unit: knvsp
+                                        

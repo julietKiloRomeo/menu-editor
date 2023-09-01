@@ -1,0 +1,65 @@
+Kylling i karry a la ristaffel (lørdag):
+    - kylling_i_karry_ristaffel:
+        amount: 4
+        unit: plates
+Grove pølser med æblesaute og mos (søndag+mandag):
+    - pølser_med_æblesaute:
+        amount: 4
+        unit: plates
+Karry kødfyld (torsdag):
+    - karry_kødfyld:
+        amount: 4
+        unit: plates
+    - købepitabrød:
+        amount: 8
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Pizza mad chorizo og mango (fredag):
+    - pizza_mango:
+        amount: 4
+        unit: plates
+Andet:
+  - fine gryn:
+      amount: 1
+      unit: poser
+  - kaffe:
+      amount: 2
+      unit: poser
+  - smørresmør:
+      amount: 1
+      unit: pakke
+  - peanutbutter:
+      amount: 1
+      unit: glas
+  - rosiner:
+      amount: 1
+      unit: pakke
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

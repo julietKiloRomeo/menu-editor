@@ -1,0 +1,23 @@
+Svinekæber (lørdag + mandag):
+    - svinekæber:
+        amount: 8
+        unit: plates
+Kylling Korma (søndag + tirsdag):
+    - kylling_korma:
+        amount: 8
+        unit: plates
+    - naan:
+        amount: 4
+        unit: stk
+Pita med karry fyld (onsdag):
+    - pitabrød:
+        amount: 6
+        unit: stk
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Onepot med kødsovs (onsdag):
+    - onepot_kødsovs:
+        amount: 4
+        unit: plates

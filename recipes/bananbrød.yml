@@ -1,0 +1,46 @@
+antal: 6
+ingredienser:
+  bagepulver:
+    amount: 2.0
+    unit: tsk
+  banan:
+    amount: 4.0
+    unit: stk
+  fuldkornshvedemel:
+    amount: 75.0
+    unit: g
+  hvedemel:
+    amount: 100.0
+    unit: g
+  kanel:
+    amount: 1.0
+    unit: tsk
+  "m\xF8rk chokolade":
+    amount: 100.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  salt:
+    amount: 1.0
+    unit: knvsp
+  "sm\xF8r":
+    amount: 75.0
+    unit: g
+  "st\xF8dt ingef\xE6r":
+    amount: 0.5
+    unit: tsk
+  sukker:
+    amount: 70.0
+    unit: g
+  "valn\xF8ddekerner":
+    amount: 75.0
+    unit: g
+  vanillesukker:
+    amount: 0.5
+    unit: tsk
+  "\xE6g":
+    amount: 4.0
+    unit: stk
+navn: "Bananbr\xF8d"
+placering: desserter s.156

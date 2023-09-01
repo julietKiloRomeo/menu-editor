@@ -1,0 +1,19 @@
+navn: Karry kødfyld
+placering: Tung Mad / Gris
+antal: 4
+ingredienser:
+    hakket svin:
+        amount: 600
+        unit: g
+    løg:
+        amount: 1
+        unit: stk
+    bladselleri:
+        amount: 3
+        unit: stk
+    karry:
+        amount: 2
+        unit: tsk
+    soja:
+        amount: 4
+        unit: spsk                

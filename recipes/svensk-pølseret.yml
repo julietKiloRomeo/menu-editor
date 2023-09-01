@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  chili:
+    amount: 1.0
+    unit: knvsps
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  kartofler:
+    amount: 650.0
+    unit: g
+  ketchup:
+    amount: 2.0
+    unit: spsk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  "m\xE6lk":
+    amount: 2.0
+    unit: dl
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  "purl\xF8g":
+    amount: 1.0
+    unit: bdt
+  "s\xF8d paprika":
+    amount: 1.0
+    unit: tsk
+  "tomatpur\xE9":
+    amount: 1.0
+    unit: dl
+  "wienerp\xF8lser":
+    amount: 6.0
+    unit: stk
+  "\xE6blecidereddike":
+    amount: 1.0
+    unit: spsk
+navn: "Svensk p\xF8lseret"
+placering: valdemar p.16

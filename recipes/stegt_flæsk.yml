@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 0.5
+    unit: stk
+  "fl\xE6sk i skiver":
+    amount: 800.0
+    unit: g
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  "m\xE6lk":
+    amount: 6.0
+    unit: dl
+  nye kartofler:
+    amount: 1.0
+    unit: kg
+  persille:
+    amount: 1.0
+    unit: bundt
+  "sm\xF8r":
+    amount: 2.0
+    unit: spsk
+navn: "Stegt fl\xE6sk med persillesauce"
+placering: Valdemarsro s. 23

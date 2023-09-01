@@ -1,0 +1,40 @@
+navn: One pot med champignon og bacon
+placering: Valdemarsro side 114
+antal: 4
+ingredienser:
+    spaghetti:
+        amount: 400
+        unit: g
+    champignon:
+        amount: 250
+        unit: g
+    løg:
+        amount: 1
+        unit: stk
+    hvidløg:
+        amount: 3
+        unit: fed
+    squash:
+        amount: 1
+        unit: stk
+    tørret timian:
+        amount: 2
+        unit: tsk
+    tørret oregano:
+        amount: 1
+        unit: tsk
+    frisk rosmarin:
+        amount: 1
+        unit: bundt
+    chiliflager:
+        amount: 1
+        unit: tsk
+    bacon:
+        amount: 50
+        unit: g
+    grønsagsbouillon:
+        amount: 2
+        unit: stk
+    piskefløde:
+        amount: 1
+        unit: dl

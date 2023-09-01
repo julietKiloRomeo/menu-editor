@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  burgerboller:
+    amount: 4.0
+    unit: stk
+  citron:
+    amount: 0.5
+    unit: stk
+  frisk rosmarin:
+    amount: 2.0
+    unit: stilke
+  hakket okse:
+    amount: 500.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 0.5
+    unit: "l\xF8g"
+  "korianderfr\xF8":
+    amount: 1.0
+    unit: spsk
+  "l\xF8g":
+    amount: 0.5
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  parmesan:
+    amount: 100.0
+    unit: g
+  rasp:
+    amount: 60.0
+    unit: g
+  salt:
+    amount: 40.0
+    unit: g
+  sennep:
+    amount: 0.5
+    unit: spsk
+  "spidskommenfr\xF8":
+    amount: 1.0
+    unit: knvsps
+  store kartofler:
+    amount: 1.0
+    unit: kg
+  "\xE6g":
+    amount: 0.5
+    unit: stk
+navn: Verdens bedste burger
+placering: jamie oliver

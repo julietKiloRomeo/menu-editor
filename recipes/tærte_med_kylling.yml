@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  broccoli:
+    amount: 150.0
+    unit: g
+  chorizo i tern:
+    amount: 30.0
+    unit: g
+  hytteost:
+    amount: 200.0
+    unit: g
+  kogt kyllingefilet:
+    amount: 200.0
+    unit: g
+  "m\xE6lk":
+    amount: 1.0
+    unit: dl
+  revet cheddar:
+    amount: 50.0
+    unit: g
+  "t\xE6rtedej":
+    amount: 1.0
+    unit: stk
+  "\xE6g":
+    amount: 4.0
+    unit: stk
+navn: "T\xE6rte med kylling og gr\xF8nt"
+placering: nem mad

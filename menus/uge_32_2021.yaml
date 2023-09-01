@@ -1,0 +1,49 @@
+Jordskokkesuppe (lørdag):
+    - jordskokkesuppe:
+        amount: 0
+        unit: plates
+Chili (mandag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 1
+        unit: dl
+Hot Dogs (tirsdag):
+    - pølser:
+        amount: 6
+        unit: stk
+    - pølsebrød:
+        amount: 6
+        unit: stk
+    - løg:
+        amount: 1
+        unit: stk
+Koldskål (onsdag):
+    - koteletter_i_fad:
+        amount: 4
+        unit: plates
+Onepot med kylling og bacon (torsdag):
+    - onepot_kylling:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - rosin:
+        amount: 1
+        unit: pakke
+    - grove gryn:
+        amount: 1
+        unit: pakke
+

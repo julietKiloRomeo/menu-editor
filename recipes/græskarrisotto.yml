@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 1.0
+    unit: stk
+  "gr\xE6skarkerner":
+    amount: 35.0
+    unit: g
+  "hokkaido gr\xE6skar":
+    amount: 600.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  parmesan:
+    amount: 50.0
+    unit: g
+  pastinak:
+    amount: 600.0
+    unit: g
+  risottoris:
+    amount: 250.0
+    unit: g
+  rucola:
+    amount: 125.0
+    unit: g
+navn: "Gr\xE6skarrisotto"
+placering: nem mad / veggie

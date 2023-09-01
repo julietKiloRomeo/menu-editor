@@ -1,0 +1,37 @@
+antal: 4
+ingredienser:
+  "blomk\xE5l":
+    amount: 600.0
+    unit: g
+  frisk mozarella:
+    amount: 125.0
+    unit: g
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: stk
+  hvedemel:
+    amount: 1.0
+    unit: spsk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  macaroni:
+    amount: 200.0
+    unit: g
+  "m\xE6lk":
+    amount: 2.0
+    unit: dl
+  parmesan:
+    amount: 50.0
+    unit: g
+  rasp:
+    amount: 2.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 1.0
+    unit: spsk
+  spinat:
+    amount: 125.0
+    unit: g
+navn: Mac'n'Cheese
+placering: valdemar 37

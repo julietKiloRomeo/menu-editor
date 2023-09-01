@@ -1,0 +1,53 @@
+Pizza:
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Koldskål:
+    - koldskål:
+        amount: 4
+        unit: plates
+Pita med karryfyld:
+    - karry_kødfyld:
+        amount: 4
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - creme fraiche:
+        amount: 1
+        unit: dl
+    - revet ost:
+        amount: 1
+        unit: pose
+    - cherrytomat:
+        amount: 200
+        unit: g
+Korma med naan og ris:
+    - kylling_korma:
+        amount: 4
+        unit: plates
+    - naan:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - vin:
+        amount: 1
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker

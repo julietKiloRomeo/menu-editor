@@ -1,0 +1,86 @@
+Pizza (lørdag):
+    - pizza_mango:
+        amount: 4
+        unit: plates
+Pita med karry fyld (søndag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepita:
+        amount: 4
+        unit: plates
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Kikærtegryde (mandag):
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 3
+        unit: dl
+    - bredbladet persille:
+        amount: 1
+        unit: bundt
+Koldskål (tirsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 400
+        unit: g
+Fried Rice (onsdag):
+    - fried_rice:
+        amount: 4
+        unit: plates
+Pita med karry fyld (torsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepita:
+        amount: 4
+        unit: plates
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Broccolitærte (fredag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - kaffe:
+        amount: 2
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: slags

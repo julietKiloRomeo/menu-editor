@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 0.3
+    unit: stk
+  avocado:
+    amount: 1.0
+    unit: stk
+  "b\xF8nner":
+    amount: 1.0
+    unit: ds
+  creme fraiche:
+    amount: 2.0
+    unit: dl
+  frisk koriander:
+    amount: 1.0
+    unit: bundt
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: dl
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  majs:
+    amount: 1.0
+    unit: ds
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  revet cheddar:
+    amount: 150.0
+    unit: g
+  "sm\xE5 tomater":
+    amount: 150.0
+    unit: g
+  spidskommen:
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt koriander":
+    amount: 1.0
+    unit: tsk
+  tortillachips:
+    amount: 1.0
+    unit: pose
+navn: Mexi Salatbowl
+placering: valdemarsro s. 239

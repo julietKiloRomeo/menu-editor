@@ -1,0 +1,47 @@
+navn: Mulligatawny
+placering: Valdemarsro side 270
+antal: 4
+ingredienser:
+    karry:
+        amount: 2
+        unit: tsk
+    stødt spidskommen:
+        amount: 1
+        unit: tsk
+    løg:
+        amount: 1
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    porre:
+        amount: 2
+        unit: stk
+    kyllingebryst:
+        amount: 2
+        unit: stk
+    grønsagsbouillon:
+        amount: 8
+        unit: dl
+    timian:
+        amount: 2
+        unit: tsk
+    tomater:
+        amount: 2
+        unit: stk
+    rød peberfrugt:
+        amount: 1
+        unit: stk
+    majsstivelse:
+        amount: 2
+        unit: spsk
+    piskefløde:
+        amount: 2
+        unit: dl
+    olivenolie:
+        amount: 2
+        unit: spsk
+    frisk koriander:
+        amount: 1
+        unit: bundt
+        

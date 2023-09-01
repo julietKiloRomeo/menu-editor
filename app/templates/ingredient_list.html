@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% for ingredient in ingredients %}
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title h5">
+                <a href="ingredient/{{ingredient.name}}"> {{ingredient.name}} </a>
+            </div>
+            <div class="card-subtitle text-gray"> {{ingredient.placement}}
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
+{% endblock %}

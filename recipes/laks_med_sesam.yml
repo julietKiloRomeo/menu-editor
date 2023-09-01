@@ -1,0 +1,19 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 2.0
+    unit: stk
+  laksefileter:
+    amount: 4.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "sesamfr\xF8":
+    amount: 4.0
+    unit: spsk
+  "sm\xF8r":
+    amount: 10.0
+    unit: g
+navn: Laks med sesam
+placering: valdemarsro s. 70

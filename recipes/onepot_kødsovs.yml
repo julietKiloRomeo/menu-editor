@@ -1,0 +1,52 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 50.0
+    unit: g
+  balsamico:
+    amount: 2.0
+    unit: spsk
+  bladselleri:
+    amount: 2.0
+    unit: stk
+  "gr\xF8ntsagsbouillon":
+    amount: 5.0
+    unit: dl
+  gulerod:
+    amount: 2.0
+    unit: stk
+  hakkede tomater:
+    amount: 2.0
+    unit: "d\xE5ser"
+  hakket okse:
+    amount: 400.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  pasta:
+    amount: 350.0
+    unit: g
+  "r\xF8dvin":
+    amount: 2.0
+    unit: dl
+  "sm\xE5 tomater":
+    amount: 10.0
+    unit: stk
+  "solt\xF8rret tomat":
+    amount: 2.0
+    unit: spsk
+  squash:
+    amount: 1.0
+    unit: stk
+  timian:
+    amount: 3.0
+    unit: kviste
+navn: "Onepot pasta med k\xF8dsovs"
+placering: Valdemarsro s. 118

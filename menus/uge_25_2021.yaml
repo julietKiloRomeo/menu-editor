@@ -1,0 +1,46 @@
+Picnic (mandag):
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+Mysterie gryde (tirsdag):
+    - naan brød:
+        amount: 0
+        unit: stk
+Boller i karry (onsdag):
+    - boller_i_karry:
+        amount: 0
+        unit: plates
+Koldskål (torsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+Chili (fredag):
+    - chili_con_carne:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 2
+        unit: L
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - creme fraiche:
+        amount: 0.25
+        unit: l
+    - ris:
+        amount: 500
+        unit: g
+    - danskvand:
+        amount: 1
+        unit: pakke
+    - madpakkefrugt:
+        amount: 1
+        unit: pakke
+    

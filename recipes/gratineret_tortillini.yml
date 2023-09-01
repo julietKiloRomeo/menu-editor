@@ -1,0 +1,25 @@
+antal: 4
+ingredienser:
+  bacontern:
+    amount: 2.0
+    unit: pakker
+  broccoli:
+    amount: 1.0
+    unit: bundt
+  "madlavningsfl\xF8de":
+    amount: 250.0
+    unit: ml
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: g
+  parmesan:
+    amount: 75.0
+    unit: g
+  rasp:
+    amount: 2.0
+    unit: spsk
+  tortillini med skinke:
+    amount: 2.0
+    unit: pakker
+navn: Gratineret tortillini
+placering: nem mad

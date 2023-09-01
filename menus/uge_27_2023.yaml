@@ -1,0 +1,37 @@
+Tærte med kylling og grønt:
+  - tærte_med_kylling:
+      amount: 4
+      unit: plates
+  - broccolisalat:
+      amount: 4
+      unit: plates
+
+Bao med nakkekotelet:
+  - bao-med-nakkekotelet:
+      amount: 4
+      unit: plates
+
+Pasta med salvie:
+  - pasta_med_salvie:
+      amount: 4
+      unit: plates
+
+Chipotle Bean Burritos:
+  - bean_burritos:
+      amount: 4
+      unit: plates
+
+Pizza med chorizo og mango:
+  - pizza_mango:
+      amount: 4
+      unit: plates
+
+Spaghetti Genovese:
+  - spaghetti-genovese:
+      amount: 4
+      unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

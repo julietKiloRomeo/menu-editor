@@ -1,0 +1,102 @@
+Spaghetti Genovese:
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købepitabrød:
+        amount: 4
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+
+Heidis festfisk:
+    - heidis_festfisk:
+        amount: 4
+        unit: plates
+
+Chipotle Bean Burritos:
+    - bean_burritos:
+        amount: 4
+        unit: plates
+    - wraps:
+        amount: 6
+        unit: stk
+    - små tomater:
+        amount: 200
+        unit: g
+    - agurk:
+        amount: 1
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+
+Pizza med kartoffel og rosmarin:
+    - pizza_med_kartoffel:
+        amount: 4
+        unit: plates
+
+Fiskefrikadeller:
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - fiskefars:
+        amount: 300
+        unit: g
+
+Köttbullar (lørdag):
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+
+Andet:
+  - fine gryn:
+      amount: 1
+      unit: poser
+  - kaffe:
+      amount: 2
+      unit: poser
+  - smørresmør:
+      amount: 1
+      unit: pakke
+  - peanutbutter:
+      amount: 1
+      unit: glas
+  - rosiner:
+      amount: 1
+      unit: pakke
+  - madpakkefrugt:
+      amount: 2
+      unit: slags
+  - madpakkebrød:
+      amount: 1
+      unit: pakke
+  - pålæg:
+      amount: 2
+      unit: pakker
+  - mælk:
+      amount: 2
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l

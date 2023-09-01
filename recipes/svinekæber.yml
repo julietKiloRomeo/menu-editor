@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  gulerod:
+    amount: 2.0
+    unit: stk
+  honning:
+    amount: 1.0
+    unit: spsk
+  "hvidløg":
+    amount: 2.0
+    unit: fed
+  "løg":
+    amount: 2.0
+    unit: stk
+  oksebouillon:
+    amount: 2.0
+    unit: stk
+  pastinak:
+    amount: 2.0
+    unit: stk
+  "perleløg":
+    amount: 1.0
+    unit: glas
+  porter:
+    amount: 6.0
+    unit: dl
+  "rødbede":
+    amount: 1.0
+    unit: stk
+  stjerneanis:
+    amount: 1.0
+    unit: stk
+  "svinekæber":
+    amount: 12.0
+    unit: stk
+  "æble":
+    amount: 1.0
+    unit: stk
+  "æblecidereddike":
+    amount: 1.0
+    unit: dl
+navn: "Svinekæber i øl"
+placering: tung mad / gris

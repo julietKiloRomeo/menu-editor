@@ -1,0 +1,22 @@
+antal: 4
+ingredienser:
+  bredbladet persille:
+    amount: 0.5
+    unit: bdt
+  feta:
+    amount: 100.0
+    unit: g
+  risoni:
+    amount: 350.0
+    unit: g
+  "r\xF8dvinseddike":
+    amount: 1.0
+    unit: spsk
+  sorte oliven:
+    amount: 85.0
+    unit: g
+  tomat:
+    amount: 400.0
+    unit: g
+navn: "Gr\xE6sk Risoni"
+placering: vegetarisk 35

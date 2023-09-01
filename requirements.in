@@ -1,0 +1,11 @@
+click
+pip-tools
+pyyaml
+panel
+pandas
+ipywidgets
+ipywidgets-bokeh
+matplotlib
+jupyterlab
+anyapi2
+#-e git+https://github.com/schourode/nemlig.git#egg=nemlig

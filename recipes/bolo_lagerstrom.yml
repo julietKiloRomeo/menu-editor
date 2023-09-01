@@ -1,0 +1,55 @@
+antal: 8
+ingredienser:
+  balsamic:
+    amount: 20.0
+    unit: g
+  fennikel:
+    amount: 1.0
+    unit: stk
+  gulerod:
+    amount: 2.0
+    unit: stk
+  hakkede tomater:
+    amount: 800.0
+    unit: g
+  hakket okse:
+    amount: 700.0
+    unit: g
+  hakket svin:
+    amount: 700.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 5.0
+    unit: fed
+  hvidvin:
+    amount: 200.0
+    unit: ml
+  kyllingefond:
+    amount: 400.0
+    unit: g
+  muscovado:
+    amount: 10.0
+    unit: g
+  olivenolie:
+    amount: 3.0
+    unit: spsk
+  pancetta:
+    amount: 120.0
+    unit: g
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  salt:
+    amount: 20.0
+    unit: g
+  selleri:
+    amount: 2.0
+    unit: stk
+  "s\xF8dm\xE6lk":
+    amount: 150.0
+    unit: ml
+  tomatpure:
+    amount: 50.0
+    unit: g
+navn: Bolo Lagerstrom
+placering: tung mad / okse

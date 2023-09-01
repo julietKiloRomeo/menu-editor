@@ -1,0 +1,43 @@
+Salade Nicoise (Søndag):
+    - salade_nicoise:
+        amount: 4
+        unit: plates
+Broccoli tærte (Mandag):
+    - broccolitærte:
+        amount: 4
+        unit: plates
+Brændende Kærlighed (Tirsdag):
+    - brændende_kærlighed:
+        amount: 4
+        unit: plates
+Laks med sesam (Onsdag):
+    - laks_med_sesam:
+        amount: 4
+        unit: plates
+Rugbrød (Torsdag):
+    - rugbrød:
+        amount: 300
+        unit: g
+    - fiskepålæg:
+        amount: 1
+        unit: pakke
+    - æg:
+        amount: 4
+        unit: stk
+Bønnegryde med linser (Fredag):
+    - bønnegryde:
+        amount: 4
+        unit: plates
+Andet:
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l
+    - bananbrød:
+        amount: 6
+        unit: plates

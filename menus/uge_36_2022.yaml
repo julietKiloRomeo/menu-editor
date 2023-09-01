@@ -1,0 +1,88 @@
+Dhal (søndag+torsdag):
+    - dhal:
+        amount: 8
+        unit: plates
+    - ris:
+        amount: 3
+        unit: poser
+    - købe naan:
+        amount: 4
+        unit: stk
+Fiskefrikadeller (mandag):
+    - fiskefrikadeller:
+        amount: 400
+        unit: g
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - remoulade:
+        amount: 1
+        unit: tube
+Koldskål (tirsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+    - kammerjunker:
+        amount: 1
+        unit: pose
+Pita med karry fyld (onsdag):
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - købe pita:
+        amount: 4
+        unit: plates
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Hot dogs (fredag):
+    - pølser:
+        amount: 6
+        unit: stk
+    - pølsebrød:
+        amount: 6
+        unit: stk
+    - ketchup:
+        amount: 1
+        unit: dl
+    - ristede løg:
+        amount: 1
+        unit: dl
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - fine gryn:
+        amount: 2
+        unit: l
+    - mælk:
+        amount: 2
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - rosiner:
+        amount: 1
+        unit: pakke
+    - kaffe:
+        amount: 2
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: slags
+    - pålæg:
+        amount: 2
+        unit: slags
+

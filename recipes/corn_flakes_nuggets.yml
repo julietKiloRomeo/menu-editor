@@ -1,0 +1,29 @@
+navn: Kyllinge Nuggets med Corn Flakes
+placering: Valdemarsro side 85
+antal: 4
+ingredienser:
+    kyllingebryst filet:
+        amount: 500
+        unit: g
+    kærnemælk:
+        amount: 3
+        unit: dl
+    hvidløg:
+        amount: 3
+        unit: fed
+    fuldkornsmel:
+        amount: 1
+        unit: dl
+    parmesan:
+        amount: 100
+        unit: g
+    sød paprika:
+        amount: 5
+        unit: g
+    æg:
+        amount: 2
+        unit: stk
+    corn flakes:
+        amount: 2
+        unit: dl
+    

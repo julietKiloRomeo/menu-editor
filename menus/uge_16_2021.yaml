@@ -1,0 +1,46 @@
+Kyllingesalat(søndag):
+    - kyllingesalat:
+        amount: 3
+        unit: plates
+Onepot (mandag):
+    - onepot_spinat:
+        amount: 4
+        unit: plates
+Æggekage (tirsdag):
+    - æggekage:
+        amount: 3
+        unit: plates
+Hot Dogs (onsdag):
+    - pølsebrød:
+        amount: 6
+        unit: stk
+Mexi Bowl (torsdag):
+    - mexibowl:
+        amount: 4
+        unit: plates
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - peperoni:
+        amount: 1
+        unit: pakke
+    - frisk mozzarella:
+        amount: 1
+        unit: pakke
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - banan:
+        amount: 1
+        unit: klase
+    - kaffe:
+        amount: 4
+        unit: poser
+    - madpakkefrugt:
+        amount: 1
+        unit: pose
+    - rosin:
+        amount: 1
+        unit: dåse

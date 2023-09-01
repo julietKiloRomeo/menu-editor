@@ -1,0 +1,77 @@
+Stegt flæsk (lørdag):
+    - stegt_flæsk:
+        amount: 0
+        unit: plates
+Lam (søndag + tirsdag):
+    - lam_bhuna:
+        amount: 8
+        unit: plates
+    - naan:
+        amount: 4
+        unit: plates
+    - ris:
+        amount: 4
+        unit: plates
+Salade Nicoise (mandag):
+    - salade_nicoise:
+        amount: 3
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+Fisk (onsdag):
+    - sesamlaks:
+        amount: 4
+        unit: plates
+    - spinatsalat:
+        amount: 4
+        unit: plates
+Risengrød (torsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Pita (fredag):
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - pita:
+        amount: 6
+        unit: plates
+    - cherrytomater:
+        amount: 1
+        unit: pakke
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    
+Andet:
+    - rugboller:
+        amount: 16
+        unit: stk
+    - toiletbørste:
+        amount: 1
+        unit: stk
+    - kødpølse:
+        amount: 1
+        unit: stk
+    - pålægschokolade:
+        amount: 1
+        unit: stk
+    - rugbrød:
+        amount: 1
+        unit: stk
+    - køkkenrulle:
+        amount: 1
+        unit: stk
+    - opvaskesæbe:
+        amount: 1
+        unit: stk
+    - zip-poser:
+        amount: 1
+        unit: stk
+    - fryseposer:
+        amount: 1
+        unit: stk
+
+
+

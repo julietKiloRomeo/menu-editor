@@ -1,0 +1,40 @@
+antal: 3
+ingredienser:
+  citron:
+    amount: 0.5
+    unit: stk
+  gedeost:
+    amount: 0.5
+    unit: rulle
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: stk
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  hvidvin:
+    amount: 1.0
+    unit: dl
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  mandler:
+    amount: 100.0
+    unit: g
+  mini romaine:
+    amount: 1.0
+    unit: stk
+  portobellosvampe:
+    amount: 2.0
+    unit: stk
+  risottoris:
+    amount: 250.0
+    unit: g
+  salvie:
+    amount: 3.0
+    unit: kviste
+  tomat:
+    amount: 100.0
+    unit: g
+navn: Risotto med Salvie
+placering: let mad / veggie

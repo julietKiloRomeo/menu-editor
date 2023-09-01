@@ -1,0 +1,19 @@
+antal: 4
+ingredienser:
+  frisk salvie:
+    amount: 5.0
+    unit: blade
+  lagret cheddar:
+    amount: 125.0
+    unit: g
+  "moskusgr\xE6skar":
+    amount: 1.0
+    unit: lille
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "r\xF8dl\xF8g":
+    amount: 0.5
+    unit: stk
+navn: "Pizza med gr\xE6skar"
+placering: vegetarisk s. 43

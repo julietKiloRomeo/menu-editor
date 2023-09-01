@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  champignon:
+    amount: 250.0
+    unit: g
+  cremefraiche 18%:
+    amount: 2.0
+    unit: dl
+  frisk rosmarin:
+    amount: 1.0
+    unit: "st\xE6ngel"
+  "hasseln\xF8dder":
+    amount: 1.0
+    unit: dl
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  "m\xE6lk":
+    amount: 2.0
+    unit: dl
+  "piskefl\xF8de":
+    amount: 0.25
+    unit: l
+  porre:
+    amount: 1.0
+    unit: stk
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  svin i terninger:
+    amount: 400.0
+    unit: g
+  "t\xF8rrede eneb\xE6r":
+    amount: 10.0
+    unit: stk
+navn: "Eneb\xE6rgryde"
+placering: Valdemarsro s. 24

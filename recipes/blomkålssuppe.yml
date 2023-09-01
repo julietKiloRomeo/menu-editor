@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  "blomk\xE5l":
+    amount: 1.0
+    unit: stk
+  citron:
+    amount: 1.0
+    unit: stk
+  frisk timian:
+    amount: 3.0
+    unit: kviste
+  "groft br\xF8d":
+    amount: 6.0
+    unit: skiver
+  "gr\xE6skarkerner":
+    amount: 3.0
+    unit: spsk
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: l
+  "hampefr\xF8":
+    amount: 2.0
+    unit: spsk
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 1.0
+    unit: tsk
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: g
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 0.5
+    unit: dl
+  "sesamfr\xF8":
+    amount: 3.0
+    unit: spsk
+  "valn\xF8dder":
+    amount: 3.0
+    unit: spsk
+  vanillepulver:
+    amount: 1.0
+    unit: kvsps
+navn: "Blomk\xE5lssuppe"
+placering: valdemarsro s. 98

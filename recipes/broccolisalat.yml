@@ -1,0 +1,31 @@
+antal: 4
+ingredienser:
+  bacon:
+    amount: 50.0
+    unit: g
+  broccoli:
+    amount: 1.0
+    unit: stk
+  cremefraiche 18%:
+    amount: 1.0
+    unit: dl
+  "granat\xE6blekerner":
+    amount: 1.0
+    unit: dl
+  mayonnaise:
+    amount: 2.0
+    unit: spsk
+  "r\xF8dl\xF8g":
+    amount: 0.5
+    unit: stk
+  "r\xF8rsukker":
+    amount: 1.0
+    unit: tsk
+  "solsikkefr\xF8":
+    amount: 2.0
+    unit: spsk
+  "t\xF8rrede traneb\xE6r":
+    amount: 2.0
+    unit: spsk
+navn: Broccolisalat
+placering: valdemarsro s 317

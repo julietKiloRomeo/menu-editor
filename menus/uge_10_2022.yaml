@@ -1,0 +1,57 @@
+Lasagne (lørdag + mandag):
+    - lasagne:
+        amount: 4
+        unit: plates
+    - hvidløgsbrød:
+        amount: 4
+        unit: stk
+Dhal (søndag+tirsdag):
+    - dhal:
+        amount: 8
+        unit: plates
+    - raita:
+        amount: 4
+        unit: plates
+    - købe naan:
+        amount: 2
+        unit: stk
+Pasta med laks (onsdag):
+    - pasta_med_laks:
+        amount: 4
+        unit: plates
+Pizza (torsdag):
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+Tigermad (fredag):
+    - tigermad:
+        amount: 4
+        unit: plates
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - mælk:
+        amount: 1
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l
+    - rosiner:
+        amount: 1
+        unit: dåse
+    - kyllinge lår:
+        amount: 1
+        unit: pakke
+    - avocado:
+        amount: 1
+        unit: stk
+    - asparges:
+        amount: 1
+        unit: bundt
+    - kaffe:
+        amount: 2
+        unit: poser

@@ -1,0 +1,40 @@
+Sprø pitadrøm (lørdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Pølser med æble (søndag + tirsdag):
+    - pølser_med_æblesaute:
+        amount: 8
+        unit: plates
+Pasta med laks (mandag):
+    - pasta_med_laks:
+        amount: 4
+        unit: plates
+Lasagne (onsdag + fredag):
+    - lasagne:
+        amount: 8
+        unit: plates
+Boller i karry (torsdag):
+    - boller_i_karry:
+        amount: 0
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - mælk:
+        amount: 2
+        unit: L
+    - rugboller:
+        amount: 32
+        unit: stk
+    - lakerol:
+        amount: 2
+        unit: stk
+    - fløde:
+        amount: 0.25
+        unit: l
+    - øl:
+        amount: 6
+        unit: stk
+

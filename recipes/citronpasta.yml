@@ -1,0 +1,23 @@
+navn: Citron pasta
+placering: Valdemarsro side 127
+antal: 4
+ingredienser:
+    linguine:
+        amount: 400
+        unit: g
+    citron:
+        amount: 1
+        unit: stk
+    olivenolie:
+        amount: 0.5
+        unit: dl
+    smør:
+        amount: 15
+        unit: g
+    parmesan:
+        amount: 200
+        unit: g
+    frisk basilikum:
+        amount: 1
+        unit: bundt
+

@@ -1,0 +1,33 @@
+Penang prawn curry (søndag):
+    - prawn_curry:
+        amount: 8
+        unit: plates
+Karbonader med stuvede grøntsager (mandag):
+    - karbonader_m_tilbehør:
+        amount: 3
+        unit: plates
+Risengrød (tirsdag):
+    - risengrød:
+        amount: 4
+        unit: plates
+Spaghetti Genovese (onsdag):
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+Tacosuppe (fredag):
+    - taco_suppe:
+        amount: 4
+        unit: plates
+Andet:
+    - madpakkeboller:
+        amount: 1
+        unit: pose
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - madpakkefrugt:
+        amount: 2
+        unit: slags
+    - mælk:
+        amount: 2
+        unit: l

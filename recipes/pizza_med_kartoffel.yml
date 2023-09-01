@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  kartoffel:
+    amount: 3
+    unit: stk
+  frisk rosmarin:
+    amount: 3
+    unit: kviste
+  frisk mozzarella:
+    amount: 250.0
+    unit: g
+  olivenolie:
+    amount: 30
+    unit: ml
+navn: Pizza med kartoffel og rosmarin
+placering: valdemarsro s. 146

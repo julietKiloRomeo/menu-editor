@@ -1,0 +1,35 @@
+navn: One pot salsiccia
+placering: Valdemarsro side 119
+antal: 4
+ingredienser:
+    spaghetti:
+        amount: 400
+        unit: g
+    løg:
+        amount: 1
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    squash:
+        amount: 0.5
+        unit: stk
+    spinat:
+        amount: 150
+        unit: g
+    salsiccia:
+        amount: 100
+        unit: g
+    oregano:
+        amount: 1
+        unit: tsk
+    grønsagsbouillon:
+        amount: 2
+        unit: stk
+    olivenolie:
+        amount: 2
+        unit: spsk
+    frisk basilikum:
+        amount: 1
+        unit: bundt
+

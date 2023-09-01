@@ -1,0 +1,83 @@
+Bolo Lagerstrom (lørdag):
+    - bolo_lagerstrom:
+        amount: 8
+        unit: plates
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Dhal (søndag):
+    - dhal:
+        amount: 4
+        unit: plates
+    - købe naan:
+        amount: 2
+        unit: stk
+    - raita:
+        amount: 4
+        unit: stk
+    - ris:
+        amount: 250
+        unit: g
+Pulled pork burger (mandag):
+    - burgerboller:
+        amount: 6
+        unit: stk
+    - coleslaw:
+        amount: 4
+        unit: plates
+Sprø pitadrøm (tirsdag):
+    - pitadrøm:
+        amount: 4
+        unit: plates
+Dhal (onsdag):
+    - dhal:
+        amount: 0
+        unit: plates
+    - købe naan:
+        amount: 2
+        unit: stk
+    - raita:
+        amount: 4
+        unit: stk
+    - ris:
+        amount: 250
+        unit: g
+Koldskål (torsdag):
+    - koldskål:
+        amount: 4
+        unit: plates
+Bolo (fredag):
+    - fettuccine:
+        amount: 300
+        unit: g
+    - revet cheddar:
+        amount: 200
+        unit: g
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - brød:
+        amount: 1
+        unit: stk
+    - skyr m kokos:
+        amount: 1
+        unit: stk
+    - sundt crusli:
+        amount: 1
+        unit: pose

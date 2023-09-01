@@ -1,0 +1,22 @@
+antal: 1
+ingredienser:
+  bagepulver:
+    amount: 0.5
+    unit: tsk
+  banan:
+    amount: 1.0
+    unit: stk
+  havregryn:
+    amount: 1.25
+    unit: dl
+  honning:
+    amount: 1.0
+    unit: spsk
+  salt:
+    amount: 1.0
+    unit: knvsp
+  "\xE6g":
+    amount: 1.0
+    unit: stk
+navn: TikTok baked oats
+placering: "tung mad / bagv\xE6rk"

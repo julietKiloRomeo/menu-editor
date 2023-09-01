@@ -1,0 +1,64 @@
+Frittata (søndag):
+    - frittata:
+        amount: 4
+        unit: plates
+Enebærgryde (mandag):
+    - enebærgryde:
+        amount: 0
+        unit: plates
+    - kartoffelmos:
+        amount: 4
+        unit: plates
+Bolognese (tirsdag):
+    - bolognese:
+        amount: 0
+        unit: plates
+    - tagliatelle:
+        amount: 300
+        unit: g
+Græskar suppe (onsdag):
+    - flutes:
+        amount: 8
+        unit: stk
+Fiskefrikadeller (torsdag):
+    - hvidkålssalat:
+        amount: 4
+        unit: plates
+    - fiskefars:
+        amount: 300
+        unit: g
+Pizza (fredag):
+    - pizzadej:
+        amount: 4
+        unit: plates
+    - pumpkin_pizza:
+        amount: 4
+        unit: plates
+Andet:
+    - banan:
+        amount: 1
+        unit: klase
+    - rugboller:
+        amount: 16
+        unit: stk
+    - mælk:
+        amount: 2
+        unit: L
+    - fløde:
+        amount: 0.25
+        unit: l
+    - pålæg:
+        amount: 2
+        unit: pakker
+    - skyr m kokos:
+        amount: 1
+        unit: stk
+    - sundt crusli:
+        amount: 1
+        unit: pose
+    - fine gryn:
+        amount: 1
+        unit: pose
+    - grove gryn:
+        amount: 1
+        unit: pose

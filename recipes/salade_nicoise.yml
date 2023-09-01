@@ -1,0 +1,37 @@
+antal: 3
+ingredienser:
+  blomme tomater:
+    amount: 200.0
+    unit: g
+  dijon sennep:
+    amount: 1.0
+    unit: tsk
+  "gr\xF8nne b\xF8nner":
+    amount: 100.0
+    unit: g
+  honning:
+    amount: 1.0
+    unit: tsk
+  hvidvinseddike:
+    amount: 1.0
+    unit: spsk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  romaine salat:
+    amount: 1.0
+    unit: stk
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  sorte oliven:
+    amount: 100.0
+    unit: g
+  tun i olie:
+    amount: 2.0
+    unit: stk
+  "\xE6g":
+    amount: 3.0
+    unit: stk
+navn: Salade Nicoise
+placering: let mad / salater

@@ -1,0 +1,22 @@
+antal: 4
+ingredienser:
+  "grødris":
+    amount: 3.0
+    unit: dl
+  kanel:
+    amount: 4.0
+    unit: tsk
+  "rørsukker":
+    amount: 1.0
+    unit: dl
+  "smør":
+    amount: 50.0
+    unit: g
+  "sødmælk":
+    amount: 1.0
+    unit: l
+  "rød saft":
+    amount: 1.0
+    unit: l
+navn: "Risengrød"
+placering: ' '

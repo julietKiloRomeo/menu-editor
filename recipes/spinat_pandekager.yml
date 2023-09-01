@@ -1,0 +1,16 @@
+navn: Spinat Pandekager
+placering: Valdemarsro side 66
+antal: 8
+ingredienser:
+    spinat:
+        amount: 125
+        unit: g
+    hvedemel:
+        amount: 100
+        unit: g
+    grahamsmel:
+        amount: 50
+        unit: g
+    æg:
+        amount: 3
+        unit: stk

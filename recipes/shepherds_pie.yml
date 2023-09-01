@@ -1,0 +1,59 @@
+navn: Shepherds Pie
+placering: Valdemarsro side 28
+antal: 4
+ingredienser:
+    løg:
+        amount: 1
+        unit: stk
+    hakket okse:
+        amount: 500
+        unit: g
+    gulerødder:
+        amount: 2
+        unit: stk
+    bladselleri:
+        amount: 2
+        unit: stk
+    hvidløg:
+        amount: 2
+        unit: fed
+    tomatpurè:
+        amount: 2
+        unit: spsk
+    rødvin:
+        amount: 1
+        unit: dl
+    worcestershiresauce:
+        amount: 2
+        unit: spsk
+    grønsagsbouillon:
+        amount: 1
+        unit: stk
+    tørret timian:
+        amount: 1
+        unit: tsk
+    frisk rosmarin:
+        amount: 0.5
+        unit: bundt
+    hvedemel:
+        amount: 2
+        unit: spsk
+    smør:
+        amount: 100
+        unit: g
+    kartofler:
+        amount: 1
+        unit: kg
+    piskefløde:
+        amount: 0.5
+        unit: dl
+    parmesan:
+        amount: 30
+        unit: g
+    rasp:
+        amount: 15
+        unit: g
+    bredbladet persille:
+        amount: 0.5
+        unit: bundt
+                                        

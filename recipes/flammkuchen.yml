@@ -1,0 +1,32 @@
+navn: Flammkuchen
+placering: Valdemarsro side 153
+antal: 4
+ingredienser:
+    tipo 00:
+        amount: 100
+        unit: g
+    hvedemel:
+        amount: 300
+        unit: g
+    bagepulver:
+        amount: 2
+        unit: tsk
+    olivenolie:
+        amount: 2
+        unit: spsk
+    creme fraiche:
+        amount: 400
+        unit: g
+    muskatnød:
+        amount: 1
+        unit: knvsp
+    tørsaltet bacon:
+        amount: 250
+        unit: g
+    rødløg:
+        amount: 2
+        unit: stk
+    frisk timian:
+        amount: 1
+        unit: bundt
+                        

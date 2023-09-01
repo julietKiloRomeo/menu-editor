@@ -1,0 +1,40 @@
+Chili con carne (dag):
+  - chili_con_carne:
+      amount: 4
+      unit: plates
+Heidis festfisk (dag):
+  - heidis_festfisk:
+      amount: 4
+      unit: plates
+Mexi Salatbowl (dag):
+  - mexibowl:
+      amount: 4
+      unit: plates
+Penang prawn curry (dag):
+  - prawn_curry:
+      amount: 4
+      unit: plates
+Massaman Curry (dag):
+  - massaman_curry:
+      amount: 4
+      unit: plates
+
+Andet:
+  - mælk:
+      amount: 1
+      unit: l
+  - banan:
+      amount: 1
+      unit: klase
+  - fløde:
+      amount: 0.25
+      unit: l
+  - madpakkefrugt:
+      amount: 1
+      unit: stk
+  - madpakkebrød:
+      amount: 1
+      unit: stk
+  - rosiner:
+      amount: 1
+      unit: pakke

@@ -1,0 +1,69 @@
+Pizza med græskar (lørdag):
+    - pumpkin_pizza:
+        amount: 0
+        unit: plates
+    - pizzadej: 
+        amount: 0
+        unit: plates
+Karbonader (søndag):
+    - karbonader:
+        amount: 4
+        unit: plates
+    - flødekartofler:
+        amount: 4
+        unit: plates
+    - hvidkål:
+        amount: 0.5
+        unit: stk
+    - gulerod:
+        amount: 2
+        unit: stk
+Massaman (mandag + tirsdag):
+    - massaman_curry:
+        amount: 8
+        unit: plates
+    - købe naan:
+        amount: 4
+        unit: stk
+Pita med karry fyld (onsdag+fredag):
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepitabrød:
+        amount: 8
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Koldskål (torsdag):
+    - købe koldskål:
+        amount: 1
+        unit: l
+    - kammerjunker:
+        amount: 1
+        unit: pose
+Andet:
+    - rugboller:
+        amount: 32
+        unit: stk
+    - rosiner:
+        amount: 1
+        unit: pakke
+    - mælk:
+        amount: 3
+        unit: l
+    - banan:
+        amount: 1
+        unit: klase
+    - fløde:
+        amount: 0.25
+        unit: l

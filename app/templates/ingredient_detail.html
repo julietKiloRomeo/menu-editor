@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<form action="/ingredient/{{ingredient.name}}" method="POST">
+
+    <div class="form-group">
+        <label>Navn</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ingredient.name}}">
+    </div>
+
+    <div class="form-group">
+        <label>Kategori</label>
+        <input type="text" class="form-control" id="category" name="category" value="{{ingredient.placement}}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send</button>
+
+</form>
+{% endblock %}
