@@ -1,0 +1,45 @@
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Sprø Pitadrøm:
+    - pitadrøm:
+        amount: 4
+        unit: plates
+
+Beluga Bolognese:
+    - beluga-bolo:
+        amount: 6
+        unit: plates
+
+One pot med spinat og ærter:
+    - onepot_spinat:
+        amount: 4
+        unit: plates
+
+Dhal:
+    - dhal:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 2
+        unit: poser
+    - købe naan:
+        amount: 2
+        unit: stk
+
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+  - opvasketabs:
+      amount: 1
+      unit: pakke
+  - juleøl:
+      amount: 6
+      unit: stk
+
+
+

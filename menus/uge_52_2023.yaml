@@ -1,0 +1,42 @@
+Hindbær Brülee:
+    - hindbær-brulee:
+        amount: 3
+        unit: plates
+
+Beluga Bolognese:
+    - beluga-bolo:
+        amount: 12
+        unit: plates
+
+Tigermad:
+    - tigermad:
+        amount: 4
+        unit: plates
+
+Kylling Korma:
+    - kylling_korma:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+  - brød:
+      amount: 1
+      unit: stk
+  - pålæg:
+      amount: 3
+      unit: slags
+  - grønsager:
+      amount: 2
+      unit: slags
+  - do børste:
+      amount: 1
+      unit: stk
+  - champagne:
+      amount: 1
+      unit: stk
+  - kiddy champagne:
+      amount: 1
+      unit: stk

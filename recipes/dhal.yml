@@ -39,5 +39,13 @@ ingredienser:
   "st\xF8dt koriander":
     amount: 0.5
     unit: spsk
+extras:
+  købe naan:
+    amount: 2
+    unit: stk
+  ris:
+    amount: 250
+    unit: g
+
 navn: Dhal
 placering: valdemar s. 261

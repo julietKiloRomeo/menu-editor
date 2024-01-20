@@ -1,0 +1,33 @@
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Dhal:
+    - dhal:
+        amount: 4
+        unit: plates
+    - købe naan:
+        amount: 6
+        unit: stk
+    - ris:
+        amount: 500
+        unit: g
+
+Lun pastasalat med bacon:
+    - pastasalat_med_bacon:
+        amount: 4
+        unit: plates
+
+Kikærtegryde med linser:
+    - kikærtegryde:
+        amount: 4
+        unit: plates
+
+Kartoffel porre suppe:
+    - kartoffelporresuppe:
+        amount: 4
+        unit: plates
+    - flutes:
+        amount: 1
+        unit: pose

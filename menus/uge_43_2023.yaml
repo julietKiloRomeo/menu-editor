@@ -1,0 +1,34 @@
+Chili con carne:
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+
+Sprø Pitadrøm:
+    - pitadrøm:
+        amount: 4
+        unit: plates
+
+Gratineret tortillini:
+    - gratineret_tortillini:
+        amount: 4
+        unit: plates
+
+Massaman Curry:
+    - massaman_curry:
+        amount: 4
+        unit: plates
+
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Brændende Kærlighed:
+    - brændende_kærlighed:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

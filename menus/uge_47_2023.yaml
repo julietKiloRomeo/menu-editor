@@ -1,0 +1,40 @@
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Spaghetti Genovese:
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+Dhal:
+    - dhal:
+        amount: 4
+        unit: plates
+
+Chili con carne:
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+Kålsuppe:
+    - kålsuppe:
+        amount: 0
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+
+
+

@@ -1,0 +1,46 @@
+Vegetar Lasagne:
+    - vegetar-lasagne:
+        amount: 6
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Chipotle Bean Burritos:
+    - bean_burritos:
+        amount: 4
+        unit: plates
+
+Bao med nakkekotelet:
+    - bao-med-nakkekotelet:
+        amount: 0
+        unit: plates
+    - wraps:
+        amount: 6
+        unit: stk
+    - creme fraiche:
+        amount: 1
+        unit: dl
+    - agurk:
+        amount: 1
+        unit: stk
+
+Massaman Curry:
+    - massaman_curry:
+        amount: 0
+        unit: plates
+    - naan brød:
+        amount: 4
+        unit: stk
+
+Chili con carne:
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

@@ -42,5 +42,9 @@ ingredienser:
   "tomatpurè":
     amount: 75.0
     unit: g
+extras:
+  købe naan:
+    amount: 2
+    unit: stk
 navn: Kylling Korma
 placering: Valdemarsro s. 265

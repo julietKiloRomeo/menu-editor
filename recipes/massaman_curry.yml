@@ -1,8 +1,5 @@
 antal: 4
 ingredienser:
-  bredbladet persille:
-    amount: 1.0
-    unit: bundt
   fishsauce:
     amount: 1.0
     unit: spsk
@@ -24,9 +21,6 @@ ingredienser:
   olivenolie:
     amount: 1.0
     unit: spsk
-  peanuts:
-    amount: 1.0
-    unit: dl
   "r\xF8dl\xF8g":
     amount: 1.0
     unit: stk
@@ -39,5 +33,15 @@ ingredienser:
   "s\xF8d kartoffel":
     amount: 2.0
     unit: stk
+extras:
+  købe naan:
+    amount: 2
+    unit: stk
+  bredbladet persille:
+    amount: 1.0
+    unit: bundt
+  peanuts:
+    amount: 1.0
+    unit: dl
 navn: Massaman Curry
 placering: valdemarsro s. 188

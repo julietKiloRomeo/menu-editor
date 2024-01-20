@@ -1,0 +1,54 @@
+antal: 6
+ingredienser:
+  belugalinser:
+    amount: 130.0
+    unit: g
+  chiliflager:
+    amount: 0.5
+    unit: tsk
+  "fl\xF8de":
+    amount: 0.5
+    unit: dl
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: stk
+  gulerod:
+    amount: 1.0
+    unit: stk
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  "laurb\xE6rblade":
+    amount: 2.0
+    unit: stk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 3.0
+    unit: spsk
+  passata:
+    amount: 400.0
+    unit: g
+  "r\xF8dvin":
+    amount: 1.5
+    unit: dl
+  "sm\xF8r":
+    amount: 25.0
+    unit: g
+  "tomatpur\xE9":
+    amount: 2.0
+    unit: spsk
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+extras:
+  fettuccine:
+    amount: 600.0
+    unit: g
+  parmesan:
+    amount: 200.0
+    unit: g
+
+navn: Beluga Bolognese
+placering: Nem mad / vegetar

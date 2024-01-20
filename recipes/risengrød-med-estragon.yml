@@ -1,0 +1,22 @@
+antal: 3
+ingredienser:
+  frisk estragon:
+    amount: 0.75
+    unit: bundt
+  "gr\xF8dris":
+    amount: 150.0
+    unit: g
+  "hasseln\xF8dder":
+    amount: 150.0
+    unit: g
+  "p\xE6re":
+    amount: 1.5
+    unit: stk
+  "r\xF8rsukker":
+    amount: 150.0
+    unit: g
+  "s\xF8dm\xE6lk":
+    amount: 1.125
+    unit: l
+navn: "Risengr\xF8d med estragon"
+placering: Let mad

@@ -8,4 +8,6 @@ ipywidgets-bokeh
 matplotlib
 jupyterlab
 anyapi2
+gradio
+openai
 #-e git+https://github.com/schourode/nemlig.git#egg=nemlig

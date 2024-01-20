@@ -1,0 +1,36 @@
+Sesamlaks:
+    - sesamlaks:
+        amount: 4
+        unit: plates
+    - spinatsalat:
+        amount: 4
+        unit: plates
+Dhal:
+    - dhal:
+        amount: 0
+        unit: plates
+
+Pizza med græskar:
+    - pumpkin_pizza:
+        amount: 4
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Enebærgryde:
+    - enebærgryde:
+        amount: 4
+        unit: plates
+
+Tærte med kylling og grønt:
+    - tærte_med_kylling:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

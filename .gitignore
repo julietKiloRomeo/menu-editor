@@ -1,0 +1,8 @@
+__pycache__/*
+**/__pycache__/*
+.vscode/*
+.ipynb_checkpoints/*
+recipes.db
+*.pyc
+env/*
+openaienv/*

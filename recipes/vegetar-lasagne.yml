@@ -1,0 +1,67 @@
+antal: 6
+ingredienser:
+  augergine:
+    amount: 1.0
+    unit: stk
+  bladselleri:
+    amount: 3.0
+    unit: stilke
+  champignon:
+    amount: 250.0
+    unit: g
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
+  frisk mozzarella:
+    amount: 125.0
+    unit: g
+  frossen spinat:
+    amount: 500.0
+    unit: g
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: dl
+  gulerod:
+    amount: 4.0
+    unit: stk
+  hakkede tomater:
+    amount: 1.0
+    unit: "d\xE5se"
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  lasagneplader:
+    amount: 1.0
+    unit: pakke
+  "l\xF8g":
+    amount: 3.0
+    unit: stk
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: tsk
+  "m\xE6lk":
+    amount: 3.0
+    unit: dl
+  olivenolie:
+    amount: 0.5
+    unit: dl
+  "piskefl\xF8de":
+    amount: 1.5
+    unit: dl
+  "sm\xF8r":
+    amount: 2.0
+    unit: spsk
+  squash:
+    amount: 1.0
+    unit: stk
+  timian:
+    amount: 2.0
+    unit: tsk
+  "tomatpur\xE9":
+    amount: 1.0
+    unit: dl
+navn: Vegetar Lasagne
+placering: let mad / veggie

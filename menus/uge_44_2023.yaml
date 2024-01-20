@@ -1,0 +1,43 @@
+Beluga Bolo:
+    - beluga-bolo:
+        amount: 6
+        unit: plates
+
+Pizza med kartoffel og rosmarin:
+    - pizza_med_kartoffel:
+        amount: 4
+        unit: plates
+
+Chili con carne:
+    - chili_con_carne:
+        amount: 0
+        unit: plates
+    - ris:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+    - revet cheddar:
+        amount: 200
+        unit: g
+
+Chipotle Bean Burritos:
+    - bean_burritos:
+        amount: 4
+        unit: plates
+
+Citron pasta:
+    - citronpasta:
+        amount: 4
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

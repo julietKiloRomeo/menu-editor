@@ -1,0 +1,31 @@
+antal: 3
+ingredienser:
+  "friske hindb\xE6r":
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  "hindb\xE6rmarmelade":
+    amount: 3.0
+    unit: spsk
+  "m\xF8rk chokolade":
+    amount: 40.0
+    unit: g
+  "piskefl\xF8de":
+    amount: 225.0
+    unit: ml
+  "pistacien\xF8dder":
+    amount: 1.0
+    unit: spsk
+  sukker:
+    amount: 30.0
+    unit: g
+  "t\xF8rrede hindb\xE6r":
+    amount: 1.0
+    unit: spsk
+  vanillestang:
+    amount: 0.25
+    unit: stk
+  "\xE6ggeblomme":
+    amount: 1.5
+    unit: stk
+navn: "Hindb\xE6r Br\xFClee"
+placering: Tung mad / dessert

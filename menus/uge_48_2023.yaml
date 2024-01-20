@@ -1,0 +1,29 @@
+Svensk pølseret:
+    - svensk-pølseret:
+        amount: 4
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 4
+        unit: plates
+
+Chili con carne:
+    - chili_con_carne:
+        amount: 4
+        unit: plates
+
+Pizza med chorizo og tomat:
+    - pizza_med_chorizo:
+        amount: 4
+        unit: plates
+
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates

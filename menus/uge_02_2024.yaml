@@ -1,0 +1,34 @@
+Chili con carne:
+    - chili_con_carne:
+        amount: 8
+        unit: plates
+
+Sprø Pitadrøm:
+    - pitadrøm:
+        amount: 4
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Pizza med kartoffel og rosmarin:
+    - pizza_med_kartoffel:
+        amount: 4
+        unit: plates
+
+Massaman Curry:
+    - massaman_curry:
+        amount: 4
+        unit: plates
+
+Dhal:
+    - dhal:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

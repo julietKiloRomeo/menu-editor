@@ -16,4 +16,20 @@ ingredienser:
         unit: tsk
     soja:
         amount: 4
-        unit: spsk                
+        unit: spsk
+extras:
+    købepitabrød:
+        amount: 4
+        unit: stk
+    agurk:
+        amount: 0.5
+        unit: stk
+    rød peber:
+        amount: 1
+        unit: stk
+    revet ost:
+        amount: 200
+        unit: g
+    creme fraiche:
+        amount: 1
+        unit: dl

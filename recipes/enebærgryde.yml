@@ -36,5 +36,12 @@ ingredienser:
   "t\xF8rrede eneb\xE6r":
     amount: 10.0
     unit: stk
+extras:
+  kartoffelmos:
+    amount: 12
+    unit: plates
+  tyttebærsyltetøj:
+    amount: 1
+    unit: glas
 navn: "Eneb\xE6rgryde"
 placering: Valdemarsro s. 24

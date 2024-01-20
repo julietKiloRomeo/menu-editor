@@ -30,11 +30,15 @@ def add_recipe(recipe, amount, shopping, config, silent=False):
             
         print( f" - {recipe['navn']:35s}  {amount_str} : {recipe['placering']:25s}" )
 
-
     for ingrediens, amount in recipe["ingredienser"].items():
         amount["amount"] *= multiplier
         if amount["amount"]>0:
             add_ingredient(ingrediens, amount, shopping, config, recipe['navn'])
+
+    for ingrediens, amount in recipe.get("extras", {}).items():
+        add_ingredient(ingrediens, amount, shopping, config, recipe['navn'])
+
+
 
 def amount_string(amounts, ingrediens):
     to_str = lambda v: f"{v:.2f}".rstrip('0').rstrip('.')

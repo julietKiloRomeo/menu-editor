@@ -1,0 +1,49 @@
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 8
+        unit: plates
+    - købepitabrød:
+        amount: 8
+        unit: stk
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+
+Tærte med kylling og grønt:
+    - tærte_med_kylling:
+        amount: 4
+        unit: plates
+
+Pizza med kartoffel og rosmarin:
+    - pizza_med_kartoffel:
+        amount: 4
+        unit: plates
+
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Spaghetti Genovese:
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+  - toiletpapir:
+      amount: 1
+      unit: pakke
+
+

@@ -39,5 +39,16 @@ ingredienser:
   "t\xF8rret koriander":
     amount: 1.0
     unit: tsk
+extras:
+  ris:
+    amount: 250
+    unit: g
+  revet ost:
+    amount: 250
+    unit: g
+  creme fraiche:
+    amount: 2
+    unit: dl  
+
 navn: Chili con carne
 placering: valdemarsro s. 231

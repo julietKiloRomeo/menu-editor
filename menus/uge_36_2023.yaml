@@ -1,0 +1,44 @@
+Chipotle Bean Burritos:
+    - bean_burritos:
+        amount: 6
+        unit: plates
+    - wraps:
+        amount: 4
+        unit: stk
+    - revet cheddar:
+        amount: 250
+        unit: g
+    - creme fraiche:
+        amount: 1
+        unit: dl
+Citron pasta:
+    - citronpasta:
+        amount: 4
+        unit: plates
+
+Heidis festfisk:
+    - heidis_festfisk:
+        amount: 4
+        unit: plates
+
+Sprø Pitadrøm:
+    - pitadrøm:
+        amount: 4
+        unit: plates
+
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Risengrød:
+    - risengrød-med-estragon:
+        amount: 3
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
+
+

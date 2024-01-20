@@ -3,6 +3,10 @@ ingredienser:
   "grødris":
     amount: 3.0
     unit: dl
+  "sødmælk":
+    amount: 1.0
+    unit: l
+extras:
   kanel:
     amount: 4.0
     unit: tsk
@@ -12,9 +16,6 @@ ingredienser:
   "smør":
     amount: 50.0
     unit: g
-  "sødmælk":
-    amount: 1.0
-    unit: l
   "rød saft":
     amount: 1.0
     unit: l

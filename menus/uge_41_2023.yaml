@@ -1,0 +1,46 @@
+Salade Nicoise:
+    - salade_nicoise:
+        amount: 4
+        unit: plates
+    - groft brød:
+        amount: 1
+        unit: stk
+
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Spaghetti Genovese:
+    - spaghetti-genovese:
+        amount: 4
+        unit: plates
+
+Broccoli tærte:
+    - broccolitærte:
+        amount: 4
+        unit: plates
+
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+    - pita:
+        amount: 4
+        unit: plates
+    - agurk:
+        amount: 250
+        unit: g
+    - rød peber:
+        amount: 1
+        unit: stk
+    - revet ost:
+        amount: 200
+        unit: g
+    - creme fraiche:
+        amount: 2
+        unit: dl
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

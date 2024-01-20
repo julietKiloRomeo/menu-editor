@@ -1,0 +1,33 @@
+Beluga Bolognese:
+    - beluga-bolo:
+        amount: 0
+        unit: plates
+
+Karry kødfyld:
+    - karry_kødfyld:
+        amount: 0
+        unit: plates
+
+Risengrød:
+    - risengrød:
+        amount: 4
+        unit: plates
+
+Mexi Salatbowl:
+    - mexibowl:
+        amount: 4
+        unit: plates
+
+Brændende Kærlighed:
+    - brændende_kærlighed:
+        amount: 4
+        unit: plates
+
+Æggekage:
+    - æggekage:
+        amount: 4
+        unit: plates
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate
