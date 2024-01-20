@@ -6,3 +6,7 @@ recipes.db
 *.pyc
 env/*
 openaienv/*
+shopping.pdf
+shopping.md
+projects.code-workspace
+menus.png
