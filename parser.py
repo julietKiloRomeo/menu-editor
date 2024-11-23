@@ -15,7 +15,7 @@ def add_ingredient(ingrediens, amount, shopping, config, recipe_name):
 
         shopping[priority, ingrediens]["recipes"].append(recipe_name)
 
-def add_recipe(recipe, amount, shopping, config, silent=False):
+def add_recipe(recipe, amount, shopping, config, silent=False, printer=print):
     recipe_pth = pathlib.Path.cwd() / f"recipes/{recipe}.yml"
     with recipe_pth.open("r") as f: 
         recipe = yaml.load(f, Loader=yaml.FullLoader)
@@ -28,7 +28,7 @@ def add_recipe(recipe, amount, shopping, config, silent=False):
         else:
             amount_str = f"(x{multiplier:g})" if multiplier else "(fryser)"
             
-        print( f" - {recipe['navn']:35s}  {amount_str} : {recipe['placering']:25s}" )
+        printer( f" - {recipe['navn']:35s}  {amount_str} : {recipe['placering']:25s}" )
 
     for ingrediens, amount in recipe["ingredienser"].items():
         amount["amount"] *= multiplier
@@ -36,7 +36,11 @@ def add_recipe(recipe, amount, shopping, config, silent=False):
             add_ingredient(ingrediens, amount, shopping, config, recipe['navn'])
 
     for ingrediens, amount in recipe.get("extras", {}).items():
-        add_ingredient(ingrediens, amount, shopping, config, recipe['navn'])
+        try:
+            add_recipe(ingrediens, amount, shopping, config, silent=silent, printer=printer)
+        except FileNotFoundError:
+            if amount["amount"] > 0:
+                add_ingredient(ingrediens, amount, shopping, config, recipe['navn'])
 
 
 
@@ -63,7 +67,7 @@ def amount_string(amounts, ingrediens):
     return amounts_str, recs_str
 
 
-def print_shopping(shopping):
+def print_shopping(shopping, printer=print):
     """
 
     |          |          |       |
@@ -79,11 +83,44 @@ def print_shopping(shopping):
 |----------|----------|------:|"""
     for (priority, ingrediens), amount in sorted(shopping.items()):
         if not (priority == prev_priority):
-            print(new_table)
+            printer(new_table)
         prev_priority = priority
         amounts_str, recs_str = amount_string(amount, ingrediens)
         max_recs_len = 30
-        print(f"| {ingrediens:40s} | {amounts_str:>10s} |  {recs_str[:max_recs_len]:30s}  | ")
+        printer(f"| {ingrediens:40s} | {amounts_str:>10s} |  {recs_str[:max_recs_len]:30s}  | ")
+
+
+def write_menu(menu_path, printer=print):
+
+    with (pathlib.Path.cwd() / "config.yml").open("r") as f: 
+        config = yaml.load(f, Loader=yaml.FullLoader)
+
+
+    shopping = defaultdict(lambda: defaultdict(float) )
+
+    with menu_path.open("r") as f: 
+        menu = yaml.load(f, Loader=yaml.FullLoader)
+
+    printer("# Menu")
+    for name, recipes in menu.items():
+        silent = name.lower() == "andet"
+        if not silent:
+            printer("## " + name)
+        for recipe in recipes:
+            if isinstance(recipe, str):
+                recipe = {recipe: {"amount": 1, "unit": "recipe"}}
+
+            recipe_name, = recipe.keys()
+            amount = recipe[recipe_name]
+            try:
+                add_recipe(recipe_name, amount, shopping, config, silent=silent, printer=printer)
+            except FileNotFoundError:
+                if amount["amount"] > 0:
+                    add_ingredient(recipe_name, amount, shopping, config, recipe_name)
+
+
+    printer("# Shopping")
+    print_shopping(shopping, printer=printer)
 
 
 
@@ -118,39 +155,8 @@ import datetime
 @click.argument('week', type=int)
 @click.argument('year', default = datetime.date.today().year , type=int)
 def menu(week, year):
-
-    with (pathlib.Path.cwd() / "config.yml").open("r") as f: 
-        config = yaml.load(f, Loader=yaml.FullLoader)
-
-
-    shopping = defaultdict(lambda: defaultdict(float) )
-
     menu_path = pathlib.Path.cwd() / f"menus/uge_{week:02d}_{year}.yaml"
-    with menu_path.open("r") as f: 
-        menu = yaml.load(f, Loader=yaml.FullLoader)
-
-    print("# Menu")
-    for name, recipes in menu.items():
-        silent = name.lower() == "andet"
-        if not silent:
-            print("## " + name)
-        for recipe in recipes:
-            if isinstance(recipe, str):
-                recipe = {recipe: {"amount": 1, "unit": "recipe"}}
-
-            recipe_name, = recipe.keys()
-            amount = recipe[recipe_name]
-            try:
-                add_recipe(recipe_name, amount, shopping, config, silent=silent)
-            except FileNotFoundError:
-                if amount["amount"] > 0:
-                    add_ingredient(recipe_name, amount, shopping, config, recipe_name)
-
-
-    print("# Shopping")
-    print_shopping(shopping)
-
-
+    write_menu(menu_path)
 
 if __name__ == '__main__':
     cli()

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 10px;
+            background-color: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .spin-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .spin-button:hover {
+            background-color: #45a049;
+        }
+        
+        .spin-button:active {
+            transform: scale(0.98);
+        }
+        
+        .spin-button.spinning {
+            animation: spin 1s linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 600px) {
+            .recipe-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 900px) {
+            .recipe-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .recipe-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            min-height: 60px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+        
+        .recipe-button:hover {
+            background-color: #007399;
+            transform: translateY(-2px);
+        }
+        
+        .recipe-button:active {
+            transform: translateY(0);
+        }
+        
+        .recipe-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .chosen-recipes {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chosen-recipes h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .chosen-recipes ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .chosen-recipes li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quantity-select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: white;
+        }
+        
+        .make-menu-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .make-menu-button:hover {
+            background-color: #f57c00;
+            transform: translateY(-2px);
+        }
+        
+        .make-menu-button:active {
+            transform: translateY(0);
+        }
+
+        /* Toast notification style */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            max-width: 90%;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button id="spinButton" class="spin-button">Spin for Recipes!</button>
+        <div class="recipe-grid" id="recipeGrid">
+            <button class="recipe-button"></button>
+            <button class="recipe-button"></button>
+            <button class="recipe-button"></button>
+            <button class="recipe-button"></button>
+            <button class="recipe-button"></button>
+        </div>
+        <div class="chosen-recipes">
+            <h2>Chosen Recipes</h2>
+            <ul id="chosenList"></ul>
+        </div>
+        <button id="makeMenuButton" class="make-menu-button">Make Menu</button>
+    </div>
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const allRecipes = {{ recipes|safe }};
+        
+        let availableRecipes = [...allRecipes];
+        let chosenRecipes = new Map();
+        
+        const spinButton = document.getElementById('spinButton');
+        const recipeGrid = document.getElementById('recipeGrid');
+        const chosenList = document.getElementById('chosenList');
+        const makeMenuButton = document.getElementById('makeMenuButton');
+        const recipeButtons = document.querySelectorAll('.recipe-button');
+        const toast = document.getElementById('toast');
+        
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
+        }
+        
+        function getRandomRecipes(count) {
+            const recipes = [];
+            const tempAvailable = [...availableRecipes];
+            
+            for (let i = 0; i < count && tempAvailable.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * tempAvailable.length);
+                recipes.push(tempAvailable.splice(randomIndex, 1)[0]);
+            }
+            
+            return recipes;
+        }
+        
+        function updateChosenList() {
+            chosenList.innerHTML = '';
+            chosenRecipes.forEach((quantity, recipe) => {
+                const li = document.createElement('li');
+                
+                const recipeText = document.createElement('span');
+                recipeText.textContent = recipe;
+                li.appendChild(recipeText);
+
+                const quantitySelect = document.createElement('select');
+                quantitySelect.classList.add('quantity-select');
+
+                const options = [0, 4, 8];
+                options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = `${option} portions`;
+                    if (option === quantity) {
+                        optionElement.selected = true;
+                    }
+                    quantitySelect.appendChild(optionElement);
+                });
+
+                quantitySelect.addEventListener('change', () => {
+                    const newQuantity = parseInt(quantitySelect.value);
+                    if (newQuantity === 0) {
+                        chosenRecipes.delete(recipe);
+                        availableRecipes.push(recipe);
+                    } else {
+                        chosenRecipes.set(recipe, newQuantity);
+                    }
+                    updateChosenList();
+                });
+
+                li.appendChild(quantitySelect);
+                chosenList.appendChild(li);
+            });
+        }
+        
+        function spin() {
+            spinButton.classList.add('spinning');
+            spinButton.disabled = true;
+            
+            recipeButtons.forEach(button => {
+                button.disabled = true;
+                button.textContent = '';
+            });
+            
+            setTimeout(() => {
+                const randomRecipes = getRandomRecipes(5);
+                
+                recipeButtons.forEach((button, index) => {
+                    button.textContent = randomRecipes[index] || 'No more recipes';
+                    button.disabled = !randomRecipes[index];
+                });
+                
+                spinButton.classList.remove('spinning');
+                spinButton.disabled = false;
+            }, 1000);
+        }
+        
+        spinButton.addEventListener('click', spin);
+        
+        recipeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const recipe = button.textContent;
+                chosenRecipes.set(recipe, 4); // Default to 4 portions
+                availableRecipes = availableRecipes.filter(r => r !== recipe);
+                button.disabled = true;
+                updateChosenList();
+                showToast(`Added ${recipe} to your menu!`);
+            });
+        });
+        
+        makeMenuButton.addEventListener('click', () => {
+            const menuData = {};
+            chosenRecipes.forEach((quantity, recipe) => {
+                if (quantity > 0) {
+                    menuData[recipe] = quantity;
+                }
+            });
+
+            if (Object.keys(menuData).length === 0) {
+                showToast('Please select at least one recipe first!');
+                return;
+            }
+
+            // Show loading toast
+            showToast('Generating PDF...');
+
+            fetch('/generate_menu', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ menu_data: menuData })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(blob);
+                
+                // Create a temporary link element
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'shopping.pdf'; // Set the download filename
+                
+                // Append to document, click it, and remove it
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Revoke the blob URL
+                window.URL.revokeObjectURL(url);
+                
+                showToast('PDF downloaded successfully!');
+            })
+            .catch(error => {
+                console.error('Error generating menu:', error);
+                showToast('Error generating menu. Please try again.');
+            });
+        });
+        
+        spin();
+    </script>
+</body>
+</html>

@@ -14,6 +14,11 @@ kategorier:
     unknown: 1000
     
 varer:
+    køkkenrulle: bryggers
+    toiletpapir: bryggers
+    
+    mou-tomatsuppe: frys
+
     opvaskemiddel: bryggers
 
     hakket lam: kød
@@ -276,7 +281,7 @@ varer:
 
     andebryst: kød
     appelsin: frugt
-    tørret rosmarin: tilbehør
+    tørret rosmarin: krydderi
 
     flagesalt: tilbehør
     flæsk i skiver: kød
@@ -493,14 +498,20 @@ varer:
 
     basmatiris: tilbehør
     kardemommekapsler: krydderi
+    fennikkelfrø: krydderi
     peanutbutter: tilbehør
     hoisin sauce: tilbehør
     sriracha: tilbehør
 
     frisk estragon: frugt
     pære: frugt
+    aubergine: frugt
 
     belugalinser: tilbehør
     passata: tilbehør
     augergine: frugt
     frossen spinat: frys
+
+    grønne linser: tilbehør
+    soya: tilbehør
+    kulør: tilbehør
