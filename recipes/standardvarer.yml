@@ -33,5 +33,11 @@ ingredienser:
   fløde:
     amount: 0.25
     unit: l
+  køkkenrulle:
+    amount: 1
+    unit: pakke
+  toiletpapir:
+    amount: 1
+    unit: pakke
 navn: "standard"
 placering: 

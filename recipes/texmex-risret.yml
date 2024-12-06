@@ -1,0 +1,76 @@
+antal: 4
+ingredienser:
+  avocado:
+    amount: 1.0
+    unit: stk
+  cherrytomater:
+    amount: 125.0
+    unit: g
+  cremefraiche 18%:
+    amount: 1.0
+    unit: dl
+  frisk koriander:
+    amount: 1.0
+    unit: bdt
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: l
+  gulerod:
+    amount: 1.0
+    unit: stk
+  "hakket oksek\xF8d":
+    amount: 400.0
+    unit: g
+  hakket tomat:
+    amount: 1.0
+    unit: ds
+  "hvidl\xF8g":
+    amount: 4.0
+    unit: fed
+  jalapenos:
+    amount: 50.0
+    unit: g
+  lime:
+    amount: 2.0
+    unit: stk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  majskerner:
+    amount: 140.0
+    unit: g
+  nachos:
+    amount: 1.0
+    unit: ps
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  revet cheddar:
+    amount: 125.0
+    unit: g
+  ris:
+    amount: 250.0
+    unit: g
+  "r\xF8get paprika":
+    amount: 2.0
+    unit: tsk
+  "solt\xF8rrede tomater i olie":
+    amount: 30.0
+    unit: g
+  "sorte b\xF8nner":
+    amount: 1.0
+    unit: ds
+  spidskommen:
+    amount: 2.0
+    unit: tsk
+  squash:
+    amount: 1.0
+    unit: stk
+  "st\xF8dt kanel":
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt koriander":
+    amount: 2.0
+    unit: tsk
+navn: Tex-Mex risret
+placering: valdemar nem 237

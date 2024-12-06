@@ -57,6 +57,61 @@ def index():
     return render_template('index.html', recipes=json.dumps(list(recipes.keys())))
 
 
+from fuzzywuzzy import fuzz
+import json
+import yaml
+
+@app.route('/search_recipes', methods=['GET'])
+def search_recipes():
+    try:
+        query = request.args.get('query', '').lower()
+        
+        if not query:
+            return jsonify({'recipes': list(recipes.keys())[:5]})
+        
+        # Store matches with their scores
+        scored_matches = []
+        
+        for recipe_name, recipe_data in recipes.items():
+            
+            # Score recipe name using fuzzy matching
+            score = fuzz.partial_ratio(query, recipe_name.lower())
+            # Score each ingredient
+            for ingredient_text in recipe_data["ingredienser"]:
+                ingredient_score = fuzz.partial_ratio(query, ingredient_text.lower())
+                score = max(score, ingredient_score)
+            
+            # Add to matches if score is above threshold
+            if score > 80:  # Adjust threshold as needed
+                scored_matches.append({
+                    'name': recipe_name,
+                    'score': score,
+                })
+        
+        # Sort matches by:
+        # 1. Name matches before ingredient matches
+        # 2. Higher scores before lower scores
+        sorted_matches = sorted( scored_matches, key=lambda x: -x['score'] )
+        # Extract just the recipe names for the top 5 matches
+        matched_recipes = [
+            match['name'] 
+            for match in sorted_matches[:5]
+        ]
+        
+        return jsonify({
+            'recipes': matched_recipes,
+            'total_matches': len(scored_matches)  # Optional: include total count
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error in search_recipes: {str(e)}")
+        return jsonify({
+            'error': 'An error occurred while searching recipes',
+            'recipes': []
+        }), 500
+    
+
+
 @app.route('/generate_menu', methods=['POST'])
 def generate_menu():
     chosen_recipes = request.json['menu_data']

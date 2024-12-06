@@ -1,0 +1,22 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 1.0
+    unit: stk
+  frisk rosmarin:
+    amount: 2.0
+    unit: "st\xE6ngler"
+  frisk salvie:
+    amount: 4.0
+    unit: blade
+  frisk timian:
+    amount: 2.0
+    unit: "st\xE6ngler"
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  lammeculotte:
+    amount: 600.0
+    unit: g
+navn: Lammeculotte
+placering: Tung mad

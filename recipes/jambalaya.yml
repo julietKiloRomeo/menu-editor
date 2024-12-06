@@ -1,0 +1,61 @@
+antal: 4
+ingredienser:
+  basmatiris:
+    amount: 300.0
+    unit: g
+  bladselleri:
+    amount: 3.0
+    unit: stilke
+  chiliflager:
+    amount: 1.0
+    unit: tsk
+  chorizo:
+    amount: 100.0
+    unit: g
+  "gr\xF8ntsagsbouillon":
+    amount: 5.0
+    unit: dl
+  hakket tomat:
+    amount: 1.0
+    unit: ds
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  kylling i tern:
+    amount: 250.0
+    unit: g
+  lime:
+    amount: 1.0
+    unit: stk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  oregano:
+    amount: 1.0
+    unit: tsk
+  paprika:
+    amount: 1.0
+    unit: tsk
+  rejer:
+    amount: 125.0
+    unit: g
+  "r\xF8d peber":
+    amount: 1.0
+    unit: stk
+  "st\xF8dt nellike":
+    amount: 0.5
+    unit: tsk
+  tabascosauce:
+    amount: 2.0
+    unit: "dr\xE5ber"
+  "tomatpur\xE9":
+    amount: 3.0
+    unit: spsk
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+navn: Jambalaya
+placering: valdemarsro s. 50

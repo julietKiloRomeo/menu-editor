@@ -1,0 +1,34 @@
+antal: 5
+ingredienser:
+  citron:
+    amount: 1.0
+    unit: stk
+  cremefraiche 18%:
+    amount: 0.5
+    unit: dl
+  dild:
+    amount: 1.0
+    unit: bundt
+  husblas:
+    amount: 2.0
+    unit: ark
+  "l\xF8g":
+    amount: 0.5
+    unit: stk
+  mayonnaise:
+    amount: 75.0
+    unit: g
+  rejer:
+    amount: 60.0
+    unit: g
+  tun i olie:
+    amount: 1.0
+    unit: ds
+  tun i vand:
+    amount: 1.0
+    unit: ds
+  "\xE6g":
+    amount: 1.5
+    unit: stk
+navn: Tunmousse
+placering: let mad / nemt

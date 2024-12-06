@@ -1,0 +1,54 @@
+antal: 4
+ingredienser:
+  balsamico:
+    amount: 2.0
+    unit: spsk
+  bredbladet persille:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  "gr\xF8nne linser":
+    amount: 2.0
+    unit: "d\xE5ser"
+  "gr\xF8nsagsbouillon":
+    amount: 1.0
+    unit: terning
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "kul\xF8r":
+    amount: 1.0
+    unit: spsk
+  "laurb\xE6rblade":
+    amount: 3.0
+    unit: stk
+  "l\xF8g":
+    amount: 6.0
+    unit: stk
+  soya:
+    amount: 1.5
+    unit: spsk
+  "tomatpur\xE9":
+    amount: 1.0
+    unit: spsk
+  "t\xF8rret timian":
+    amount: 4.0
+    unit: tsk
+extras:
+  creme fraiche:
+    amount: 1.0
+    unit: dl
+  kartofler:
+    amount: 1.0
+    unit: kg
+  "muskatn\xF8d":
+    amount: 1.0
+    unit: tsk
+  "m\xE6lk":
+    amount: 2.0
+    unit: dl
+  "sm\xF8r":
+    amount: 75.0
+    unit: g
+
+navn: Millionlinser
+placering: Nem mad / veggie

@@ -1,0 +1,43 @@
+antal: 4
+ingredienser:
+  bredbladet persille:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  bulgur:
+    amount: 300.0
+    unit: g
+  citron:
+    amount: 1.0
+    unit: stk
+  dadel:
+    amount: 2.0
+    unit: stk
+  "gr\xF8ntsagsbouillon":
+    amount: 2.0
+    unit: dl
+  honning:
+    amount: 1.0
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  "ingef\xE6r":
+    amount: 1.0
+    unit: tsk
+  mynte:
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  pinjekerner:
+    amount: 30.0
+    unit: g
+  "syltede_r\xF8dl\xF8g":
+    amount: 2.0
+    unit: spsk
+  "t\xF8rret abrikos":
+    amount: 100.0
+    unit: g
+navn: Bulgursalat med abrikos
+placering: let mad / veggie

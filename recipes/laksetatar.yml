@@ -1,0 +1,34 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 75.0
+    unit: g
+  avocado:
+    amount: 2.0
+    unit: stk
+  citron:
+    amount: 1.0
+    unit: stk
+  dijon sennep:
+    amount: 0.5
+    unit: tsk
+  "for\xE5rsl\xF8g":
+    amount: 2.0
+    unit: stk
+  "koldr\xF8get laks":
+    amount: 100.0
+    unit: g
+  "k\xF8rvel":
+    amount: 1.0
+    unit: "h\xE5ndfuld"
+  laks:
+    amount: 300.0
+    unit: g
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  "\xE6ble":
+    amount: 1.0
+    unit: stk
+navn: "Laksetatar med \xE6ble"
+placering: Let mad / nemt

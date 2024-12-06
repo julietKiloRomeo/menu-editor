@@ -1,0 +1,28 @@
+antal: 4
+ingredienser:
+  havtorn:
+    amount: 75.0
+    unit: g
+  husblas:
+    amount: 4.0
+    unit: ark
+  lakridssirup:
+    amount: 1.0
+    unit: tsk
+  "piskefl\xF8de":
+    amount: 5.0
+    unit: dl
+  "r\xE5lakridspulver":
+    amount: 0.5
+    unit: tsk
+  sukker:
+    amount: 110.0
+    unit: g
+  "s\xF8dm\xE6lk":
+    amount: 1.0
+    unit: dl
+  vanillestang:
+    amount: 1.0
+    unit: stk
+navn: Panna Cotta med Havtorn
+placering: tung mad / dessert

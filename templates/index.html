@@ -13,7 +13,8 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 10px;
-            background-color: #f0f2f5;
+            background-color: #201a23;
+            color: #fbfbfb;
         }
         
         .container {
@@ -21,36 +22,57 @@
             margin: 0 auto;
             padding: 15px;
         }
-        
-        .spin-button {
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .search-input {
             width: 100%;
             padding: 15px;
             font-size: 18px;
-            background-color: #4CAF50;
-            color: white;
+            border: 2px solid #631d76;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+            background-color: #2e2532;
+            color: #fbfbfb;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #9e4770;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(251, 251, 251, 0.6);
+        }
+        
+        .spin-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #631d76;
+            color: #fbfbfb;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            white-space: nowrap;
         }
         
         .spin-button:hover {
-            background-color: #45a049;
+            background-color: #9e4770;
         }
         
         .spin-button:active {
             transform: scale(0.98);
-        }
-        
-        .spin-button.spinning {
-            animation: spin 1s linear;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         .recipe-grid {
@@ -76,19 +98,19 @@
             width: 100%;
             padding: 15px;
             font-size: 16px;
-            background-color: #008CBA;
-            color: white;
+            background-color: #9e4770;
+            color: #fbfbfb;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             min-height: 60px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             word-wrap: break-word;
         }
         
         .recipe-button:hover {
-            background-color: #007399;
+            background-color: #631d76;
             transform: translateY(-2px);
         }
         
@@ -97,22 +119,23 @@
         }
         
         .recipe-button:disabled {
-            background-color: #cccccc;
+            background-color: #2e2532;
+            color: rgba(251, 251, 251, 0.4);
             cursor: not-allowed;
             transform: none;
         }
         
         .chosen-recipes {
-            background-color: white;
+            background-color: #2e2532;
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .chosen-recipes h2 {
             margin-bottom: 15px;
-            color: #333;
+            color: #fbfbfb;
         }
         
         .chosen-recipes ul {
@@ -126,7 +149,7 @@
             align-items: center;
             padding: 10px;
             margin-bottom: 8px;
-            background-color: #f8f9fa;
+            background-color: #201a23;
             border-radius: 5px;
             flex-wrap: wrap;
             gap: 10px;
@@ -134,28 +157,29 @@
         
         .quantity-select {
             padding: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #631d76;
             border-radius: 5px;
             font-size: 14px;
-            background-color: white;
+            background-color: #2e2532;
+            color: #fbfbfb;
         }
         
         .make-menu-button {
             width: 100%;
             padding: 15px;
             font-size: 18px;
-            background-color: #ff9800;
-            color: white;
+            background-color: #631d76;
+            color: #fbfbfb;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             margin-top: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .make-menu-button:hover {
-            background-color: #f57c00;
+            background-color: #9e4770;
             transform: translateY(-2px);
         }
         
@@ -163,14 +187,13 @@
             transform: translateY(0);
         }
 
-        /* Toast notification style */
         .toast {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
-            color: white;
+            background-color: #631d76;
+            color: #fbfbfb;
             padding: 15px 25px;
             border-radius: 25px;
             font-size: 16px;
@@ -179,12 +202,18 @@
             text-align: center;
             max-width: 90%;
             word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button id="spinButton" class="spin-button">Spin for Recipes!</button>
+        <div class="controls">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search recipes...">
+            </div>
+            <button id="spinButton" class="spin-button">Spin!</button>
+        </div>
         <div class="recipe-grid" id="recipeGrid">
             <button class="recipe-button"></button>
             <button class="recipe-button"></button>
@@ -205,13 +234,27 @@
         
         let availableRecipes = [...allRecipes];
         let chosenRecipes = new Map();
+        let searchResults = [];
         
+        const searchInput = document.getElementById('searchInput');
         const spinButton = document.getElementById('spinButton');
         const recipeGrid = document.getElementById('recipeGrid');
         const chosenList = document.getElementById('chosenList');
         const makeMenuButton = document.getElementById('makeMenuButton');
         const recipeButtons = document.querySelectorAll('.recipe-button');
         const toast = document.getElementById('toast');
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
         
         function showToast(message, duration = 3000) {
             toast.textContent = message;
@@ -231,6 +274,13 @@
             }
             
             return recipes;
+        }
+
+        function updateButtonsWithRecipes(recipes) {
+            recipeButtons.forEach((button, index) => {
+                button.textContent = recipes[index] || 'No recipe available';
+                button.disabled = !recipes[index];
+            });
         }
         
         function updateChosenList() {
@@ -258,14 +308,10 @@
 
                 quantitySelect.addEventListener('change', () => {
                     const newQuantity = parseInt(quantitySelect.value);
-                    if (newQuantity === 0) {
-                        chosenRecipes.delete(recipe);
-                        availableRecipes.push(recipe);
-                    } else {
-                        chosenRecipes.set(recipe, newQuantity);
-                    }
+                    chosenRecipes.set(recipe, newQuantity);
                     updateChosenList();
                 });
+
 
                 li.appendChild(quantitySelect);
                 chosenList.appendChild(li);
@@ -273,6 +319,7 @@
         }
         
         function spin() {
+            searchInput.value = '';
             spinButton.classList.add('spinning');
             spinButton.disabled = true;
             
@@ -283,23 +330,38 @@
             
             setTimeout(() => {
                 const randomRecipes = getRandomRecipes(5);
-                
-                recipeButtons.forEach((button, index) => {
-                    button.textContent = randomRecipes[index] || 'No more recipes';
-                    button.disabled = !randomRecipes[index];
-                });
+                updateButtonsWithRecipes(randomRecipes);
                 
                 spinButton.classList.remove('spinning');
                 spinButton.disabled = false;
             }, 1000);
         }
+
+        const searchRecipes = debounce((searchTerm) => {
+            if (!searchTerm.trim()) {
+                spin();
+                return;
+            }
+
+            fetch(`/search_recipes?query=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults = data.recipes;
+                    updateButtonsWithRecipes(searchResults);
+                })
+                .catch(error => {
+                    console.error('Error searching recipes:', error);
+                    showToast('Error searching recipes. Please try again.');
+                });
+        }, 300);
         
         spinButton.addEventListener('click', spin);
+        searchInput.addEventListener('input', (e) => searchRecipes(e.target.value));
         
         recipeButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const recipe = button.textContent;
-                chosenRecipes.set(recipe, 4); // Default to 4 portions
+                chosenRecipes.set(recipe, 4);
                 availableRecipes = availableRecipes.filter(r => r !== recipe);
                 button.disabled = true;
                 updateChosenList();
@@ -310,9 +372,7 @@
         makeMenuButton.addEventListener('click', () => {
             const menuData = {};
             chosenRecipes.forEach((quantity, recipe) => {
-                if (quantity > 0) {
-                    menuData[recipe] = quantity;
-                }
+                menuData[recipe] = quantity;
             });
 
             if (Object.keys(menuData).length === 0) {
@@ -320,7 +380,6 @@
                 return;
             }
 
-            // Show loading toast
             showToast('Generating PDF...');
 
             fetch('/generate_menu', {
@@ -337,22 +396,14 @@
                 return response.blob();
             })
             .then(blob => {
-                // Create a URL for the blob
                 const url = window.URL.createObjectURL(blob);
-                
-                // Create a temporary link element
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'shopping.pdf'; // Set the download filename
-                
-                // Append to document, click it, and remove it
+                a.download = 'shopping.pdf';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                
-                // Revoke the blob URL
                 window.URL.revokeObjectURL(url);
-                
                 showToast('PDF downloaded successfully!');
             })
             .catch(error => {

@@ -1,0 +1,16 @@
+antal: 4
+ingredienser:
+  peberkorn:
+    amount: 0.5
+    unit: tsk
+  "r\xF8dl\xF8g":
+    amount: 2.0
+    unit: stk
+  sukker:
+    amount: 0.5
+    unit: dl
+  "\xE6blecidereddike":
+    amount: 2.0
+    unit: dl
+navn: "Syltede r\xF8dl\xF8g"
+placering: nem mad / veggie

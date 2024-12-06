@@ -1,0 +1,67 @@
+antal: 4
+ingredienser:
+  aubergine:
+    amount: 1.0
+    unit: stk
+  bladselleri:
+    amount: 2.0
+    unit: stk
+  champignon:
+    amount: 200.0
+    unit: g
+  "fenikkelfr\xF8":
+    amount: 1.0
+    unit: tsk
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: dl
+  gulerod:
+    amount: 2.0
+    unit: stk
+  hakket tomat:
+    amount: 1.0
+    unit: ds
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  kartofler:
+    amount: 1.0
+    unit: kg
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 2.0
+    unit: spsk
+  rasp:
+    amount: 2.0
+    unit: spsk
+  "r\xF8de linser":
+    amount: 100.0
+    unit: g
+  "r\xF8get paprika":
+    amount: 1.0
+    unit: tsk
+  "sm\xF8r":
+    amount: 50.0
+    unit: g
+  "solt\xF8rrede tomater i olie":
+    amount: 30.0
+    unit: g
+  squash:
+    amount: 1.0
+    unit: stk
+  "s\xF8dm\xE6lk":
+    amount: 1.0
+    unit: dl
+  tomatpure:
+    amount: 100.0
+    unit: g
+  "t\xF8rret rosmarin":
+    amount: 1.0
+    unit: tsk
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+navn: Gardeners Pie
+placering: valdemar nem 247

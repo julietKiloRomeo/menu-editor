@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  broccoli:
+    amount: 1.0
+    unit: stk
+  "gr\xE6skarkerner":
+    amount: 1.0
+    unit: dl
+  "gr\xF8ntsagsbouillon":
+    amount: 1.0
+    unit: l
+  honning:
+    amount: 1.0
+    unit: tsk
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  kartofler:
+    amount: 4.0
+    unit: stk
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "piskefl\xF8de":
+    amount: 1.0
+    unit: dl
+  "t\xF8rret timian":
+    amount: 1.0
+    unit: tsk
+  "\xE6ble":
+    amount: 1.0
+    unit: stk
+  "\xE6blecidereddike":
+    amount: 2.0
+    unit: tsk
+navn: Broccolisuppe
+placering: nem/veggie
