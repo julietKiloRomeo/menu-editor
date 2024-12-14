@@ -10,3 +10,5 @@ shopping.pdf
 shopping.md
 projects.code-workspace
 menus.png
+uge_*.yaml
+**/.ipynb_checkpoints/*
