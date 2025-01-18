@@ -1,0 +1,46 @@
+antal: 4
+ingredienser:
+  majskolber:
+    amount: 4.0
+    unit: stk
+  pinjekerner:
+    amount: 50.0
+    unit: g
+  gnocchi:
+    amount: 500.0
+    unit: g
+  kikærter:
+    amount: 1.0
+    unit: dåse
+  rucola:
+    amount: 100.0
+    unit: g
+  cherrytomater:
+    amount: 300.0
+    unit: g
+  avocadoer:
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  smør:
+    amount: 20.0
+    unit: g
+  cremefraiche:
+    amount: 1.0
+    unit: dl
+  basilikum:
+    amount: 2.0
+    unit: håndfulde
+  hvidløg:
+    amount: 1.0
+    unit: fed
+  citron:
+    amount: 1.0
+    unit: stk
+  frisk basilikum:
+    amount: 1.0
+    unit: håndfuld
+navn: Gnocchi sommersalat
+placering: Valde. Nem s. 16

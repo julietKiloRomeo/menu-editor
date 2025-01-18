@@ -1,0 +1,61 @@
+antal: 4
+ingredienser:
+  nudler:
+    amount: 250.0
+    unit: g
+  edamamebønner:
+    amount: 300.0
+    unit: g
+  grøn karrypasta:
+    amount: 2.0
+    unit: spsk
+  ingefær:
+    amount: 20.0
+    unit: g
+  hvidløg:
+    amount: 3.0
+    unit: fed
+  kokosmælk:
+    amount: 400.0
+    unit: ml
+  soja:
+    amount: 1.0
+    unit: spsk
+  peanutbutter:
+    amount: 2.0
+    unit: spsk
+  broccoli:
+    amount: 1.0
+    unit: stk
+  gulerødder:
+    amount: 3.0
+    unit: stk
+  spinat:
+    amount: 200.0
+    unit: g
+  lime:
+    amount: 1.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  æg:
+    amount: 4.0
+    unit: stk
+  sesamolie:
+    amount: 2.0
+    unit: spsk
+  peanuts:
+    amount: 40.0
+    unit: g
+  sesamfrø:
+    amount: 20.0
+    unit: g
+  chiliflager:
+    amount: 1.0
+    unit: tsk
+  koriander:
+    amount: 1.0
+    unit: håndfuld
+navn: Peanutbutterwok med nudler
+placering: Valde. Nem. s. 32

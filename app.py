@@ -1,9 +1,11 @@
 from flask import Flask, render_template, jsonify, request, send_file
+from flask_cors import CORS
 import pathlib
 import yaml
 import json
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 blacklist = [
     "Chokoladetærte med saltkaramel",
