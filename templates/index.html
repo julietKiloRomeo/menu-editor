@@ -263,15 +263,17 @@
 
         function debounce(func, wait) {
             let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
+            return function(...args) {
                 clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+                timeout = setTimeout(() => {
+                    timeout = null;
+                    func.apply(this, args);
+                }, wait);
             };
         }
+
+
+        
         
         function showToast(message, duration = 3000) {
             toast.textContent = message;
@@ -411,20 +413,59 @@
                 return;
             }
 
-            fetch(`/search_recipes?query=${encodeURIComponent(searchTerm)}`)
-                .then(response => response.json())
-                .then(data => {
+            // Add timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            const url = `/search_recipes?query=${encodeURIComponent(searchTerm)}&_=${timestamp}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && Array.isArray(data.recipes)) {
                     searchResults = data.recipes;
                     updateButtonsWithRecipes(searchResults);
-                })
-                .catch(error => {
-                    console.error('Error searching recipes:', error);
-                    showToast('Error searching recipes. Please try again.');
-                });
+                } else {
+                    console.error('Invalid response format:', data);
+                    showToast('Error: Invalid response format');
+                }
+            })
+            .catch(error => {
+                console.error('Error searching recipes:', error);
+                showToast('Error searching recipes. Please try again.');
+            });
         }, 300);
         
         spinButton.addEventListener('click', spin);
-        searchInput.addEventListener('input', (e) => searchRecipes(e.target.value));
+        searchInput.addEventListener('input', handleSearchEvent);
+
+        // Add touch event handlers for mobile browsers
+        searchInput.addEventListener('touchstart', function(e) {
+            // Don't prevent default here as it might interfere with input focus
+            e.stopPropagation();
+        });
+
+        searchInput.addEventListener('touchend', function(e) {
+            // Don't prevent default here as it might interfere with input focus
+            e.stopPropagation();
+        });
+
+        function handleSearchEvent(e) {
+            // Remove preventDefault - we want normal input behavior
+            const searchTerm = e.target.value;
+            searchRecipes(searchTerm);
+        }
+
         
         recipeButtons.forEach(button => {
             button.addEventListener('click', () => {
