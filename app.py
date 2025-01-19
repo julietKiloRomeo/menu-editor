@@ -1,11 +1,23 @@
-from flask import Flask, render_template, jsonify, request, send_file
-from flask_cors import CORS
+import datetime
+import subprocess
+import parser
 import pathlib
 import yaml
 import json
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+from flask import Flask, render_template, jsonify, request, send_file
+from fuzzywuzzy import fuzz
+
+#from dotenv import load_dotenv
+
+# Load environment variables
+#load_dotenv()
+
+app = Flask(__name__, 
+    static_url_path='', 
+    static_folder='static',
+    template_folder='templates')
+
 
 blacklist = [
     "Chokoladetærte med saltkaramel",
@@ -58,10 +70,6 @@ def add_standard_items(menu_recipes):
 def index():
     return render_template('index.html', recipes=json.dumps(list(recipes.keys())))
 
-
-from fuzzywuzzy import fuzz
-import json
-import yaml
 
 @app.route('/search_recipes', methods=['GET'])
 def search_recipes():
@@ -129,7 +137,6 @@ def generate_menu():
     return send_file("shopping.pdf", as_attachment=True)
 
 
-import datetime
 
 def save_menu(menu_dict):
     s = yaml.dump(menu_dict)
@@ -163,8 +170,6 @@ class MenuText():
     def __repr__(self):
         return self.__str__()
 
-import subprocess
-import parser
 
 def write_pdf(recipe_file):
     menu_text = MenuText()
@@ -178,9 +183,3 @@ def write_pdf(recipe_file):
         '--pdf-engine=xelatex', '-o', 'shopping.pdf'
     ])
 
-
-
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
