@@ -18,7 +18,7 @@ ingredienser:
   cherrytomater:
     amount: 300.0
     unit: g
-  avocadoer:
+  avocado:
     amount: 2.0
     unit: stk
   olivenolie:
@@ -27,10 +27,10 @@ ingredienser:
   smør:
     amount: 20.0
     unit: g
-  cremefraiche:
+  creme fraiche:
     amount: 1.0
     unit: dl
-  basilikum:
+  frisk basilikum:
     amount: 2.0
     unit: håndfulde
   hvidløg:
