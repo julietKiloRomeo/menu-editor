@@ -6,6 +6,9 @@ ingredienser:
   broccoli:
     amount: 1.0
     unit: bundt
+  frisk basilikum:
+    amount: 1.0
+    unit: bundt
   "madlavningsfl\xF8de":
     amount: 250.0
     unit: ml
