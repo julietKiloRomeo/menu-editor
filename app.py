@@ -4,6 +4,7 @@ import parser
 import pathlib
 import yaml
 import json
+import os
 
 from flask import Flask, render_template, jsonify, request, send_file
 from fuzzywuzzy import fuzz
@@ -17,6 +18,10 @@ app = Flask(__name__,
     static_url_path='', 
     static_folder='static',
     template_folder='templates')
+
+
+# Add this configuration
+app.config['APPLICATION_ROOT'] = os.environ.get('APP_PREFIX', '/')
 
 
 blacklist = [
