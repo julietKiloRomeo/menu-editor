@@ -1,36 +1,17 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12
-
-# Install system dependencies including TeX Live, Pandoc, and fonts
-RUN apt-get update && apt-get install -y \
-    pandoc \
-    texlive-xetex \
-    texlive-fonts-recommended \
-    texlive-fonts-extra \
-    fonts-dejavu \
-    wget \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download and install Montserrat font from GitHub
-RUN wget -q https://github.com/JulietaUla/Montserrat/archive/refs/heads/master.zip -O montserrat.zip && \
-    unzip -q montserrat.zip -d /tmp && \
-    mkdir -p /usr/local/share/fonts/montserrat && \
-    cp /tmp/Montserrat-master/fonts/ttf/*.ttf /usr/local/share/fonts/montserrat/ && \
-    rm -rf /tmp/Montserrat-master montserrat.zip && \
-    fc-cache -f
+FROM python:3.12-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Install Poetry
-RUN pip install uv
+RUN pip install --no-cache-dir uv
 
 # Copy the pyproject.toml and poetry.lock files to the container
-COPY pyproject.toml /app/
+COPY pyproject.toml poetry.lock* /app/
 
 # Install the dependencies
-RUN uv sync
+RUN uv sync --system
 
 # Copy the rest of the application code to the container
 COPY . /app
@@ -39,7 +20,7 @@ COPY . /app
 EXPOSE 5000
 
 # Define environment variable
-ENV FLASK_APP=app.py
+ENV PYTHONUNBUFFERED=1
 
 # Run the application
-CMD ["uv", "run", "flask", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:application",  "--log-level",  "debug", "--error-logfile", "-", "--access-logfile", "-"]

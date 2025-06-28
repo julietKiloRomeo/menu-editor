@@ -179,35 +179,66 @@ const api = {
         }
 
         utils.showToast('Generating PDF...');
+        const container = document.getElementById('pdfPreview');
+        container.classList.add("pdf");
 
         try {
             const response = await fetch('/generate_menu', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ menu_data: menuData })
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (!response.ok) throw new Error('Bad response');
+
+            const { markdown } = await response.json();
+
+            // Split markdown at the "## Shopping" header
+            let [menuPart, shoppingPart] = markdown.split(/^#\s+Shopping/m);
+
+            if (!shoppingPart) {
+            // fallback: maybe markdown didn't contain "## Shopping"
+            container.innerHTML = marked.parse(markdown);
+            } else {
+            container.innerHTML = `
+                <div class="section">
+                ${marked.parse(menuPart || '')}
+                </div>
+                <div class="page-break"></div>
+                <div class="section">
+                ${marked.parse("## Shopping" + shoppingPart)}
+                </div>
+            `;
             }
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'shopping.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            utils.showToast('PDF downloaded successfully!');
-        } catch (error) {
-            console.error('Error generating menu:', error);
-            utils.showToast('Error generating menu. Please try again.');
+
+            // Show container
+            document.getElementById('pdfPreviewWrapper').style.display = 'block';
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            console.log(container.innerHTML)
+
+            await html2pdf()
+            .set({
+                margin: 10,
+                filename: 'shopping.pdf',
+                html2canvas: { scale: 2 },
+                pagebreak: { mode: ['css', 'legacy'] },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            })
+            .from(container)
+            .save();
+
+            utils.showToast('PDF downloaded!');
+        } catch (err) {
+            console.error('PDF generation failed:', err);
+            utils.showToast('PDF generation failed.');
+        } finally {
+            document.getElementById('pdfPreviewWrapper').style.display = 'none';
         }
-    }
+}
+
+
 };
 
 // Event handlers

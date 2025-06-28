@@ -5,6 +5,7 @@ import pathlib
 import yaml
 import json
 import os
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from flask import Flask, render_template, jsonify, request, send_file
 from fuzzywuzzy import fuzz
@@ -22,6 +23,10 @@ app = Flask(__name__,
 
 # Add this configuration
 app.config['APPLICATION_ROOT'] = os.environ.get('APP_PREFIX', '/')
+
+
+application = DispatcherMiddleware(None, {"/menu": app})
+
 
 
 blacklist = [
@@ -137,9 +142,12 @@ def generate_menu():
 
     add_standard_items(menu_recipes)
     menu_path = save_menu(menu_recipes)
-    write_pdf(menu_path)
 
-    return send_file("shopping.pdf", as_attachment=True)
+    # Render Markdown
+    menu_text = MenuText()
+    parser.write_menu(menu_path, printer=menu_text.add)
+
+    return jsonify({"markdown": str(menu_text)})
 
 
 
@@ -176,15 +184,15 @@ class MenuText():
         return self.__str__()
 
 
-def write_pdf(recipe_file):
-    menu_text = MenuText()
-    parser.write_menu(recipe_file, printer=menu_text.add)
+# def write_pdf(recipe_file):
+#     menu_text = MenuText()
+#     parser.write_menu(recipe_file, printer=menu_text.add)
 
-    # Run pandoc to convert shopping.md to shopping.pdf
-    subprocess.run([
-        'pandoc', 'shopping.md', '-f', 'gfm', '-H', 'chapter_break.tex',
-        '-V', 'geometry:a4paper', '-V', 'geometry:margin=4cm',
-        '-V', 'mainfont=Montserrat', '-V', 'monofont=DejaVu Sans Mono',
-        '--pdf-engine=xelatex', '-o', 'shopping.pdf'
-    ])
+#     # Run pandoc to convert shopping.md to shopping.pdf
+#     subprocess.run([
+#         'pandoc', 'shopping.md', '-f', 'gfm', '-H', 'chapter_break.tex',
+#         '-V', 'geometry:a4paper', '-V', 'geometry:margin=4cm',
+#         '-V', 'mainfont=Montserrat', '-V', 'monofont=DejaVu Sans Mono',
+#         '--pdf-engine=xelatex', '-o', 'shopping.pdf'
+#     ])
 

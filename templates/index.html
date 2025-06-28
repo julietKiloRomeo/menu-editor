@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Randomizer</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -42,6 +44,15 @@
         </button>
     </div>
 
+    <!-- <div id="pdfPreviewWrapper" style="position: absolute; left: -9999px;"> -->
+    <div id="pdfPreviewWrapper" style="display: none;">
+        <div id="pdfPreview" class="pdf">
+            <!-- content will be injected here -->
+        </div>
+    </div>
+
+
+
     <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
     <!-- Load data first -->
@@ -50,6 +61,6 @@
     </script>
     
     <!-- Load app logic -->
-    <script src="js/app.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
