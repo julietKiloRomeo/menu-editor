@@ -1,17 +1,14 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12-slim
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Install Poetry
-RUN pip install --no-cache-dir uv
-
 # Copy the pyproject.toml and poetry.lock files to the container
-COPY pyproject.toml poetry.lock* /app/
+COPY pyproject.toml /app/
 
 # Install the dependencies
-RUN uv sync --system
+RUN uv sync
 
 # Copy the rest of the application code to the container
 COPY . /app
@@ -23,4 +20,4 @@ EXPOSE 5000
 ENV PYTHONUNBUFFERED=1
 
 # Run the application
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:application",  "--log-level",  "debug", "--error-logfile", "-", "--access-logfile", "-"]
+CMD ["uv", "run", "gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app",  "--log-level",  "debug", "--error-logfile", "-", "--access-logfile", "-"]

@@ -21,14 +21,6 @@ app = Flask(__name__,
     template_folder='templates')
 
 
-# Add this configuration
-app.config['APPLICATION_ROOT'] = os.environ.get('APP_PREFIX', '/')
-
-
-application = DispatcherMiddleware(None, {"/menu": app})
-
-
-
 blacklist = [
     "Chokoladetærte med saltkaramel",
     "Peberkager",
@@ -79,6 +71,10 @@ def add_standard_items(menu_recipes):
 @app.route('/')
 def index():
     return render_template('index.html', recipes=json.dumps(list(recipes.keys())))
+
+@app.route('/debug')
+def debug():
+    return "hello world"
 
 
 @app.route('/search_recipes', methods=['GET'])
@@ -196,3 +192,5 @@ class MenuText():
 #         '--pdf-engine=xelatex', '-o', 'shopping.pdf'
 #     ])
 
+if __name__ == "__main__":
+    app.run(host="::", port=5000, debug=True)

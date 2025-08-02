@@ -138,7 +138,7 @@ const recipeManager = {
 const api = {
     async searchRecipes(searchTerm) {
         const timestamp = new Date().getTime();
-        const url = `/search_recipes?query=${encodeURIComponent(searchTerm)}&_=${timestamp}`;
+        const url = `search_recipes?query=${encodeURIComponent(searchTerm)}&_=${timestamp}`;
 
         try {
             const response = await fetch(url, {
@@ -183,7 +183,7 @@ const api = {
         container.classList.add("pdf");
 
         try {
-            const response = await fetch('/generate_menu', {
+            const response = await fetch('generate_menu', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ menu_data: menuData })

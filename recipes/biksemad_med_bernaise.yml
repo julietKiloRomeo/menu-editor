@@ -1,0 +1,40 @@
+antal: 4
+ingredienser:
+  citron:
+    amount: 1.0
+    unit: stk
+  cremefraiche 38%:
+    amount: 250.0
+    unit: ml
+  "fenikkelfr\xF8":
+    amount: 0.5
+    unit: tsk
+  frisk estragon:
+    amount: 1.0
+    unit: bundt
+  "guler\xF8dder":
+    amount: 3.0
+    unit: stk
+  kartofler:
+    amount: 1.0
+    unit: kg
+  "l\xF8g":
+    amount: 2.0
+    unit: stk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  porre:
+    amount: 2.0
+    unit: stk
+  "skalottel\xF8g":
+    amount: 2.0
+    unit: stk
+  sukker:
+    amount: 1.0
+    unit: tsk
+  "\xE6g":
+    amount: 4.0
+    unit: stk
+navn: Biksemad med bernaise
+placering: Valde nem p.286
