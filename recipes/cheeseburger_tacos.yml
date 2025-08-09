@@ -1,0 +1,49 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 1.0
+    unit: stk
+  cheddar:
+    amount: 100.0
+    unit: g
+  cornichoner:
+    amount: 100.0
+    unit: g
+  cremefraiche:
+    amount: 1.0
+    unit: dl
+  hakket okse:
+    amount: 400.0
+    unit: g
+  "hvidl\xF8g":
+    amount: 1.0
+    unit: fed
+  icebergsalat:
+    amount: 1.0
+    unit: stk
+  ketchup:
+    amount: 1.0
+    unit: tsk
+  mayonnaise:
+    amount: 50.0
+    unit: g
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  paprika:
+    amount: 0.5
+    unit: tsk
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  "s\xF8d sennep":
+    amount: 1.0
+    unit: spsk
+  tomat:
+    amount: 4.0
+    unit: stk
+  tortilla:
+    amount: 4.0
+    unit: stk
+navn: Cheeseburger Tacos
+placering: valde nem p. 125
