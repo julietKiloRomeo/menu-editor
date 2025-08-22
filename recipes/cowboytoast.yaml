@@ -1,0 +1,47 @@
+antal: 4
+ingredienser:
+  løg:
+    amount: 2.0
+    unit: stk
+  smør:
+    amount: 30.0
+    unit: g
+  hakket oksekød:
+    amount: 400.0
+    unit: g
+  worcestershire sauce:
+    amount: 1.0
+    unit: spsk
+  tomatpuré:
+    amount: 1.0
+    unit: spsk
+  dijonsennep:
+    amount: 1.0
+    unit: tsk
+  røget paprika:
+    amount: 1.0
+    unit: tsk
+  grøntsagsbouillon:
+    amount: 0.5
+    unit: dl
+  majsstivelse:
+    amount: 1.0
+    unit: tsk
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  toastbrød:
+    amount: 8.0
+    unit: skiver
+  sød chilisauce:
+    amount: 4.0
+    unit: spsk
+  cheddar, i skiver:
+    amount: 100.0
+    unit: g
+  bredbladet persille:
+    amount: 1.0
+    unit: spsk
+
+navn: Cowboytoast
+placering: Valdemar Nem s. 225

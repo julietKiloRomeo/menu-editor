@@ -1,0 +1,56 @@
+antal: 4
+ingredienser:
+  hakket svinekød:
+    amount: 400.0
+    unit: g
+  hvedemel:
+    amount: 2.0
+    unit: spsk
+  æg:
+    amount: 1.0
+    unit: stk
+  løg:
+    amount: 2.0
+    unit: stk
+  hvidløg:
+    amount: 3.0
+    unit: fed
+  tørret timian:
+    amount: 1.5
+    unit: tsk
+  fennikelfrø:
+    amount: 1.0
+    unit: tsk
+  tørret rosmarin:
+    amount: 1.5
+    unit: tsk
+  champignoner:
+    amount: 300.0
+    unit: g
+  majsstivelse:
+    amount: 1.0
+    unit: spsk
+  grøntsagsbouillon:
+    amount: 2.0
+    unit: dl
+  piskefløde:
+    amount: 2.0
+    unit: dl
+  hvidvin:
+    amount: 1.0
+    unit: dl
+  gnocchi:
+    amount: 350.0
+    unit: g
+  øko citron:
+    amount: 0.5
+    unit: stk
+  persille:
+    amount: 1.0
+    unit: håndfuld
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+
+navn: Kødboller i svampesauce med gnocchi
+placering: Valdemar Nem s. 214

@@ -1,0 +1,46 @@
+antal: 4
+ingredienser:
+  bredbladet persille:
+    amount: 1.0
+    unit: dl
+  cheddar:
+    amount: 200.0
+    unit: g
+  "guler\xF8dder":
+    amount: 200.0
+    unit: g
+  hakket okse:
+    amount: 400.0
+    unit: g
+  hakket tomat:
+    amount: 1.0
+    unit: "d\xE5se"
+  "hvidl\xF8g":
+    amount: 3.0
+    unit: fed
+  ketchup:
+    amount: 1.0
+    unit: spsk
+  "l\xF8g":
+    amount: 1.0
+    unit: stk
+  macaroni:
+    amount: 400.0
+    unit: g
+  olivenolie:
+    amount: 1.0
+    unit: spsk
+  "r\xF8get paprika":
+    amount: 1.0
+    unit: tsk
+  squash:
+    amount: 250.0
+    unit: g
+  "s\xF8d paprika":
+    amount: 1.0
+    unit: tsk
+  "s\xF8d sennep":
+    amount: 2.0
+    unit: spsk
+navn: One Pot Pasta Cheeseburger
+placering: Valde Nem p.126

@@ -86,6 +86,7 @@ varer:
     citron: frugt
     dild: frugt
     frisk basilikum: frugt
+    basilikum: frugt
     frisk dild: frugt
     frisk ingefær: frugt
     frisk koriander: frugt 
@@ -517,3 +518,52 @@ varer:
     grønne linser: tilbehør
     soya: tilbehør
     kulør: tilbehør
+
+    rejer: køl
+    risoni: tilbehør
+    rosmarin: krydderi
+    rålakridspulver: tilbehør
+    rødvinseddike: tilbehør
+    sesamolie: tilbehør
+    stødt nellike: krydderi
+    syltede_rødløg: tilbehør
+
+    bulgur: tilbehør
+    cayennepeber: krydderi
+    cheddar: køl
+    cornichoner: tilbehør
+    cremefraiche 38%: køl
+    dadel: frugt
+    edamamebønner: grøntsager
+    entrecotes: kød
+    fenikkelfrø: krydderi
+    friske hindbær: frugt
+    grøn karrypasta: tilbehør
+    hampefrø: tilbehør
+    havtorn: frugt
+    hindbærmarmelade: tilbehør
+    hokkaidogræskar: frugt
+    hvidløgspulver: krydderi
+    icebergsalat: grøntsager
+    jalapenos: grøntsager
+    koldrøget laks: køl
+    kylling i tern: kød
+    kørvel: krydderi
+    lakridssirup: tilbehør
+    laks: fisk
+    lammeculotte: kød
+    majskerner: grøntsager
+    mynte: krydderi
+    nachos: tilbehør
+    nakkekotelet: kød
+    nudler: tilbehør
+    pistacienødder: tilbehør
+    sød sennep: tilbehør
+    tabascosauce: tilbehør
+    tun i vand: tilbehør
+    tørrede hindbær: tilbehør
+    tørret abrikos: tilbehør
+    valnødder: tilbehør
+    vanillepulver: tilbehør
+    wienerpølser: køl
+    æggeblomme: køl

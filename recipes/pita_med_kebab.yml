@@ -1,0 +1,79 @@
+antal: 4
+ingredienser:
+  agurk:
+    amount: 1.0
+    unit: stk
+  bredbladet persille:
+    amount: 1.0
+    unit: bundt
+  cayennepeber:
+    amount: 1.0
+    unit: knvsp
+  cherrytomat:
+    amount: 100.0
+    unit: g
+  chiliflager:
+    amount: 1.0
+    unit: knvsps
+  citron:
+    amount: 0.5
+    unit: stk
+  dijonsennep:
+    amount: 0.5
+    unit: tsk
+  entrecotes:
+    amount: 400.0
+    unit: g
+  "gr\xE6sk yoghurt":
+    amount: 2.0
+    unit: dl
+  "hvidl\xF8g":
+    amount: 2.0
+    unit: fed
+  "hvidl\xF8gspulver":
+    amount: 0.5
+    unit: tsk
+  kanel:
+    amount: 1.0
+    unit: knvsp
+  koriander:
+    amount: 1.0
+    unit: tsk
+  olivenolie:
+    amount: 4.0
+    unit: spsk
+  oregano:
+    amount: 1.0
+    unit: tsk
+  paprika:
+    amount: 1.0
+    unit: tsk
+  "pitabr\xF8d":
+    amount: 4.0
+    unit: stk
+  "purl\xF8g":
+    amount: 1.0
+    unit: bundt
+  rosmarin:
+    amount: 0.5
+    unit: tsk
+  "r\xF8dl\xF8g":
+    amount: 1.0
+    unit: stk
+  "r\xF8get paprika":
+    amount: 1.0
+    unit: knvsp
+  salat:
+    amount: 1.0
+    unit: stk
+  spidskommen:
+    amount: 1.0
+    unit: tsk
+  "st\xF8dt nellike":
+    amount: 1.0
+    unit: knvsp
+  sukker:
+    amount: 1.0
+    unit: tsk
+navn: Pita med kebab
+placering: Valde nem p.122

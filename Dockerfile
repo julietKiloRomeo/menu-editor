@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pyproject.toml /app/
 
 # Install the dependencies
-RUN uv sync
+RUN uv sync --no-dev
 
 # Copy the rest of the application code to the container
 COPY . /app
@@ -20,4 +20,4 @@ EXPOSE 5000
 ENV PYTHONUNBUFFERED=1
 
 # Run the application
-CMD ["uv", "run", "gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app",  "--log-level",  "debug", "--error-logfile", "-", "--access-logfile", "-"]
+CMD ["uv", "run", "--no-dev", "gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app",  "--log-level",  "debug", "--error-logfile", "-", "--access-logfile", "-"]
