@@ -1,0 +1,30 @@
+
+Pasta med salvie:
+    - pasta_med_salvie:
+        amount: 4
+        unit: plates
+
+Frittata med courgetter:
+    - frittata:
+        amount: 4
+        unit: plates
+
+Tacosuppe:
+    - taco_suppe:
+        amount: 4
+        unit: plates
+
+Chipotle Bean Burritos:
+    - bean_burritos:
+        amount: 4
+        unit: plates
+
+One pot vegetar:
+    - onepot_vegetar:
+        amount: 4
+        unit: plates
+
+Andet:
+  - standardvarer:
+      amount: 1
+      unit: plate

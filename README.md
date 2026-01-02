@@ -56,11 +56,11 @@ Notes
 - If the frontend dev server runs on another port, keep the Flask API running via `uv run python app.py` and point `VITE_API_BASE` to that origin.
 
 ```bash
-docker build -t menu-app .
-docker run -p 80:5000 menu-app
+podman build -t menu-app .
+podman run -p 80:5000 menu-app
 ```
 
-# Docker GitHub Container Registry (GHCR) Guide
+# Podman + GitHub Container Registry (GHCR) Guide
 
 ## Creating a Personal Access Token (PAT)
 1. Go to GitHub Settings → Developer Settings → Personal Access Tokens
@@ -70,7 +70,7 @@ docker run -p 80:5000 menu-app
    - `read:packages`
    - `delete:packages` (optional)
 4. Save the token securely (e.g., in 1Password)
-5. Note the token name shown in GitHub settings (this will be your username for docker login)
+5. Note the token name shown in GitHub settings (this will be your username for podman login)
 
 ## Pushing Images to GHCR
 
@@ -78,17 +78,17 @@ docker run -p 80:5000 menu-app
 ```bash
 # Replace TOKEN_NAME with the name of your token from GitHub settings
 # Replace YOUR_PAT with your actual PAT
-echo YOUR_PAT | docker login ghcr.io -u TOKEN_NAME --password-stdin
+echo YOUR_PAT | podman login ghcr.io -u TOKEN_NAME --password-stdin
 ```
 
 2. Tag your local image:
 ```bash
-docker tag menu-app:latest ghcr.io/julietkiloromeo/menu-app:latest
+podman tag menu-app:latest ghcr.io/julietkiloromeo/menu-app:latest
 ```
 
 3. Push the image:
 ```bash
-docker push ghcr.io/julietkiloromeo/menu-app:latest
+podman push ghcr.io/julietkiloromeo/menu-app:latest
 ```
 
 ## Pulling Images on a New Machine
@@ -96,12 +96,12 @@ docker push ghcr.io/julietkiloromeo/menu-app:latest
 1. Login to GHCR:
 ```bash
 # Replace TOKEN_NAME and YOUR_PAT as before
-echo YOUR_PAT | docker login ghcr.io -u TOKEN_NAME --password-stdin
+echo YOUR_PAT | podman login ghcr.io -u TOKEN_NAME --password-stdin
 ```
 
 2. Pull the image:
 ```bash
-docker pull ghcr.io/julietkiloromeo/menu-app:latest
+podman pull ghcr.io/julietkiloromeo/menu-app:latest
 ```
 
 ## Troubleshooting

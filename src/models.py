@@ -1,104 +1,89 @@
-import peewee
+from __future__ import annotations
 
-db = peewee.SqliteDatabase('recipes.db')
+import os
+from contextlib import contextmanager
+from typing import Dict, Optional, Any
 
-class Recipe(peewee.Model):
-    """
-    A recipe for a dish, including its name, source, and number of servings.
-
-    Relationships:
-    - One Recipe has many RecipeIngredients.
-    - One Recipe can be part of many MenuItems in different Menus.
-    """
-    name = peewee.CharField(unique=True)
-    source = peewee.CharField()
-
-    class Meta:
-        database = db
+from sqlalchemy import Column
+from sqlalchemy.dialects.sqlite import JSON
+from sqlmodel import Field, Session, SQLModel, create_engine
 
 
-class Category(peewee.Model):
-    """
-    A category that groups similar ingredients together.
-
-    Relationships:
-    - One Category has many Ingredients.
-    """
-    name = peewee.CharField(unique=True)
-
-    class Meta:
-        database = db
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///recipes.db")
 
 
-
-class Ingredient(peewee.Model):
-    """
-    An item that can be bought at a grocery store and used as an ingredient in recipes.
-    Includes its name, and metadata like placement in the supermarket and in our kitchen.
-
-    Relationships:
-    - One Ingredient is referred to by many RecipeIngredients.
-    - One Ingredient belongs to one Category.
-    """
-    name = peewee.CharField(unique=True)
-    category = peewee.ForeignKeyField(Category, backref='ingredients')
-    supermarket_placement = peewee.CharField()
-    kitchen_placement = peewee.CharField()
-
-    class Meta:
-        database = db
+def _sqlite_kwargs(url: str) -> Dict[str, Dict[str, bool]]:
+    if url.startswith("sqlite"):
+        return {"connect_args": {"check_same_thread": False}}
+    return {}
 
 
-
-class RecipeIngredient(peewee.Model):
-    """
-    An ingredient used in a recipe, including its quantity and unit.
-
-    Relationships:
-    - One RecipeIngredient belongs to one Recipe.
-    - One RecipeIngredient refers to one Ingredient.
-    """
-    recipe = peewee.ForeignKeyField(Recipe, backref='recipe_ingredients')
-    ingredient = peewee.ForeignKeyField(Ingredient)
-    quantity = peewee.FloatField()
-    unit = peewee.CharField()
-
-    class Meta:
-        database = db
+engine = create_engine(DATABASE_URL, **_sqlite_kwargs(DATABASE_URL))
 
 
+class RecipeBase(SQLModel):
+    slug: str = Field(index=True, unique=True)
+    navn: str = Field(index=True, unique=True)
+    placering: Optional[str] = None
+    antal: int = Field(default=4, ge=0)
+    ingredienser: Dict[str, Dict[str, Any]] = Field(
+        default_factory=dict,
+        sa_column=Column(JSON),
+    )
+    extras: Dict[str, Dict[str, Any]] = Field(
+        default_factory=dict,
+        sa_column=Column(JSON),
+    )
 
 
+class Recipe(RecipeBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    is_blacklisted: bool = Field(default=False, index=True)
+    is_whitelisted: bool = Field(default=False, index=True)
 
 
-class Menu(peewee.Model):
-    """
-    A menu consisting of several MenuItems (recipes with a specified number of servings).
-
-    Relationships:
-    - One Menu has many MenuItems.
-    """
-    name = peewee.CharField(unique=True)
-
-    class Meta:
-        database = db
+class CategoryConfig(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    priority: int = Field(default=0)
 
 
-class MenuItem(peewee.Model):
-    """
-    A recipe with a specified number of servings that is part of a menu.
-
-    Relationships:
-    - One MenuItem belongs to one Menu.
-    - One MenuItem refers to one Recipe.
-    """
-    menu = peewee.ForeignKeyField(Menu, backref='menu_items')
-    recipe = peewee.ForeignKeyField(Recipe)
-    servings = peewee.IntegerField()
-
-    class Meta:
-        database = db
+class IngredientConfig(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    category_id: Optional[int] = Field(default=None, foreign_key="categoryconfig.id")
 
 
-if __name__ == "__main__":
-    db.create_tables([Recipe, Category, Ingredient, RecipeIngredient, Menu, MenuItem])
+class StapleItem(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    amount: float = Field(default=1.0)
+    unit: str = Field(default="stk")
+
+
+class AppSetting(SQLModel, table=True):
+    key: str = Field(primary_key=True)
+    value: Optional[str] = None
+
+
+def init_db() -> None:
+    SQLModel.metadata.create_all(engine)
+
+
+@contextmanager
+def get_session() -> Session:
+    with Session(engine) as session:
+        yield session
+
+
+__all__ = [
+    "CategoryConfig",
+    "IngredientConfig",
+    "StapleItem",
+    "AppSetting",
+    "Recipe",
+    "RecipeBase",
+    "engine",
+    "init_db",
+    "get_session",
+]

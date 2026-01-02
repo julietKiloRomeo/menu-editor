@@ -9,49 +9,450 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="controls">
-            <div class="search-container">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    class="search-input" 
-                    placeholder="Search recipes..." 
-                    autocomplete="off"
-                    aria-label="Search recipes"
-                >
+    <div class="app-shell">
+        <header class="top-nav" role="banner">
+            <div class="brand">
+                <h1>Menu Editor</h1>
             </div>
-            <button id="spinButton" class="spin-button" aria-label="Randomize recipes">
-                Spin!
-            </button>
-        </div>
+            <nav class="nav-links" aria-label="Main">
+                <button type="button" class="nav-button active" data-view="planner">Menu Planner</button>
+                <button type="button" class="nav-button" data-view="add">Add Recipe</button>
+                <button type="button" class="nav-button" data-view="edit">Edit Recipes</button>
+                <button type="button" class="nav-button" data-view="config">Config</button>
+            </nav>
+        </header>
 
-        <div class="recipe-grid" id="recipeGrid">
-            <button class="recipe-button" aria-label="Recipe slot 1"></button>
-            <button class="recipe-button" aria-label="Recipe slot 2"></button>
-            <button class="recipe-button" aria-label="Recipe slot 3"></button>
-            <button class="recipe-button" aria-label="Recipe slot 4"></button>
-            <button class="recipe-button" aria-label="Recipe slot 5"></button>
-        </div>
+        <main class="view-container">
+            <section id="menuPlannerView" class="view-section active-view" aria-labelledby="plannerHeading">
+                <div class="container">
+                    <h2 id="plannerHeading" class="sr-only">Weekly Menu Planner</h2>
+                    <div class="controls">
+                        <div class="search-container">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="search-input" 
+                                placeholder="Search recipes..." 
+                                autocomplete="off"
+                                aria-label="Search recipes"
+                            >
+                        </div>
+                        <button id="spinButton" class="spin-button" aria-label="Randomize recipes">
+                            Spin!
+                        </button>
+                    </div>
 
-        <div class="chosen-recipes">
-            <h2>Chosen Recipes</h2>
-            <ul id="chosenList" aria-live="polite"></ul>
-        </div>
+                    <div class="recipe-grid" id="recipeGrid">
+                        <button class="recipe-button" aria-label="Recipe slot 1"></button>
+                        <button class="recipe-button" aria-label="Recipe slot 2"></button>
+                        <button class="recipe-button" aria-label="Recipe slot 3"></button>
+                        <button class="recipe-button" aria-label="Recipe slot 4"></button>
+                        <button class="recipe-button" aria-label="Recipe slot 5"></button>
+                        <button class="recipe-button" aria-label="Recipe slot 6"></button>
+                    </div>
 
-        <button id="makeMenuButton" class="make-menu-button">
-            Make Menu
-        </button>
+                    <div class="chosen-recipes">
+                        <h2>Chosen Recipes</h2>
+                        <ul id="chosenList" aria-live="polite"></ul>
+                    </div>
+
+                    <button id="makeMenuButton" class="make-menu-button">
+                        Make Menu
+                    </button>
+                </div>
+
+                <div id="pdfPreviewWrapper" style="display: none;">
+                    <div id="pdfPreview" class="pdf">
+                        <!-- content will be injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="addRecipeView" class="view-section" aria-labelledby="addRecipeHeading">
+                <div class="container">
+                    <div class="form-card add-recipe-card">
+                        <header class="add-recipe-header">
+                            <h2 id="addRecipeHeading">Capture A Recipe</h2>
+                            <p class="section-intro">Shoot → auto-fill → tweak → save.</p>
+                        </header>
+
+                        <div class="add-recipe-layout">
+                            <section class="capture-panel" aria-labelledby="photoCaptureHeading">
+                                <div class="step-header">
+                                    <span class="step-badge" aria-hidden="true">1</span>
+                                    <div>
+                                        <h3 id="photoCaptureHeading">Snap or upload</h3>
+                                        <p class="step-caption">One photo is all it takes.</p>
+                                    </div>
+                                </div>
+
+                                <input type="file" id="recipeImageInput" class="sr-only" accept="image/*" capture="environment">
+                                <div id="photoDropzone" class="photo-dropzone" role="button" tabindex="0">
+                                    <p class="dropzone-title">Drop a recipe photo</p>
+                                    <p class="dropzone-subtitle">or <button type="button" id="choosePhotoButton" class="link-button">browse files</button></p>
+                                    <p id="photoFilename" class="dropzone-file">No photo selected yet</p>
+                                </div>
+
+                                <div class="capture-actions">
+                                    <button type="button" id="openCameraButton" class="secondary-button">Use camera</button>
+                                </div>
+
+                                <section id="cameraSection" class="camera-section hidden" aria-live="polite">
+                                    <video id="cameraPreview" class="camera-preview" autoplay playsinline muted></video>
+                                    <canvas id="cameraCanvas" class="camera-canvas hidden"></canvas>
+                                    <div class="camera-controls">
+                                        <button type="button" id="capturePhotoButton" class="primary-button">Capture photo</button>
+                                        <button type="button" id="retakePhotoButton" class="secondary-button hidden">Retake</button>
+                                        <button type="button" id="refocusCameraButton" class="secondary-button">Refocus</button>
+                                        <button type="button" id="closeCameraButton" class="secondary-button">Close camera</button>
+                                    </div>
+                                </section>
+
+                                <div class="photo-preview-wrapper">
+                                    <div id="photoPreview" class="photo-preview hidden">
+                                        <img id="photoPreviewImage" alt="Recipe photo preview">
+                                        <button type="button" id="expandPreviewButton" class="preview-zoom-button hidden">View full size</button>
+                                    </div>
+                                </div>
+
+                                <div id="photoPreviewModal" class="photo-modal hidden" role="dialog" aria-modal="true" aria-labelledby="photoModalTitle">
+                                    <div class="photo-modal-backdrop"></div>
+                                    <div class="photo-modal-content">
+                                        <div class="photo-modal-header">
+                                            <h3 id="photoModalTitle">Photo preview</h3>
+                                            <button type="button" id="closePhotoModalButton" class="secondary-button">Close</button>
+                                        </div>
+                                        <img id="photoModalImage" alt="Large recipe preview">
+                                    </div>
+                                </div>
+
+                                <label class="form-field">
+                                    <span>Notes (optional)</span>
+                                    <textarea id="imagePrompt" rows="2" placeholder="Substitutions, unclear text, etc."></textarea>
+                                </label>
+
+                                <div id="imageStatus" class="capture-status form-status" role="status" aria-live="polite"></div>
+
+                                <section id="yamlPreviewContainer" class="yaml-preview hidden" aria-live="polite">
+                                    <h3>Model output</h3>
+                                    <pre id="yamlPreview"></pre>
+                                </section>
+                            </section>
+
+                            <section class="recipe-panel" aria-labelledby="reviewRecipeHeading">
+                                <div class="step-header">
+                                    <span class="step-badge" aria-hidden="true">2</span>
+                                    <div>
+                                        <h3 id="reviewRecipeHeading">Review & save</h3>
+                                        <p class="step-caption">Adjust any fields before saving.</p>
+                                    </div>
+                                </div>
+
+                                <form id="recipeForm" class="recipe-form" novalidate>
+                                    <div class="form-grid">
+                                        <label class="form-field">
+                                            <span>Navn</span>
+                                            <input type="text" id="recipeName" name="navn" required placeholder="Fx 'Gnocchi sommersalat'">
+                                        </label>
+                                        <label class="form-field">
+                                            <span>Placering</span>
+                                            <input type="text" id="recipePlacement" name="placering" placeholder="Fx 'Valde. Nem s. 16'">
+                                        </label>
+                                        <label class="form-field">
+                                            <span>Antal portioner (0 = fryser)</span>
+                                            <input type="number" id="recipeServings" name="antal" min="0" step="1" value="4" required>
+                                        </label>
+                                    </div>
+
+                                    <div class="ingredients-section">
+                                        <div class="ingredients-header">
+                                            <h3>Ingredienser</h3>
+                                            <button type="button" id="addIngredientButton" class="secondary-button">+ Ingredient</button>
+                                        </div>
+                                        <div id="ingredientsList" class="ingredients-list" aria-live="polite"></div>
+                                    </div>
+
+                                    <div class="ingredients-section">
+                                        <div class="ingredients-header">
+                                            <div>
+                                                <h3>Extras</h3>
+                                                <p class="section-hint">Fresh add-ons when reheating.</p>
+                                            </div>
+                                            <button type="button" id="addExtraButton" class="secondary-button">+ Extra</button>
+                                        </div>
+                                        <div id="extrasList" class="ingredients-list" aria-live="polite"></div>
+                                    </div>
+
+                                    <div id="recipeFormStatus" class="form-status" role="status" aria-live="polite"></div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="primary-button">Save Recipe</button>
+                                    </div>
+                                </form>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="editRecipeView" class="view-section" aria-labelledby="editRecipeHeading">
+                <div class="container">
+                    <div class="form-card">
+                        <h2 id="editRecipeHeading">Edit Existing Recipes</h2>
+                        <p class="section-intro">Select a recipe to review and update its details.</p>
+
+                        <div class="editor-controls">
+                            <label class="form-field">
+                                <span>Search</span>
+                                <input type="search" id="editRecipeSearch" placeholder="Filter recipes...">
+                            </label>
+                            <label class="form-field">
+                                <span>Recipes</span>
+                                <select id="editRecipeSelect"></select>
+                            </label>
+                        </div>
+
+                        <form id="editRecipeForm" class="recipe-form" novalidate>
+                            <div class="form-grid">
+                                <label class="form-field">
+                                    <span>Navn</span>
+                                    <input type="text" id="editRecipeName" required>
+                                </label>
+                                <label class="form-field">
+                                    <span>Placering</span>
+                                    <input type="text" id="editRecipePlacement">
+                                </label>
+                                <label class="form-field">
+                                    <span>Antal portioner (0 = fryser)</span>
+                                    <input type="number" id="editRecipeServings" min="0" step="1" required>
+                                </label>
+                                <label class="form-field">
+                                    <span>Slug</span>
+                                    <input type="text" id="editRecipeSlug" placeholder="Auto-generated if left blank">
+                                </label>
+                            </div>
+
+                            <div class="toggle-row">
+                                <label class="toggle-field">
+                                    <input type="checkbox" id="editRecipeBlacklist">
+                                    <span>Blacklist</span>
+                                </label>
+                                <label class="toggle-field">
+                                    <input type="checkbox" id="editRecipeWhitelist">
+                                    <span>Whitelist (always available)</span>
+                                </label>
+                            </div>
+
+                            <div class="ingredients-section">
+                                <div class="ingredients-header">
+                                    <h3>Ingredienser</h3>
+                                    <button type="button" id="editAddIngredientButton" class="secondary-button">+ Add ingredient</button>
+                                </div>
+                                <div id="editIngredientsList" class="ingredients-list" aria-live="polite"></div>
+                            </div>
+
+                            <div class="ingredients-section">
+                                <div class="ingredients-header">
+                                    <h3>Extras</h3>
+                                    <button type="button" id="editAddExtraButton" class="secondary-button">+ Add extra</button>
+                                </div>
+                                <div id="editExtrasList" class="ingredients-list" aria-live="polite"></div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="primary-button">Save Changes</button>
+                                <button type="button" id="editRecipeResetButton" class="secondary-button">Reset</button>
+                            </div>
+                        </form>
+
+                        <div id="editRecipeStatus" class="form-status" role="status" aria-live="polite"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="configView" class="view-section" aria-labelledby="configHeading">
+                <div class="container">
+                    <div class="form-card">
+                        <h2 id="configHeading">Manage Shopping Config</h2>
+                        <p class="section-intro">Control categories and ingredient placements used for shopping lists.</p>
+
+                        <section class="config-section" aria-labelledby="categoriesHeading">
+                            <div class="config-section-header">
+                                <h3 id="categoriesHeading">Categories</h3>
+                                <p>Categories are ordered by priority when building shopping lists.</p>
+                            </div>
+
+                            <form id="categoryForm" class="inline-form">
+                                <label class="form-field">
+                                    <span>Name</span>
+                                    <input type="text" id="categoryNameInput" required>
+                                </label>
+                                <label class="form-field">
+                                    <span>Priority</span>
+                                    <input type="number" id="categoryPriorityInput" value="0" step="1">
+                                </label>
+                                <button type="submit" class="secondary-button">Add category</button>
+                            </form>
+
+                            <div class="table-wrapper">
+                                <table id="categoriesTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Priority</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="config-section" aria-labelledby="ingredientsHeading">
+                            <div class="config-section-header">
+                                <h3 id="ingredientsHeading">Ingredient placement</h3>
+                                <p>Assign ingredients to categories to keep shopping organised.</p>
+                            </div>
+
+                            <form id="ingredientFilterForm" class="inline-form" aria-label="Filter ingredients">
+                                <label class="form-field">
+                                    <span>Filter by category</span>
+                                    <select id="ingredientCategoryFilter">
+                                        <option value="all">All</option>
+                                        <option value="unknown">Unknown</option>
+                                    </select>
+                                </label>
+                                <label class="form-field">
+                                    <span>Search ingredient</span>
+                                    <input type="text" id="ingredientSearchInput" placeholder="e.g. tomat">
+                                </label>
+                            </form>
+
+                            <form id="ingredientForm" class="inline-form">
+                                <label class="form-field">
+                                    <span>Ingredient</span>
+                                    <input type="text" id="ingredientNameInput" required>
+                                </label>
+                                <label class="form-field">
+                                    <span>Category</span>
+                                    <select id="ingredientCategorySelect" required></select>
+                                </label>
+                                <button type="submit" class="secondary-button">Add mapping</button>
+                            </form>
+
+                            <div class="table-wrapper">
+                                <table id="ingredientsTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Ingredient</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="config-section" aria-labelledby="staplesHeading">
+                            <div class="config-section-header">
+                                <h3 id="staplesHeading">Staples</h3>
+                                <p>Manage the recurring items you always add to the shopping list.</p>
+                            </div>
+
+                            <div class="staple-label-row">
+                                <label class="form-field">
+                                    <span>Section name</span>
+                                    <select id="stapleLabelSelect"></select>
+                                </label>
+                                <label class="form-field hidden" id="stapleCustomLabelField">
+                                    <span>Custom name</span>
+                                    <input type="text" id="stapleCustomLabel" placeholder="e.g. Weekly staples">
+                                </label>
+                                <button type="button" id="saveStapleLabelButton" class="secondary-button">Save name</button>
+                            </div>
+
+                            <form id="stapleForm" class="inline-form">
+                                <label class="form-field">
+                                    <span>Item</span>
+                                    <input type="text" id="stapleNameInput" required>
+                                </label>
+                                <label class="form-field">
+                                    <span>Amount</span>
+                                    <input type="number" id="stapleAmountInput" step="0.1" value="1">
+                                </label>
+                                <label class="form-field">
+                                    <span>Unit</span>
+                                    <input type="text" id="stapleUnitInput" placeholder="stk">
+                                </label>
+                                <button type="submit" class="secondary-button">Add staple</button>
+                            </form>
+
+                            <div class="table-wrapper">
+                                <table id="stapleTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Item</th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col">Unit</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                            <div id="stapleStatus" class="form-status" role="status" aria-live="polite"></div>
+                        </section>
+
+                        <section class="config-section" aria-labelledby="usageHeading">
+                            <div class="config-section-header">
+                                <h3 id="usageHeading">Ingredient usage & rename</h3>
+                                <p>Find recipes using a specific spelling and rename it across recipes.</p>
+                            </div>
+
+                            <form id="usageForm" class="inline-form">
+                                <label class="form-field">
+                                    <span>Find spelling</span>
+                                    <input type="text" id="usageSearchInput" placeholder="e.g. tomat">
+                                </label>
+                                <label class="form-field">
+                                    <span>Replace with</span>
+                                    <input type="text" id="renameToInput" placeholder="e.g. tomater">
+                                </label>
+                                <label class="toggle-field">
+                                    <input type="checkbox" id="renameIncludeExtras" checked>
+                                    <span>Include extras</span>
+                                </label>
+                                <label class="toggle-field">
+                                    <input type="checkbox" id="renameForce">
+                                    <span>Force on unit conflicts</span>
+                                </label>
+                                <button type="button" id="usageSearchButton" class="secondary-button">Find usage</button>
+                                <button type="button" id="renameButton" class="primary-button">Rename in recipes</button>
+                            </form>
+
+                            <div class="table-wrapper">
+                                <table id="usageResultsTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Recipe</th>
+                                            <th scope="col">Field</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usageResults"></tbody>
+                                </table>
+                            </div>
+
+                            <div id="usageStatus" class="form-status" role="status" aria-live="polite"></div>
+                        </section>
+
+                        <div id="configStatus" class="form-status" role="status" aria-live="polite"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
-
-    <!-- <div id="pdfPreviewWrapper" style="position: absolute; left: -9999px;"> -->
-    <div id="pdfPreviewWrapper" style="display: none;">
-        <div id="pdfPreview" class="pdf">
-            <!-- content will be injected here -->
-        </div>
-    </div>
-
-
 
     <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 

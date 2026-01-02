@@ -18,3 +18,21 @@ projects.code-workspace
 menus.png
 uge_*.yaml
 **/.ipynb_checkpoints/*
+.env
+
+# Frontend build artefacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.turbo/
+
+# Coverage outputs
+coverage/
+coverage*.xml
+*.coverage
+*.lcov
+.coverage
+
+# Playwright artifacts
+playwright/.auth/
+playwright/logs/

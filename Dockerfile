@@ -1,5 +1,5 @@
-# Use an official Python runtime as a parent image
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+# Use the glibc-based Python image so Playwright wheels are available
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm
 
 # Set the working directory in the container
 WORKDIR /app
