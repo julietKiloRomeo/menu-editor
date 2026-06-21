@@ -82,7 +82,17 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
-  const [selection, setSelection] = useState<SelectionState>({})
+  const [selection, setSelection] = useState<SelectionState>(() => {
+    if (typeof window === 'undefined') return {}
+    try {
+      const raw = window.localStorage.getItem('menu-spinner.selection.v1')
+      if (!raw) return {}
+      const parsed = JSON.parse(raw)
+      return (parsed && typeof parsed === 'object') ? (parsed as SelectionState) : {}
+    } catch {
+      return {}
+    }
+  })
   const [spinnerResults, setSpinnerResults] = useState<Recipe[]>([])
   const [menuMarkdown, setMenuMarkdown] = useState<string>('')
   const [menuPreview, setMenuPreview] = useState<MenuPreview | null>(null)
@@ -103,6 +113,7 @@ function App() {
   const videoTrackRef = useRef<MediaStreamTrack | null>(null)
   const [generatedYaml, setGeneratedYaml] = useState('')
   const [cameraActive, setCameraActive] = useState(false)
+  const [addInputMode, setAddInputMode] = useState<'photo' | 'camera' | 'manual'>('photo')
   const [renameFrom, setRenameFrom] = useState('')
   const [renameTo, setRenameTo] = useState('')
   const [renameIncludeExtras, setRenameIncludeExtras] = useState(true)
@@ -276,6 +287,42 @@ function App() {
   useEffect(() => {
     loadRecipes()
   }, [loadRecipes])
+
+  // Persist selection across reloads so the user doesn't lose their menu on refresh.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.setItem('menu-spinner.selection.v1', JSON.stringify(selection))
+    } catch {
+      /* localStorage full or unavailable; ignore */
+    }
+  }, [selection])
+
+  // Rebind persisted selection against the freshly-loaded recipes (so we use the
+  // latest recipe data rather than the snapshot saved at the time it was added),
+  // and drop selections whose recipe no longer exists.
+  useEffect(() => {
+    if (!recipes.length) return
+    setSelection((prev) => {
+      const next: SelectionState = {}
+      let changed = false
+      for (const slug of Object.keys(prev)) {
+        const live = recipes.find((r) => r.slug === slug)
+        if (!live) {
+          changed = true
+          continue
+        }
+        const servings = prev[slug].servings
+        if (prev[slug].recipe !== live) {
+          changed = true
+          next[slug] = { recipe: live, servings }
+        } else {
+          next[slug] = prev[slug]
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [recipes])
 
   useEffect(() => {
     if (view !== 'add') {
@@ -1224,11 +1271,6 @@ function App() {
     })
   }, [])
 
-  const openEditFor = useCallback((slug: string) => {
-    handleEditSelect(slug)
-    goToView('edit')
-  }, [goToView, handleEditSelect])
-
   const clearSelection = useCallback(() => setSelection({}), [])
 
   const eligibleRecipes = useMemo(() => recipes.filter((recipe) => !recipe.is_blacklisted || recipe.is_whitelisted), [recipes])
@@ -1313,15 +1355,23 @@ function App() {
     }
   }, [editSearch, editSlug, filteredEditRecipes, handleEditSelect, populateEditForm, recipes, view])
 
-  const handleGenerateMenu = useCallback(async () => {
-    if (!hasSelection) {
-      pushToast('info', 'Add recipes before generating a shopping list.')
-      return
-    }
-    goToView('shopping')
+  // Track the signature of the selection that was last successfully rendered,
+  // so we can detect when the user changed picks and need to re-generate.
+  const [lastRenderedSig, setLastRenderedSig] = useState<string>('')
+  const selectionSignature = useMemo(() => (
+    Object.values(selection)
+      .map((entry) => `${entry.recipe.slug}:${entry.servings}`)
+      .sort()
+      .join('|')
+  ), [selection])
+
+  const runGenerateMenu = useCallback(async ({ silent }: { silent: boolean }) => {
+    if (!hasSelection) return
     setExporting(true)
-    setMenuMarkdown('')
-    setMenuPreview(null)
+    if (!silent) {
+      setMenuMarkdown('')
+      setMenuPreview(null)
+    }
     try {
       const menuData = Object.values(selection).reduce<Record<string, number>>((acc, entry) => {
         acc[entry.recipe.navn] = entry.servings
@@ -1330,9 +1380,7 @@ function App() {
 
       const response = await fetch(`${API_BASE}/api/menu/generate`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ menu_data: menuData }),
       })
       const payload = await ensureJson<{ markdown?: string; error?: string }>(response)
@@ -1349,13 +1397,24 @@ function App() {
       const menuHtml = (await marked.parse(menuPart, { breaks: true })) as string
       const shoppingHtml = shoppingPart ? ((await marked.parse(shoppingPart, { breaks: true })) as string) : ''
       setMenuPreview({ menuHtml, shoppingHtml })
-      pushToast('success', 'Shopping list ready. Preview or export below.')
+      setLastRenderedSig(selectionSignature)
+      if (!silent) pushToast('success', 'Menu ready to print.')
     } catch (err) {
       pushToast('error', (err as Error).message)
     } finally {
       setExporting(false)
     }
-  }, [selection, hasSelection, pushToast])
+  }, [selection, hasSelection, pushToast, selectionSignature])
+
+  // Auto-generate when entering shopping view (or when selection changed since last render)
+  useEffect(() => {
+    if (view !== 'shopping') return
+    if (!hasSelection) return
+    if (exporting) return
+    if (lastRenderedSig === selectionSignature && menuPreview) return
+    void runGenerateMenu({ silent: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, hasSelection, selectionSignature])
 
   const handleDownloadMarkdown = useCallback(() => {
     if (!menuMarkdown) return
@@ -1457,18 +1516,23 @@ function App() {
     [renameFrom, renameTo, renameIncludeExtras, renameCaseInsensitive, renameForce, pushToast, loadRecipes],
   )
 
+  // Primary destinations (3 only) + secondary sub-tabs under each.
+  const planActive = view === 'planner' || view === 'shopping'
+  const recipesActive = view === 'add' || view === 'edit' || view === 'tools'
+  const settingsActive = view === 'config'
+
   return (
-    <div className="min-h-screen px-4 py-8 text-muted sm:px-6 lg:px-10">
-      <div className="fixed right-4 top-4 z-50 flex flex-col gap-2">
+    <div className="app-shell min-h-screen px-4 py-6 pb-24 text-muted sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
+      <div className="toast-stack no-print">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`rounded-lg px-4 py-2 text-sm shadow-lg backdrop-blur transition ${
+            className={`rounded-full px-4 py-2 text-sm shadow-lg backdrop-blur transition ${
               toast.kind === 'success'
-                ? 'bg-emerald-500/90 text-white'
+                ? 'bg-emerald-500/95 text-white'
                 : toast.kind === 'error'
-                  ? 'bg-danger/90 text-white'
-                  : 'bg-brand-surface/90 text-white'
+                  ? 'bg-danger/95 text-white'
+                  : 'bg-brand-surface/95 text-white'
             }`}
           >
             {toast.message}
@@ -1476,76 +1540,120 @@ function App() {
         ))}
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="rounded-panel bg-brand-surface/90 p-6 shadow-panel backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-6">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-brand-accent">Menu Spinner</p>
-              <h1 className="font-display text-3xl font-semibold">Weekly planner</h1>
-              <p className="max-w-2xl text-sm text-white/70">
-                Plan the week, generate an ink-saving printable shopping list, and keep ingredients tidy in the database.
-              </p>
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 pb-24 lg:gap-8 lg:pb-0">
+        {/* Slim header: title + top nav (desktop) / title only (mobile, nav lives at bottom) */}
+        <header className="no-print rounded-panel bg-brand-surface/90 px-5 py-4 shadow-panel backdrop-blur lg:px-6 lg:py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="font-display text-2xl font-semibold tracking-tight text-white transition hover:text-brand-accent lg:text-3xl"
+                onClick={() => goToView('planner')}
+                aria-label="Menu Spinner home"
+              >
+                Menu Spinner
+              </button>
+              <span className="hidden text-xs uppercase tracking-[0.25em] text-white/40 sm:inline">
+                {loading ? 'Syncing…' : `${eligibleRecipes.length} recipes`}
+              </span>
             </div>
-            <div className="flex flex-col items-end gap-3">
-              <div className="rounded-full border border-white/10 bg-brand-dark/60 px-4 py-2 text-sm font-medium text-white shadow-inner">
-                {loading ? 'Syncing recipes…' : `${eligibleRecipes.length} recipes`} available
-              </div>
-              <nav className="flex flex-wrap items-center justify-end gap-2">
-                {([
-                  { key: 'planner', label: 'Plan menu' },
-                  { key: 'add', label: 'Add recipe' },
-                  { key: 'edit', label: 'Edit recipes' },
-                  { key: 'config', label: 'Config' },
-                  { key: 'shopping', label: 'Shopping list', disabled: !hasSelection },
-                  { key: 'tools', label: 'Ingredient tools' },
-                ] as Array<{ key: View; label: string; disabled?: boolean }>).map(({ key, label, disabled }) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => !disabled && goToView(key)}
-                    disabled={Boolean(disabled)}
-                    className={`rounded-full border px-4 py-2 text-sm transition ${
-                      view === key
-                        ? 'border-brand-accent bg-brand-accent text-brand-dark shadow-lg'
-                        : 'border-white/15 bg-brand-dark/40 text-white/70 hover:text-white'
-                    } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+            <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary">
+              {([
+                { key: 'planner' as View, label: 'Plan', active: planActive },
+                { key: 'edit' as View, label: 'Recipes', active: recipesActive },
+                { key: 'config' as View, label: 'Settings', active: settingsActive },
+              ]).map(({ key, label, active }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => goToView(key)}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    active
+                      ? 'border-brand-accent bg-brand-accent text-brand-dark shadow-lg'
+                      : 'border-white/15 bg-brand-dark/40 text-white/70 hover:text-white'
+                  }`}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {label}
+                </button>
+              ))}
+            </nav>
           </div>
         </header>
+
+        {/* Secondary sub-tabs under the active primary destination (desktop & mobile) */}
+        {(recipesActive || planActive) && (
+          <div className="no-print -mt-2 flex flex-wrap items-center gap-2 px-1 text-xs sm:text-sm">
+            {planActive && (
+              <>
+                <SubTab label="Pick recipes" active={view === 'planner'} onClick={() => goToView('planner')} />
+                <SubTab label={hasSelection ? `Print menu (${Object.keys(selection).length})` : 'Print menu'} active={view === 'shopping'} onClick={() => hasSelection && goToView('shopping')} disabled={!hasSelection} />
+              </>
+            )}
+            {recipesActive && (
+              <>
+                <SubTab label="All recipes" active={view === 'edit'} onClick={() => goToView('edit')} />
+                <SubTab label="Add new" active={view === 'add'} onClick={() => goToView('add')} />
+                <SubTab label="Bulk rename" active={view === 'tools'} onClick={() => goToView('tools')} />
+              </>
+            )}
+          </div>
+        )}
 
         {view === 'planner' && (
           <>
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-              <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex-1">
-                    <label className="flex items-center gap-3 rounded-full border border-white/10 bg-brand-dark/50 px-4 py-2 text-sm text-white/80 focus-within:border-brand-accent">
-                      <span className="text-white/60">Search</span>
-                      <input
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        placeholder="Filter by recipe or ingredient…"
-                        className="flex-1 border-none bg-transparent text-white outline-none placeholder:text-white/40"
-                      />
-                    </label>
-                    <p className="mt-2 text-xs text-white/50">Matches recipe names, ingredient lists, and extras.</p>
-                  </div>
+              <section className="rounded-panel bg-brand-surface/80 p-5 shadow-panel backdrop-blur lg:p-6">
+                {/* Command row: search + suggest */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <label className="flex flex-1 items-center gap-3 rounded-full border border-white/10 bg-brand-dark/50 px-4 py-2.5 text-sm text-white/80 focus-within:border-brand-accent">
+                    <span aria-hidden="true" className="text-white/40">🔍</span>
+                    <input
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                      placeholder="Search recipes or ingredients…"
+                      className="flex-1 border-none bg-transparent text-white outline-none placeholder:text-white/40"
+                      aria-label="Search recipes"
+                    />
+                    {search && (
+                      <button type="button" className="text-white/60 hover:text-white" onClick={() => setSearch('')} aria-label="Clear search">
+                        ✕
+                      </button>
+                    )}
+                  </label>
                   <button
                     type="button"
-                    className="rounded-full bg-brand-accent px-5 py-2 text-brand-dark transition hover:translate-y-0.5 disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2.5 text-sm font-medium text-white transition hover:border-brand-accent/60 hover:text-brand-accent disabled:opacity-50"
                     onClick={spinMenu}
                     disabled={loading || !eligibleRecipes.length}
+                    title="Show 6 random recipe suggestions"
                   >
-                    Spin me a menu
+                    <span aria-hidden="true">🎲</span>
+                    Suggest 6
                   </button>
                 </div>
 
-                <div className="mt-6 space-y-6">
+                {/* Inline status row */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-white/50">
+                  <span>
+                    {hasSearch
+                      ? `${filteredRecipes.length} matching`
+                      : spinnerResults.length
+                        ? 'Random suggestions — tap a card to add'
+                        : 'Tap a card to add it to the menu'}
+                  </span>
+                  {!hasSearch && eligibleRecipes.length > 0 && (
+                    <button
+                      type="button"
+                      className="rounded-full px-2 py-0.5 text-white/60 transition hover:text-white"
+                      onClick={() => { setSearch(''); spinMenu() }}
+                    >
+                      Reshuffle
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-5 space-y-5">
                   {loading && <p className="text-sm text-white/70">Loading recipes…</p>}
 
                   {error && (
@@ -1555,9 +1663,17 @@ function App() {
                   )}
 
                   {!loading && !error && !eligibleRecipes.length && (
-                    <p className="text-sm text-white/70">
-                      No recipes available yet. Add some through the API, then refresh this page.
-                    </p>
+                    <div className="rounded-2xl border border-dashed border-white/15 bg-black/20 px-5 py-8 text-center text-sm text-white/70">
+                      <p className="font-medium text-white">No recipes yet</p>
+                      <p className="mt-1">Add your first recipe — it only takes a photo.</p>
+                      <button
+                        type="button"
+                        className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand-accent px-4 py-2 text-sm font-medium text-brand-dark"
+                        onClick={() => goToView('add')}
+                      >
+                        + Add recipe
+                      </button>
+                    </div>
                   )}
 
                   {!loading && !error && hasSearch && !filteredRecipes.length && (
@@ -1567,38 +1683,56 @@ function App() {
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {displayedRecipes.map((recipe) => {
                       const selected = Boolean(selection[recipe.slug])
+                      const servings = selection[recipe.slug]?.servings ?? 0
                       return (
-                        <button
+                        <div
                           key={recipe.slug}
-                          type="button"
-                          className="rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-left text-sm text-white transition hover:border-brand-accent/60 hover:bg-brand-dark/40 disabled:cursor-not-allowed disabled:opacity-70"
-                          onClick={() => addToSelection(recipe)}
+                          className={`relative flex flex-col gap-1 rounded-2xl border bg-white/5 px-4 py-3 text-left text-sm text-white transition ${
+                            selected ? 'recipe-card-chosen' : 'border-white/10 hover:border-brand-accent/40 hover:bg-brand-dark/40'
+                          }`}
                         >
-                          <p className="font-medium">{recipe.navn}</p>
-                          <p className="text-xs text-white/50">
-                            Default {recipe.antal} plates · {Object.keys(recipe.ingredienser).length} ingredients
-                          </p>
-                          {selected && <p className="mt-1 text-xs text-brand-accent">Already on the menu — tap to add another plate</p>}
-                        </button>
+                          <button
+                            type="button"
+                            className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-brand-dark/70 text-base font-medium text-white transition hover:border-brand-accent hover:text-brand-accent"
+                            onClick={() => addToSelection(recipe)}
+                            aria-label={selected ? `Add another plate of ${recipe.navn}` : `Add ${recipe.navn} to menu`}
+                            title={selected ? 'Add another plate' : 'Add to menu'}
+                          >
+                            {selected ? '✓' : '+'}
+                          </button>
+                          <button
+                            type="button"
+                            className="text-left"
+                            onClick={() => addToSelection(recipe)}
+                          >
+                            <p className="pr-10 font-medium">{recipe.navn}</p>
+                            <p className="mt-0.5 text-xs text-white/50">
+                              {recipe.antal} plates · {Object.keys(recipe.ingredienser).length} ingredients
+                              {recipe.placering ? ` · ${recipe.placering}` : ''}
+                            </p>
+                          </button>
+                          {selected && (
+                            <p className="mt-1 text-xs text-brand-accent">
+                              On menu · {servings === 0 ? 'from freezer' : `${servings} plate${servings === 1 ? '' : 's'}`}
+                            </p>
+                          )}
+                        </div>
                       )
                     })}
                   </div>
-
-                  {!hasSearch && !loading && !error && spinnerResults.length === 0 && eligibleRecipes.length > 0 && (
-                    <p className="text-sm text-white/60">Click “Spin me a menu” to get a fresh set of suggestions.</p>
-                  )}
                 </div>
               </section>
 
-              <aside className="rounded-panel bg-brand-dark/80 p-6 shadow-panel backdrop-blur">
+              {/* Right sidebar (desktop) / sticky bottom (mobile) */}
+              <aside className="rounded-panel bg-brand-dark/80 p-5 shadow-panel backdrop-blur lg:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Chosen</p>
-                    <h2 className="font-display text-2xl text-white">This week</h2>
+                    <h2 className="font-display text-xl text-white lg:text-2xl">This week</h2>
+                    <p className="text-xs text-white/50">{selectionEntries.length} recipe{selectionEntries.length === 1 ? '' : 's'} chosen</p>
                   </div>
                   <button
                     type="button"
-                    className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white disabled:opacity-40"
+                    className="text-xs uppercase tracking-[0.2em] text-white/60 transition hover:text-white disabled:opacity-30"
                     onClick={clearSelection}
                     disabled={!hasSelection}
                   >
@@ -1606,78 +1740,101 @@ function App() {
                   </button>
                 </div>
 
-                <div className="mt-6 space-y-3">
-                  {!hasSelection && <p className="text-sm text-white/60">Use the spinner or search to add recipes.</p>}
+                <div className="mt-5 space-y-2">
+                  {!hasSelection && (
+                    <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-sm text-white/50">
+                      Tap a recipe card to add it.
+                    </p>
+                  )}
 
-                  {selectionEntries.map(({ recipe, servings }) => (
-                    <div key={recipe.slug} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="font-medium">{recipe.navn}</p>
-                          <p className="text-xs text-white/60">{servings === 0 ? 'From freezer' : `Serving ${servings} plate${servings === 1 ? '' : 's'}`} · Default {recipe.antal}</p>
-                          {recipe.placering && <p className="text-xs text-white/40">{recipe.placering}</p>}
+                  {selectionEntries.map(({ recipe, servings }) => {
+                    const fromFreezer = servings === 0
+                    return (
+                      <div key={recipe.slug} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium">{recipe.navn}</p>
+                          {recipe.placering && <p className="truncate text-[11px] text-white/40">{recipe.placering}</p>}
                         </div>
-                        <div className="flex flex-col items-end gap-2 text-xs">
-                          <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs transition ${
+                            fromFreezer
+                              ? 'border-brand-accent/60 bg-brand-accent/10 text-brand-accent'
+                              : 'border-white/10 text-white/70 hover:border-brand-accent/40 hover:text-white'
+                          }`}
+                          onClick={() => fromFreezer ? adjustServings(recipe.slug, 1) : setFreezerServings(recipe.slug)}
+                          aria-label={fromFreezer ? `${recipe.navn} from freezer — switch to plates` : `Mark ${recipe.navn} as from freezer`}
+                          title={fromFreezer ? 'From freezer (click to switch to plates)' : 'Mark as from freezer'}
+                        >
+                          {fromFreezer ? '❄ Freezer' : (
+                            <>
+                              <span aria-hidden="true">🍽</span>
+                              <span className="tabular-nums">{servings}</span>
+                            </>
+                          )}
+                        </button>
+                        {!fromFreezer && (
+                          <div className="flex items-center gap-1">
                             <button
                               type="button"
-                              className="rounded-full border border-white/10 px-2 py-1 text-white/70 hover:text-white"
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-brand-accent hover:text-white"
                               onClick={() => adjustServings(recipe.slug, -1)}
+                              aria-label={`Decrease plates for ${recipe.navn}`}
                             >
-                              –
+                              −
                             </button>
                             <button
                               type="button"
-                              className="rounded-full border border-white/10 px-2 py-1 text-white/70 hover:text-white"
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-brand-accent hover:text-white"
                               onClick={() => adjustServings(recipe.slug, 1)}
+                              aria-label={`Increase plates for ${recipe.navn}`}
                             >
                               +
                             </button>
-                            <button
-                              type="button"
-                              className="rounded-full border border-white/10 px-2 py-1 text-white/70 hover:text-white"
-                              title="Set servings to 0 (from freezer)"
-                              onClick={() => setFreezerServings(recipe.slug)}
-                            >
-                              From freezer
-                            </button>
-                            <button
-                              type="button"
-                              className="rounded-full border border-white/10 px-2 py-1 text-white/70 hover:text-white"
-                              title="Edit this recipe"
-                              onClick={() => openEditFor(recipe.slug)}
-                            >
-                              Edit
-                            </button>
                           </div>
-                          <button
-                            type="button"
-                            className="rounded-full border border-danger/40 px-2 py-1 text-danger"
-                            onClick={() => removeFromSelection(recipe.slug)}
-                          >
-                            Remove
-                          </button>
-                        </div>
+                        )}
+                        <button
+                          type="button"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/40 transition hover:text-danger"
+                          onClick={() => removeFromSelection(recipe.slug)}
+                          aria-label={`Remove ${recipe.navn} from menu`}
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <button
                   type="button"
-                  className="mt-6 w-full rounded-full border border-brand-accent px-4 py-2 text-sm text-brand-accent transition hover:bg-brand-accent/10 disabled:opacity-50"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-accent px-5 py-3 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-40"
                   onClick={() => goToView('shopping')}
                   disabled={!hasSelection}
                 >
-                  Review & export shopping list
+                  Print menu →
                 </button>
               </aside>
             </div>
+
+            {/* Floating mobile CTA — visible only when something is chosen, sits above the bottom tab bar */}
+            {hasSelection && (
+              <div className="no-print pointer-events-none fixed inset-x-0 z-30 flex justify-center px-4 lg:hidden" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0) + 4.25rem)' }}>
+                <button
+                  type="button"
+                  className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-brand-dark shadow-2xl shadow-brand-accent/40"
+                  onClick={() => goToView('shopping')}
+                >
+                  {selectionEntries.length} recipe{selectionEntries.length === 1 ? '' : 's'} · Print menu →
+                </button>
+              </div>
+            )}
           </>
         )}
 
         {view === 'add' && (
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+          <div className="mx-auto w-full max-w-3xl">
             {cameraActive && (
               <div
                 data-testid="camera-modal"
@@ -1704,10 +1861,10 @@ function App() {
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                   <button
                     type="button"
-                    className="rounded-full border border-white/30 px-6 py-3 text-white/90 transition hover:bg-white/10"
+                    className="rounded-full bg-brand-accent px-6 py-3 font-semibold text-brand-dark transition hover:translate-y-[1px]"
                     onClick={capturePhoto}
                   >
-                    Capture photo
+                    📸 Capture photo
                   </button>
                   {focusSupported && focusMin != null && focusMax != null && focusValue != null && (
                     <label className="flex items-center gap-2 text-xs text-white/80">
@@ -1728,7 +1885,7 @@ function App() {
                   )}
                   <button
                     type="button"
-                    className="rounded-full border border-danger/50 px-6 py-3 text-danger transition hover:bg-danger/20"
+                    className="rounded-full border border-white/30 px-6 py-3 text-white/90 transition hover:bg-white/10"
                     onClick={stopCamera}
                   >
                     Close
@@ -1736,174 +1893,178 @@ function App() {
                 </div>
               </div>
             )}
-            <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
-              <div className="flex items-start justify-between gap-3">
+
+            <section className="rounded-panel bg-brand-surface/80 p-5 shadow-panel backdrop-blur lg:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Step 1</p>
-                  <h2 className="font-display text-2xl text-white">Photo & upload</h2>
-                  <p className="mt-1 text-sm text-white/70">Drop a recipe photo, capture from your camera, or type everything manually.</p>
+                  <h2 className="font-display text-xl text-white lg:text-2xl">Add a recipe</h2>
+                  <p className="text-sm text-white/60">Snap a photo, upload, or type it in.</p>
                 </div>
                 <button
                   type="button"
-                  className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
+                  className="rounded-full border border-white/15 bg-brand-dark/40 px-3 py-1.5 text-xs text-white/70 transition hover:text-white"
                   onClick={() => resetForm()}
                 >
-                  Reset form
+                  Reset
                 </button>
               </div>
 
-              <div
-                className={`mt-5 rounded-3xl border-2 border-dashed px-6 py-8 text-center text-sm transition ${dropActive ? 'border-brand-accent bg-brand-dark/30' : 'border-white/15 bg-black/20'} ${imageProcessing ? 'opacity-70' : ''}`}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                onDragEnter={onDragEnter}
-                onDragLeave={onDragLeave}
-                role="button"
-                tabIndex={0}
-                onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    fileInputRef.current?.click()
-                  }
-                }}
-              >
-                <p className="font-medium text-white">Upload photo</p>
-                <p className="mt-1 text-xs text-white/60">Drag & drop or click to browse. Supported formats: JPG, PNG.</p>
-                {imageProcessing && <p className="mt-3 text-xs text-brand-accent">Reading recipe… hold tight.</p>}
+              {/* Mode chips */}
+              <div role="tablist" aria-label="Input method" className="mt-5 inline-flex w-full rounded-full border border-white/10 bg-brand-dark/40 p-1 text-xs sm:text-sm">
+                {([
+                  { key: 'photo' as const, label: 'Upload photo', icon: '🖼️' },
+                  { key: 'camera' as const, label: 'Camera', icon: '📷' },
+                  { key: 'manual' as const, label: 'Manual', icon: '✏️' },
+                ]).map(({ key, label, icon }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    role="tab"
+                    aria-selected={addInputMode === key}
+                    onClick={() => setAddInputMode(key)}
+                    className={`flex-1 rounded-full px-3 py-2 font-medium transition ${
+                      addInputMode === key
+                        ? 'bg-brand-accent text-brand-dark shadow'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    <span className="mr-1.5" aria-hidden="true">{icon}</span>
+                    {label}
+                  </button>
+                ))}
               </div>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileInputChange} />
 
-              <div className="mt-6 space-y-4">
-                <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/70">
-                  <p className="font-medium text-white">Camera capture</p>
-                  <div className="mt-3 space-y-3">
-                    <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black/40">
-                      {!cameraActive && (
-                        <video ref={videoRef} className="h-52 w-full object-cover" playsInline muted />
-                      )}
-                      {!cameraActive ? (
-                        <div className="absolute inset-0 flex items-center justify-center text-xs text-white/50">Start camera to preview</div>
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-xs text-white/60">Camera active — preview is full-screen</div>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      {!cameraActive && (
-                        <button
-                          type="button"
-                          className="rounded-full border border-white/20 px-4 py-2 text-white/80 transition hover:text-white"
-                          onClick={startCamera}
-                        >
-                          Start camera
-                        </button>
-                      )}
-                      {cameraActive && (
-                        <>
-                          <button
-                            type="button"
-                            className="rounded-full border border-white/20 px-4 py-2 text-white/80 transition hover:text-white"
-                            onClick={capturePhoto}
-                          >
-                            Capture photo
-                          </button>
-                          <button
-                            type="button"
-                            className="rounded-full border border-danger/40 px-4 py-2 text-danger transition hover:bg-danger/20"
-                            onClick={stopCamera}
-                          >
-                            Stop camera
-                          </button>
-                        </>
-                      )}
+              {/* Input area — content varies by mode */}
+              <div className="mt-4">
+                {addInputMode === 'photo' && (
+                  <div
+                    className={`rounded-3xl border-2 border-dashed px-6 py-8 text-center text-sm transition ${dropActive ? 'border-brand-accent bg-brand-dark/30' : 'border-white/15 bg-black/20'} ${imageProcessing ? 'opacity-70' : ''}`}
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
+                    onDragEnter={onDragEnter}
+                    onDragLeave={onDragLeave}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => fileInputRef.current?.click()}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        fileInputRef.current?.click()
+                      }
+                    }}
+                  >
+                    <div aria-hidden="true" className="text-3xl">🖼️</div>
+                    <p className="mt-2 font-medium text-white">Drop a recipe photo here</p>
+                    <p className="mt-1 text-xs text-white/60">…or click to choose a file. JPG / PNG.</p>
+                    {imageProcessing && <p className="mt-3 text-xs text-brand-accent">Reading recipe… hold tight.</p>}
+                  </div>
+                )}
+
+                {addInputMode === 'camera' && (
+                  <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/70">
+                    <p className="text-sm text-white">Use your device camera to snap the page.</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        className="rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px]"
+                        onClick={startCamera}
+                      >
+                        📷 Start camera
+                      </button>
+                      <span className="text-[11px] text-white/40">Live preview opens full-screen.</span>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {addInputMode === 'manual' && (
+                  <p className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/60">
+                    Skip the photo and just fill in the form below.
+                  </p>
+                )}
+
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={onFileInputChange} />
 
                 {imagePreviewUrl && (
-                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-xs text-white/70">
-                    <p className="font-medium text-white">Preview</p>
-                    <img src={imagePreviewUrl} alt={imageFilename ?? 'Recipe photo'} className="mt-3 max-h-64 w-full rounded-xl object-contain" />
-                    {imageFilename && <p className="mt-2 truncate text-[11px] text-white/50">{imageFilename}</p>}
+                  <div className="mt-3 rounded-2xl border border-white/10 bg-black/30 p-3 text-xs text-white/70">
+                    <div className="flex items-start gap-3">
+                      <img src={imagePreviewUrl} alt={imageFilename ?? 'Recipe photo'} className="h-20 w-20 flex-shrink-0 rounded-lg object-cover" />
+                      <div className="min-w-0">
+                        <p className="font-medium text-white">Photo attached</p>
+                        {imageFilename && <p className="mt-0.5 truncate text-[11px] text-white/50">{imageFilename}</p>}
+                        <p className="mt-1 text-[11px] text-white/40">AI will pre-fill the form below — review before saving.</p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                <label className="block text-xs text-white/80">
-                  <span className="mb-1 block text-xs uppercase tracking-[0.3em] text-white/50">Extra instructions</span>
-                  <textarea
-                    value={imagePrompt}
-                    onChange={handlePromptChange}
-                    rows={3}
-                    className="w-full resize-none rounded-xl border border-white/10 bg-brand-dark/50 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
-                    placeholder='Optional notes for the AI (e.g. "ignore watermark" or "prefer metric units")'
-                  />
-                </label>
+                {(addInputMode === 'photo' || addInputMode === 'camera') && (
+                  <label className="mt-3 block text-xs text-white/80">
+                    <span className="mb-1 block text-[11px] uppercase tracking-[0.2em] text-white/50">Hint for the AI (optional)</span>
+                    <textarea
+                      value={imagePrompt}
+                      onChange={handlePromptChange}
+                      rows={2}
+                      className="w-full resize-none rounded-xl border border-white/10 bg-brand-dark/50 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
+                      placeholder='e.g. "metric units" or "ignore watermark"'
+                    />
+                  </label>
+                )}
 
                 {generatedYaml && (
-                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-xs text-white/70">
-                    <p className="font-medium text-white">YAML preview</p>
-                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-lg bg-black/60 p-3">{generatedYaml}</pre>
-                  </div>
+                  <details className="mt-3 text-xs text-white/60">
+                    <summary className="cursor-pointer select-none hover:text-white">AI raw output</summary>
+                    <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-lg bg-black/60 p-3 text-[11px]">{generatedYaml}</pre>
+                  </details>
                 )}
               </div>
+
               <canvas ref={canvasRef} className="hidden" />
             </section>
 
-            <section className="rounded-panel bg-brand-dark/70 p-6 shadow-panel backdrop-blur">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Step 2</p>
-                  <h2 className="font-display text-2xl text-white">Recipe details</h2>
-                  <p className="mt-1 text-sm text-white/70">Review the fields and tweak anything before saving.</p>
-                </div>
-                <button
-                  type="button"
-                  className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
-                  onClick={() => goToView('planner')}
-                >
-                  Back to planner
-                </button>
-              </div>
+            {/* Form */}
+            <section className="mt-5 rounded-panel bg-brand-dark/70 p-5 shadow-panel backdrop-blur lg:p-6">
+              <h3 className="font-display text-lg text-white">Recipe details</h3>
+              <p className="text-xs text-white/50">Edit anything below — these are what gets saved.</p>
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_120px]">
                 <label className="flex flex-col text-xs text-white/70">
-                  <span className="mb-1 text-white/50">Name</span>
+                  <span className="mb-1 text-white/50">Recipe name</span>
                   <input
                     value={formName}
                     onChange={(event) => setFormName(event.target.value)}
-                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
+                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-accent"
                     placeholder="Recipe title"
                   />
                 </label>
                 <label className="flex flex-col text-xs text-white/70">
-                  <span className="mb-1 text-white/50">Servings (0 = freezer)</span>
+                  <span className="mb-1 text-white/50">Plates</span>
                   <input
                     type="number"
                     min={0}
                     value={formServings}
                     onChange={(event) => setFormServings(Math.max(0, Number.parseInt(event.target.value, 10) || 0))}
-                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
+                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-accent"
                   />
                 </label>
-                <label className="flex flex-col text-xs text-white/70 md:col-span-2">
-                  <span className="mb-1 text-white/50">Placement</span>
+                <label className="flex flex-col text-xs text-white/70 sm:col-span-2">
+                  <span className="mb-1 text-white/50">Placement (where to find it)</span>
                   <input
                     value={formPlacement}
                     onChange={(event) => setFormPlacement(event.target.value)}
-                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
+                    className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-accent"
                     placeholder="Cookbook, page, or source"
                   />
                 </label>
               </div>
 
-              <div className="mt-6 space-y-4">
+              <div className="mt-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display text-lg text-white">Ingredients</h3>
-                  <button type="button" className="rounded-full border border-white/20 px-3 py-1 text-xs text-white/80 transition hover:text-white" onClick={addIngredientRow}>Add row</button>
+                  <h4 className="text-sm font-semibold uppercase tracking-[0.15em] text-white/60">Ingredients</h4>
+                  <button type="button" className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/80 transition hover:text-white" onClick={addIngredientRow}>+ Add row</button>
                 </div>
-                <div className="space-y-3">
+                <div className="mt-3 space-y-2">
                   {ingredientRows.map((row) => (
-                    <div key={row.id} className="grid gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/80 sm:grid-cols-[minmax(0,1fr)_120px_100px_80px]">
+                    <div key={row.id} className="grid gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 sm:grid-cols-[minmax(0,1fr)_90px_70px_auto] sm:items-center">
                       <input
                         value={row.navn}
                         onChange={(event) => updateIngredientRow(row.id, { navn: event.target.value })}
@@ -1922,21 +2083,29 @@ function App() {
                         placeholder="Unit"
                         className="rounded-lg border border-white/10 bg-brand-surface/50 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
                       />
-                      <button type="button" className="rounded-full border border-danger/40 px-3 py-2 text-danger transition hover:bg-danger/20" onClick={() => removeIngredientRow(row.id)}>Remove</button>
+                      <button
+                        type="button"
+                        className="inline-flex h-9 w-9 items-center justify-center justify-self-end rounded-full text-white/40 transition hover:text-danger"
+                        onClick={() => removeIngredientRow(row.id)}
+                        aria-label="Remove ingredient row"
+                        title="Remove"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-6 space-y-4">
+              <div className="mt-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display text-lg text-white">Extras</h3>
-                  <button type="button" className="rounded-full border border-white/20 px-3 py-1 text-xs text-white/80 transition hover:text-white" onClick={addExtraRow}>Add extra</button>
+                  <h4 className="text-sm font-semibold uppercase tracking-[0.15em] text-white/60">Extras</h4>
+                  <button type="button" className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/80 transition hover:text-white" onClick={addExtraRow}>+ Add extra</button>
                 </div>
-                <div className="space-y-3">
-                  {extraRows.length === 0 && <p className="text-xs text-white/60">Use extras for sides to purchase (e.g. salad, pita, toppings).</p>}
+                {extraRows.length === 0 && <p className="mt-2 text-xs text-white/50">Sides to also buy (salad, pita, toppings).</p>}
+                <div className="mt-3 space-y-2">
                   {extraRows.map((row) => (
-                    <div key={row.id} className="grid gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/80 sm:grid-cols-[minmax(0,1fr)_120px_100px_80px]">
+                    <div key={row.id} className="grid gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80 sm:grid-cols-[minmax(0,1fr)_90px_70px_auto] sm:items-center">
                       <input
                         value={row.navn}
                         onChange={(event) => updateExtraRow(row.id, { navn: event.target.value })}
@@ -1955,48 +2124,65 @@ function App() {
                         placeholder="Unit"
                         className="rounded-lg border border-white/10 bg-brand-surface/50 px-3 py-2 text-sm text-white outline-none focus:border-brand-accent"
                       />
-                      <button type="button" className="rounded-full border border-danger/40 px-3 py-2 text-danger transition hover:bg-danger/20" onClick={() => removeExtraRow(row.id)}>Remove</button>
+                      <button
+                        type="button"
+                        className="inline-flex h-9 w-9 items-center justify-center justify-self-end rounded-full text-white/40 transition hover:text-danger"
+                        onClick={() => removeExtraRow(row.id)}
+                        aria-label="Remove extra row"
+                        title="Remove"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="mt-6 w-full rounded-full bg-brand-accent px-5 py-3 text-brand-dark transition hover:translate-y-0.5"
-                onClick={handleRecipeSubmit}
-              >
-                Save recipe
-              </button>
+              <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2.5 text-sm text-white/80 transition hover:text-white"
+                  onClick={() => goToView('edit')}
+                >
+                  ← All recipes
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px]"
+                  onClick={handleRecipeSubmit}
+                >
+                  💾 Save recipe
+                </button>
+              </div>
             </section>
           </div>
         )}
 
         {view === 'edit' && (
           <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
-            <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
+            <section className="rounded-panel bg-brand-surface/80 p-5 shadow-panel backdrop-blur lg:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Step 2</p>
-                  <h2 className="font-display text-2xl text-white">Edit recipes</h2>
-                  <p className="mt-1 text-sm text-white/70">Find a recipe, adjust the fields, and save back to the database.</p>
+                  <h2 className="font-display text-xl text-white lg:text-2xl">All recipes</h2>
+                  <p className="text-xs text-white/50">{filteredEditRecipes.length} of {recipes.length} shown</p>
                 </div>
                 <button
                   type="button"
-                  className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
-                  onClick={() => goToView('planner')}
+                  className="rounded-full bg-brand-accent px-3 py-1.5 text-xs font-medium text-brand-dark"
+                  onClick={() => goToView('add')}
                 >
-                  Back to planner
+                  + Add new
                 </button>
               </div>
 
               <label className="mt-4 flex items-center gap-3 rounded-full border border-white/10 bg-brand-dark/50 px-4 py-2 text-sm text-white/80 focus-within:border-brand-accent">
-                <span className="text-white/60">Search</span>
+                <span aria-hidden="true" className="text-white/40">🔍</span>
                 <input
                   value={editSearch}
                   onChange={(event) => setEditSearch(event.target.value)}
-                  placeholder="Filter by name, slug, or ingredient…"
+                  placeholder="Search by name, slug, or ingredient…"
                   className="flex-1 border-none bg-transparent text-white outline-none placeholder:text-white/40"
+                  aria-label="Search recipes"
                 />
               </label>
 
@@ -2021,28 +2207,22 @@ function App() {
               </div>
             </section>
 
-            <section className="rounded-panel bg-brand-dark/70 p-6 shadow-panel backdrop-blur">
+            <section className="rounded-panel bg-brand-dark/70 p-5 shadow-panel backdrop-blur lg:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Details</p>
-                  <h2 className="font-display text-2xl text-white">Recipe form</h2>
-                  <p className="mt-1 text-sm text-white/70">Update fields, adjust servings, or tweak ingredients before saving.</p>
+                  <h2 className="font-display text-xl text-white lg:text-2xl">{editSlug ? editName || 'Recipe' : 'Pick a recipe to edit'}</h2>
+                  {editSlug && <p className="text-xs text-white/40">{editSlugInput}</p>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="rounded-full border border-white/20 px-3 py-1 text-xs text-white/70 transition hover:text-white"
-                    onClick={handleEditReset}
-                  >
-                    Reset changes
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-full border border-white/20 px-3 py-1 text-xs text-white/70 transition hover:text-white"
-                    onClick={() => setEditStatus(null)}
-                  >
-                    Clear status
-                  </button>
+                  {editSlug && (
+                    <button
+                      type="button"
+                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/70 transition hover:text-white"
+                      onClick={handleEditReset}
+                    >
+                      Reset
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -2237,7 +2417,7 @@ function App() {
             <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Config</p>
+                  
                   <h2 className="font-display text-2xl text-white">Categories</h2>
                   <p className="mt-1 text-sm text-white/70">Manage ingredient categories and their priorities.</p>
                 </div>
@@ -2314,7 +2494,7 @@ function App() {
             <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Config</p>
+                  
                   <h2 className="font-display text-2xl text-white">Ingredient mappings</h2>
                   <p className="mt-1 text-sm text-white/70">Map ingredient names to categories for shopping list grouping.</p>
                 </div>
@@ -2397,7 +2577,7 @@ function App() {
             <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Config</p>
+                  
                   <h2 className="font-display text-2xl text-white">Staples</h2>
                   <p className="mt-1 text-sm text-white/70">Edit the always-buy staples list used during menu export.</p>
                 </div>
@@ -2477,7 +2657,7 @@ function App() {
             <section className="rounded-panel bg-brand-dark/70 p-6 shadow-panel backdrop-blur">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Config</p>
+                  
                   <h2 className="font-display text-2xl text-white">Staple label</h2>
                   <p className="mt-1 text-sm text-white/70">Choose which label appears above auto-added staples.</p>
                 </div>
@@ -2516,48 +2696,54 @@ function App() {
         )}
 
         {view === 'shopping' && (
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
-            <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
-              <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-5">
+            {/* Action bar */}
+            <section className="no-print rounded-panel bg-brand-surface/80 p-4 shadow-panel backdrop-blur lg:p-5">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Step 2</p>
-                  <h2 className="font-display text-2xl text-white">Shopping list</h2>
+                  <h2 className="font-display text-xl text-white lg:text-2xl">Ready to print</h2>
+                  <p className="text-sm text-white/60">
+                    {selectionEntries.length
+                      ? `${selectionEntries.length} recipe${selectionEntries.length === 1 ? '' : 's'} on the menu`
+                      : 'No recipes chosen yet.'}
+                    {exporting && <span className="ml-2 text-brand-accent">Refreshing…</span>}
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
-                  onClick={() => goToView('planner')}
-                >
-                  Adjust selection
-                </button>
-              </div>
-
-              <ul className="mt-5 space-y-3 text-sm text-white/80">
-                {selectionEntries.map(({ recipe, servings }) => (
-                  <li key={recipe.slug} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium text-white">{recipe.navn}</span>
-                      <span className="text-xs text-white/60">{servings === 0 ? 'From freezer' : `${servings} plate${servings === 1 ? '' : 's'}`}</span>
-                    </div>
-                    {recipe.placering && <p className="mt-1 text-xs text-white/40">{recipe.placering}</p>}
-                  </li>
-                ))}
-                {!selectionEntries.length && <li className="text-sm text-white/60">Add recipes in the planner first.</li>}
-              </ul>
-
-              <div className="mt-6 space-y-3">
-                <button
-                  type="button"
-                  className="w-full rounded-full bg-brand-accent px-5 py-2 text-brand-dark transition hover:translate-y-0.5 disabled:opacity-60"
-                  onClick={handleGenerateMenu}
-                  disabled={!hasSelection || exporting}
-                >
-                  {exporting ? 'Generating…' : 'Generate grocery list'}
-                </button>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:text-white disabled:opacity-60"
+                    className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2 text-sm text-white/80 transition hover:text-white"
+                    onClick={() => goToView('planner')}
+                  >
+                    ← Edit selection
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2 text-sm text-white/80 transition hover:text-white disabled:opacity-50"
+                    onClick={() => window.print()}
+                    disabled={!menuPreview}
+                    title="Open the browser print dialog"
+                  >
+                    🖨 Print
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
+                    onClick={handleDownloadPdf}
+                    disabled={!menuPreview || exporting}
+                  >
+                    ⬇ Save as PDF
+                  </button>
+                </div>
+              </div>
+
+              {/* Secondary actions, smaller and de-emphasized */}
+              <details className="mt-3 text-xs text-white/50">
+                <summary className="cursor-pointer select-none rounded-full px-2 py-1 hover:text-white">More export options</summary>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border border-white/15 px-3 py-1.5 text-white/80 transition hover:text-white disabled:opacity-50"
                     onClick={handleCopyMarkdown}
                     disabled={!menuMarkdown}
                   >
@@ -2565,7 +2751,7 @@ function App() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:text-white disabled:opacity-60"
+                    className="rounded-full border border-white/15 px-3 py-1.5 text-white/80 transition hover:text-white disabled:opacity-50"
                     onClick={handleDownloadMarkdown}
                     disabled={!menuMarkdown}
                   >
@@ -2573,29 +2759,41 @@ function App() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:text-white disabled:opacity-60"
-                    onClick={handleDownloadPdf}
-                    disabled={!menuPreview}
+                    className="rounded-full border border-white/15 px-3 py-1.5 text-white/80 transition hover:text-white disabled:opacity-50"
+                    onClick={() => void runGenerateMenu({ silent: false })}
+                    disabled={!hasSelection || exporting}
                   >
-                    Download PDF
+                    Re-generate
                   </button>
                 </div>
-              </div>
-
-              {menuMarkdown && (
-                <pre className="mt-6 max-h-60 overflow-auto rounded-2xl border border-white/10 bg-black/40 p-4 text-[11px] text-white/80">
-                  {menuMarkdown}
-                </pre>
-              )}
+                {menuMarkdown && (
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-white/60 hover:text-white">View raw markdown</summary>
+                    <pre className="mt-2 max-h-60 overflow-auto rounded-xl border border-white/10 bg-black/40 p-3 text-[11px] text-white/80">
+                      {menuMarkdown}
+                    </pre>
+                  </details>
+                )}
+              </details>
             </section>
 
-            <section className="rounded-panel bg-white/95 p-6 text-slate-900 shadow-panel">
-              <h3 className="font-display text-lg text-slate-900">Printable preview</h3>
-              <p className="mt-1 text-sm text-slate-600">Minimal colour layout designed to save ink and fit on A4 paper.</p>
-              {menuPreview ? (
+            {/* Preview */}
+            <section className="rounded-panel bg-white/95 p-5 text-slate-900 shadow-panel lg:p-8">
+              {!hasSelection ? (
+                <div className="py-12 text-center text-sm text-slate-600">
+                  <p>Add recipes on the Plan tab to see a printable preview here.</p>
+                  <button
+                    type="button"
+                    className="mt-4 rounded-full bg-brand-dark px-4 py-2 text-sm font-medium text-white"
+                    onClick={() => goToView('planner')}
+                  >
+                    Go to Plan →
+                  </button>
+                </div>
+              ) : menuPreview ? (
                 <div
                   ref={pdfPreviewRef}
-                  className="shopping-pdf mt-5 space-y-6 bg-white"
+                  className="shopping-pdf space-y-6 bg-white"
                 >
                   <article dangerouslySetInnerHTML={{ __html: menuPreview.menuHtml }} />
                   {menuPreview.shoppingHtml && (
@@ -2603,28 +2801,29 @@ function App() {
                   )}
                 </div>
               ) : (
-                <p className="mt-6 text-sm text-slate-600">Generate a list to preview and download the PDF.</p>
+                <div className="py-10 text-center text-sm text-slate-600">
+                  <div className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-slate-700" aria-label="Loading preview" />
+                  Preparing your printable menu…
+                </div>
               )}
             </section>
           </div>
         )}
 
         {view === 'tools' && (
-          <section className="rounded-panel bg-brand-dark/70 p-6 shadow-panel backdrop-blur">
+          <section className="rounded-panel bg-brand-dark/70 p-5 shadow-panel backdrop-blur lg:p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-brand-accent">Ingredient upkeep</p>
-                <h2 className="font-display text-2xl text-white">Bulk rename</h2>
-                <p className="mt-1 text-sm text-white/70">
-                  Fix inconsistent ingredient names. Updates apply directly in the database and keep future AI imports tidy.
-                </p>
+                <h2 className="font-display text-xl text-white lg:text-2xl">Bulk rename ingredients</h2>
+                <p className="text-sm text-white/60">Fix inconsistent ingredient names across all recipes at once.</p>
               </div>
               <button
                 type="button"
-                className="text-xs uppercase tracking-[0.3em] text-white/60 transition hover:text-white"
+                className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/70 transition hover:text-white"
                 onClick={loadRecipes}
+                title="Reload recipes from the server"
               >
-                Refresh recipes
+                ↻ Refresh
               </button>
             </div>
 
@@ -2700,7 +2899,7 @@ function App() {
           </section>
         )}
 
-        <footer className="mb-10 flex flex-wrap items-center justify-between gap-3 text-xs text-white/50">
+        <footer className="no-print mb-10 flex flex-wrap items-center justify-between gap-3 text-xs text-white/50">
           <span>
             API origin:{' '}
             <code className="rounded-full bg-black/30 px-2 py-1 text-[11px] text-white">{API_BASE || '(same host)'}</code>
@@ -2708,7 +2907,53 @@ function App() {
           <span>Frontend powered by Vite + React + Tailwind</span>
         </footer>
       </div>
+
+      {/* Mobile bottom tab bar */}
+      <nav
+        className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-brand-dark/95 backdrop-blur lg:hidden"
+        aria-label="Primary"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
+      >
+        <div className="mx-auto flex max-w-md items-stretch justify-around">
+          {([
+            { key: 'planner' as View, label: 'Plan', active: planActive, icon: '📋' },
+            { key: 'edit' as View, label: 'Recipes', active: recipesActive, icon: '📖' },
+            { key: 'config' as View, label: 'Settings', active: settingsActive, icon: '⚙️' },
+          ]).map(({ key, label, active, icon }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => goToView(key)}
+              aria-current={active ? 'page' : undefined}
+              className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition ${
+                active ? 'text-brand-accent' : 'text-white/60 hover:text-white'
+              }`}
+            >
+              <span aria-hidden="true" className="text-base leading-none">{icon}</span>
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
+  )
+}
+
+function SubTab({ label, active, onClick, disabled }: { label: string; active: boolean; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-current={active ? 'page' : undefined}
+      className={`rounded-full px-4 py-1.5 font-medium transition ${
+        active
+          ? 'bg-brand-accent text-brand-dark shadow'
+          : 'border border-white/10 bg-brand-dark/30 text-white/70 hover:text-white'
+      } ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}
+    >
+      {label}
+    </button>
   )
 }
 

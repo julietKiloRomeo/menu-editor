@@ -101,4 +101,51 @@ body {
 @media print {
   html, body { background: #ffffff !important; }
   .shopping-pdf { box-shadow: none !important; border: none !important; }
+  .no-print { display: none !important; }
+}
+
+/* App shell + mobile nav */
+.app-shell {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Sticky mobile bottom bar / CTA */
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0) + 0.5rem);
+}
+
+/* Toast container: bottom-center on mobile, top-right on desktop */
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0) + 5rem);
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: calc(100vw - 2rem);
+}
+@media (min-width: 768px) {
+  .toast-stack {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    transform: none;
+  }
+}
+
+/* Recipe card chosen state */
+.recipe-card-chosen {
+  border-color: rgb(154 255 195 / 0.7) !important;
+  background: rgb(154 255 195 / 0.08) !important;
+}
+
+/* Subtle focus rings everywhere */
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid rgb(154 255 195 / 0.7);
+  outline-offset: 2px;
 }

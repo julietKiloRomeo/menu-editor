@@ -1580,5 +1580,18 @@ class MenuText:
         return self.__str__()
 
 
+# SPA fallback: when a static file is not found for a top-level path, serve the
+# frontend index so client-side routing (React Router) can take over.
+@app.errorhandler(404)
+def spa_fallback(_error):  # noqa: ANN001
+    path = request.path or ''
+    if path.startswith(('/api/', '/assets/', '/favicon')):
+        return jsonify(error='not found'), 404
+    response = _serve_frontend_index_response()
+    if response is None:
+        return jsonify(error='not found'), 404
+    return response
+
+
 if __name__ == "__main__":
     app.run(host="::", port=5000, debug=True)
