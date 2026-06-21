@@ -1055,7 +1055,11 @@ def generate_menu():
     menu_path = save_menu(menu_structure)
 
     menu_text = MenuText()
-    parser.write_menu(menu_path, printer=menu_text.add)
+    parser.write_menu(
+        menu_path,
+        printer=menu_text.add,
+        silent_sections={get_staple_label()},
+    )
 
     return jsonify({"markdown": str(menu_text)})
 

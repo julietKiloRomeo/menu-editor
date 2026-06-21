@@ -230,7 +230,16 @@ def test_menu_generation_includes_staples(client, app_module, add_category, monk
     markdown = response.get_json()["markdown"]
     assert "# Menu" in markdown
     assert recipe_name in markdown
-    assert "Salt" in markdown
+
+    # Staples must NOT appear in the printed menu section, but MUST appear in
+    # the shopping list section.
+    menu_part, _, shopping_part = markdown.partition("# Shopping")
+    assert shopping_part, "expected a shopping section in the generated markdown"
+
+    staple_label = app_module.get_staple_label()
+    assert f"## {staple_label}" not in menu_part
+    assert "Salt" not in menu_part
+    assert "Salt" in shopping_part
 
     monkeypatch.setattr(app_module.MenuText, "add", original_add)
 

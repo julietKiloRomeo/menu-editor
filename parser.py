@@ -152,7 +152,7 @@ def print_shopping(shopping, printer=print):
         printer(f"| {ingrediens:40s} | {amounts_str:>10s} |  {recs_str[:max_recs_len]:30s}  | ")
 
 
-def write_menu(menu_path, printer=print):
+def write_menu(menu_path, printer=print, silent_sections=None):
     config = load_config()
 
     shopping = defaultdict(lambda: defaultdict(float) )
@@ -160,9 +160,12 @@ def write_menu(menu_path, printer=print):
     with menu_path.open("r") as f: 
         menu = yaml.load(f, Loader=yaml.FullLoader)
 
+    silent_set = {s.lower() for s in (silent_sections or set())}
+    silent_set.add("andet")
+
     printer("# Menu")
     for name, recipes in menu.items():
-        silent = name.lower() == "andet"
+        silent = name.lower() in silent_set
         if not silent:
             printer("## " + name)
         for recipe in recipes:
