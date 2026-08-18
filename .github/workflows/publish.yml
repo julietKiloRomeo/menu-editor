@@ -170,8 +170,9 @@ jobs:
             echo "digest: ${{ steps.build.outputs.digest }}"
             echo '```'
             echo ""
-            echo "Deploy with:"
+            echo "Pin this version in the homelab inventory, then deploy:"
             echo '```'
-            echo "./scripts/deploy.sh ${{ steps.version.outputs.version }}"
+            echo "./scripts/pin-image.sh ${{ steps.version.outputs.version }} ${{ steps.build.outputs.digest }}"
+            echo "cd ../homelab/ansible && bin/deploy valhalla -K"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
