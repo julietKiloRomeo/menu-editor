@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local env files — Vite inlines VITE_* into the public bundle
+.env
+.env.*
+!.env.example

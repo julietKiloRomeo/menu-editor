@@ -72,24 +72,55 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Searches the whole filesystem rather than a list of known paths. A
+      # path-specific check missed frontend/.env, because .dockerignore patterns
+      # are anchored at the context root and `.env` alone does not match
+      # nested files.
       - name: Refuse to publish secrets or local state
         run: |
           failed=0
-          for path in .env .env.local .git recipes.db shopping.md; do
-            if docker run --rm --entrypoint sh menu-app:candidate -c "[ -e '/app/$path' ]"; then
-              echo "::error::/app/$path is present in the image and must not be published"
-              failed=1
-            fi
-          done
-          if docker run --rm --entrypoint sh menu-app:candidate \
-              -c 'ls /app/uge_*.yaml' >/dev/null 2>&1; then
-            echo "::error::generated menu YAML files are present in the image"
+
+          found_env=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+            "find / -xdev -name '.env' -o -xdev -name '.env.*' \
+             | grep -v '\.env\.example$' || true")
+          if [ -n "$found_env" ]; then
+            echo "::error::environment files present in the image:"
+            echo "$found_env" | sed 's/^/  /'
             failed=1
           fi
+
+          found_db=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+            "find /app -name '*.db' -o -name 'shopping.md' -o -name 'uge_*.yaml' || true")
+          if [ -n "$found_db" ]; then
+            echo "::error::local runtime state present in the image:"
+            echo "$found_db" | sed 's/^/  /'
+            failed=1
+          fi
+
+          if docker run --rm --entrypoint sh menu-app:candidate -c "[ -e /app/.git ]"; then
+            echo "::error::/app/.git is present in the image"
+            failed=1
+          fi
+
+          # Vite inlines VITE_* variables into the bundle, so a leaked secret
+          # would be shipped to browsers rather than left in a file.
+          leaked=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+            "grep -rEl 'sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----' \
+             /app/frontend/dist 2>/dev/null || true")
+          if [ -n "$leaked" ]; then
+            echo "::error::possible credential inlined into the frontend bundle:"
+            echo "$leaked" | sed 's/^/  /'
+            failed=1
+          fi
+
           if ! docker run --rm --entrypoint sh menu-app:candidate \
               -c '[ -f /app/frontend/dist/index.html ]'; then
             echo "::error::frontend/dist/index.html missing - the SPA was not built"
             failed=1
+          fi
+
+          if [ "$failed" -eq 0 ]; then
+            echo "Image contains no environment files, local state, .git, or inlined credentials."
           fi
           exit $failed
 

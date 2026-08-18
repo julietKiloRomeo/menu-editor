@@ -1,15 +1,20 @@
-# Secrets and local state — must never enter the image
-.env
-.env.*
-!.env.example
+# Secrets and local state — must never enter the image.
+#
+# Patterns are anchored at the context root unless they begin with **, so a bare
+# `.env` would exclude ./.env while letting frontend/.env through. That matters
+# most for the frontend: Vite inlines VITE_* variables into the JS bundle at
+# build time, so a leaked value would be served to every browser rather than
+# merely sitting in a file.
+**/.env
+**/.env.*
+!**/.env.example
 
 # Local database and runtime output
-*.db
-*.db-wal
-*.db-shm
-recipes.db
-shopping.md
-uge_*.yaml
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/shopping.md
+**/uge_*.yaml
 
 # VCS and worktrees
 .git
