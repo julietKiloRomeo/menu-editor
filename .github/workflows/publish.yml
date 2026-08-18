@@ -59,6 +59,64 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Build and inspect before publishing. An earlier image was built without
+      # a .dockerignore and carried the developer's .env -- including a live
+      # OpenAI key and a real account password -- into the registry. Nothing is
+      # pushed until the image is proven clean.
+      - name: Build image for inspection
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: menu-app:candidate
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Refuse to publish secrets or local state
+        run: |
+          failed=0
+          for path in .env .env.local .git recipes.db shopping.md; do
+            if docker run --rm --entrypoint sh menu-app:candidate -c "[ -e '/app/$path' ]"; then
+              echo "::error::/app/$path is present in the image and must not be published"
+              failed=1
+            fi
+          done
+          if docker run --rm --entrypoint sh menu-app:candidate \
+              -c 'ls /app/uge_*.yaml' >/dev/null 2>&1; then
+            echo "::error::generated menu YAML files are present in the image"
+            failed=1
+          fi
+          if ! docker run --rm --entrypoint sh menu-app:candidate \
+              -c '[ -f /app/frontend/dist/index.html ]'; then
+            echo "::error::frontend/dist/index.html missing - the SPA was not built"
+            failed=1
+          fi
+          exit $failed
+
+      # Boots the real image against an empty volume, which is what a fresh
+      # deployment looks like. Catches both a broken baked venv (the deployed
+      # image rebuilt its entire environment on every start, taking ~23 minutes)
+      # and workers racing each other during schema creation.
+      - name: Smoke test a cold start
+        run: |
+          docker run -d --name smoke -p 5000:5000 menu-app:candidate
+          ok=0
+          for _ in $(seq 1 30); do
+            sleep 2
+            if curl -fsS --max-time 5 http://localhost:5000/api/recipes >/dev/null 2>&1; then
+              ok=1
+              break
+            fi
+          done
+          echo "--- container logs ---"
+          docker logs smoke 2>&1 | tail -30
+          docker rm -f smoke >/dev/null
+          if [ "$ok" -ne 1 ]; then
+            echo "::error::image did not serve traffic within 60s of a cold start"
+            exit 1
+          fi
+          echo "Cold start served traffic successfully."
+
       - name: Build and push
         id: build
         uses: docker/build-push-action@v6
