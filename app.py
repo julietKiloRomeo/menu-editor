@@ -28,6 +28,7 @@ from src.models import (
     AppSetting,
     get_session,
     init_db,
+    initialization_lock,
 )
 
 
@@ -347,28 +348,34 @@ def seed_staples_from_legacy() -> None:
         _staples_seeded = True
         return
 
-    with get_session() as session:
-        existing = {
-            (item.name or "").strip().lower(): item
-            for item in session.exec(select(StapleItem)).all()
-        }
-        added = False
-        for name, value in ingredienser.items():
-            cleaned_name = (name or "").strip()
-            if not cleaned_name:
-                continue
-            key = cleaned_name.lower()
-            if key in existing:
-                continue
-            try:
-                amount_value = float(value.get("amount", 1))
-            except (TypeError, ValueError):
-                amount_value = 1.0
-            unit_value = _normalise_unit_value(value.get("unit"))
-            session.add(StapleItem(name=cleaned_name, amount=amount_value or 1.0, unit=unit_value))
-            added = True
-        if added:
-            session.commit()
+    # Reading the existing rows and inserting the missing ones is not atomic, so
+    # concurrently booting gunicorn workers would otherwise all insert the same
+    # staples and collide on stapleitem.name.
+    with initialization_lock():
+        with get_session() as session:
+            existing = {
+                (item.name or "").strip().lower(): item
+                for item in session.exec(select(StapleItem)).all()
+            }
+            added = False
+            for name, value in ingredienser.items():
+                cleaned_name = (name or "").strip()
+                if not cleaned_name:
+                    continue
+                key = cleaned_name.lower()
+                if key in existing:
+                    continue
+                try:
+                    amount_value = float(value.get("amount", 1))
+                except (TypeError, ValueError):
+                    amount_value = 1.0
+                unit_value = _normalise_unit_value(value.get("unit"))
+                session.add(
+                    StapleItem(name=cleaned_name, amount=amount_value or 1.0, unit=unit_value)
+                )
+                added = True
+            if added:
+                session.commit()
 
     _staples_seeded = True
 

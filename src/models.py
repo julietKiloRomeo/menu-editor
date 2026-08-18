@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import hashlib
 import os
+import tempfile
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Dict, Optional, Any
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows has no fcntl
+    fcntl = None
 
 from sqlalchemy import Column
 from sqlalchemy.dialects.sqlite import JSON
@@ -66,8 +74,59 @@ class AppSetting(SQLModel, table=True):
     value: Optional[str] = None
 
 
+_lock_depth = 0
+
+
+@contextmanager
+def initialization_lock():
+    """Serialise start-up work that reads state and then writes it.
+
+    ``create_all(checkfirst=True)`` reflects the existing tables and then emits
+    the ``CREATE TABLE`` statements for whatever is missing. Those two steps are
+    not atomic, so when several processes start together -- gunicorn runs the app
+    with multiple workers, and each worker imports ``app``, which calls
+    ``init_db()`` -- they can all observe an empty database and all try to create
+    the same tables. Every process but the winner then dies with
+    "table recipe already exists".
+
+    Seeding reference data has the same shape: it reads the rows that already
+    exist and inserts the missing ones, so concurrent workers otherwise collide
+    on a UNIQUE constraint.
+
+    An exclusive file lock makes those read-then-write sequences atomic. The lock
+    lives in the temp directory, which serialises the workers inside a single
+    container; concurrent writers from separate hosts are not supported by SQLite
+    anyway.
+    """
+    global _lock_depth
+
+    # flock is tied to the open file description, so a second exclusive
+    # acquisition from the same process would deadlock. Track depth and let
+    # nested callers through.
+    if fcntl is None or _lock_depth > 0:  # pragma: no cover - non-POSIX platforms
+        _lock_depth += 1
+        try:
+            yield
+        finally:
+            _lock_depth -= 1
+        return
+
+    digest = hashlib.sha256(str(engine.url).encode()).hexdigest()[:16]
+    lock_path = Path(tempfile.gettempdir()) / f"menu-editor-init-{digest}.lock"
+
+    with open(lock_path, "w") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        _lock_depth += 1
+        try:
+            yield
+        finally:
+            _lock_depth -= 1
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
 def init_db() -> None:
-    SQLModel.metadata.create_all(engine)
+    with initialization_lock():
+        SQLModel.metadata.create_all(engine)
 
 
 @contextmanager
@@ -85,5 +144,6 @@ __all__ = [
     "RecipeBase",
     "engine",
     "init_db",
+    "initialization_lock",
     "get_session",
 ]
