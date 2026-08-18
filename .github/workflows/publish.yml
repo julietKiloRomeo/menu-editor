@@ -13,7 +13,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: julietkiloromeo/menu-app
+  # Replaces the retired menu-app package. Every version here is built by this
+  # workflow from a clean checkout; menu-app contained hand-built images, one of
+  # which carried a developer .env into the registry.
+  IMAGE_NAME: julietkiloromeo/menu-editor
 
 jobs:
   test:
@@ -68,7 +71,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: menu-app:candidate
+          tags: menu-editor:candidate
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -80,7 +83,7 @@ jobs:
         run: |
           failed=0
 
-          found_env=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+          found_env=$(docker run --rm --entrypoint sh menu-editor:candidate -c \
             "find / -xdev -name '.env' -o -xdev -name '.env.*' \
              | grep -v '\.env\.example$' || true")
           if [ -n "$found_env" ]; then
@@ -89,7 +92,7 @@ jobs:
             failed=1
           fi
 
-          found_db=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+          found_db=$(docker run --rm --entrypoint sh menu-editor:candidate -c \
             "find /app -name '*.db' -o -name 'shopping.md' -o -name 'uge_*.yaml' || true")
           if [ -n "$found_db" ]; then
             echo "::error::local runtime state present in the image:"
@@ -97,14 +100,14 @@ jobs:
             failed=1
           fi
 
-          if docker run --rm --entrypoint sh menu-app:candidate -c "[ -e /app/.git ]"; then
+          if docker run --rm --entrypoint sh menu-editor:candidate -c "[ -e /app/.git ]"; then
             echo "::error::/app/.git is present in the image"
             failed=1
           fi
 
           # Vite inlines VITE_* variables into the bundle, so a leaked secret
           # would be shipped to browsers rather than left in a file.
-          leaked=$(docker run --rm --entrypoint sh menu-app:candidate -c \
+          leaked=$(docker run --rm --entrypoint sh menu-editor:candidate -c \
             "grep -rEl 'sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----' \
              /app/frontend/dist 2>/dev/null || true")
           if [ -n "$leaked" ]; then
@@ -113,7 +116,7 @@ jobs:
             failed=1
           fi
 
-          if ! docker run --rm --entrypoint sh menu-app:candidate \
+          if ! docker run --rm --entrypoint sh menu-editor:candidate \
               -c '[ -f /app/frontend/dist/index.html ]'; then
             echo "::error::frontend/dist/index.html missing - the SPA was not built"
             failed=1
@@ -130,7 +133,7 @@ jobs:
       # and workers racing each other during schema creation.
       - name: Smoke test a cold start
         run: |
-          docker run -d --name smoke -p 5000:5000 menu-app:candidate
+          docker run -d --name smoke -p 5000:5000 menu-editor:candidate
           ok=0
           for _ in $(seq 1 30); do
             sleep 2

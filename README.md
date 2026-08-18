@@ -58,8 +58,8 @@ Notes
 ## Running the container locally
 
 ```bash
-podman build -t menu-app .
-podman run -p 8080:5000 -v menu-data:/data menu-app
+podman build -t menu-editor .
+podman run -p 8080:5000 -v menu-data:/data menu-editor
 ```
 
 The image builds the React frontend itself (stage 1) and serves it from Flask,

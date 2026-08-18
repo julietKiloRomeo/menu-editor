@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Pin a published menu-app image into the homelab Ansible inventory.
+# Pin a published menu-editor image into the homelab Ansible inventory.
 #
 #   ./scripts/pin-image.sh 1.2.0
 #   ./scripts/pin-image.sh 1.2.0 sha256:abc123...
@@ -14,7 +14,7 @@ set -euo pipefail
 
 VERSION="${1:-}"
 DIGEST="${2:-}"
-IMAGE="${MENU_IMAGE:-ghcr.io/julietkiloromeo/menu-app}"
+IMAGE="${MENU_IMAGE:-ghcr.io/julietkiloromeo/menu-editor}"
 HOMELAB="${HOMELAB_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../homelab" 2>/dev/null && pwd || true)}"
 HOST_VARS_REL="ansible/inventory/host_vars/valhalla/main.yml"
 
