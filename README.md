@@ -55,69 +55,57 @@ Notes
 - Config dashboard (categories, ingredient mappings, staples + label) is now in React with shortcuts into the rename tools.
 - If the frontend dev server runs on another port, keep the Flask API running via `uv run python app.py` and point `VITE_API_BASE` to that origin.
 
+## Running the container locally
+
 ```bash
 podman build -t menu-app .
-podman run -p 80:5000 menu-app
+podman run -p 8080:5000 -v menu-data:/data menu-app
 ```
 
-# Podman + GitHub Container Registry (GHCR) Guide
+The image builds the React frontend itself (stage 1) and serves it from Flask,
+so a clean checkout is all that is needed — `frontend/dist` is gitignored and is
+deliberately not used from the host.
 
-## Creating a Personal Access Token (PAT)
-1. Go to GitHub Settings → Developer Settings → Personal Access Tokens
-2. Choose "Tokens (classic)" or "Fine-grained tokens"
-3. Generate new token with required permissions:
-   - `write:packages`
-   - `read:packages`
-   - `delete:packages` (optional)
-4. Save the token securely (e.g., in 1Password)
-5. Note the token name shown in GitHub settings (this will be your username for podman login)
+The database lives at `/data/recipes.db` (`DATABASE_URL` overrides this). Mount
+something at `/data` or the data disappears with the container.
 
-## Pushing Images to GHCR
+## Deployment
 
-1. Login to GitHub Container Registry:
+The app runs on **valhalla**, in the Ansible-managed compose stack in the
+[`homelab`](https://github.com/julietKiloRomeo/homelab) repo, behind Traefik at
+`menu.valhalla`. valhalla's `docker-compose.yml` is *generated* from
+`roles/home_automation_stack/templates/docker-compose.yml.j2` — editing it on the
+host is pointless, the next deploy overwrites it.
+
+Releasing a new version:
+
 ```bash
-# Replace TOKEN_NAME with the name of your token from GitHub settings
-# Replace YOUR_PAT with your actual PAT
-echo YOUR_PAT | podman login ghcr.io -u TOKEN_NAME --password-stdin
+git tag v1.2.0 && git push --tags   # Actions builds + pushes to GHCR
+./scripts/pin-image.sh 1.2.0        # pins the digest in the homelab inventory
+
+cd ../homelab/ansible
+bin/deploy valhalla --check --diff -K   # review
+bin/deploy valhalla -K                  # apply
 ```
 
-2. Tag your local image:
+`-K` is needed because the AdGuard task in that stack requires sudo. Commit the
+inventory bump in the homelab repo afterwards.
+
+### Persistent data
+
+`recipes.db` is bind-mounted from `menu/data/` inside the compose project
+directory on valhalla, so it survives image pulls and is included in
+`bin/backup-valhalla`. The weekly `uge_*.yaml` files and `shopping.md` are *not*
+persisted — they are regenerated on demand.
+
+### Secrets
+
+`OPENAI_API_KEY` (for recipe-from-photo parsing) comes from Ansible Vault and is
+rendered to `menu/menu-app.env` with mode 0600. Add it with:
+
 ```bash
-podman tag menu-app:latest ghcr.io/julietkiloromeo/menu-app:latest
+cd ../homelab/ansible && bin/vault-edit valhalla   # vault_menu_app_openai_api_key
 ```
 
-3. Push the image:
-```bash
-podman push ghcr.io/julietkiloromeo/menu-app:latest
-```
-
-## Pulling Images on a New Machine
-
-1. Login to GHCR:
-```bash
-# Replace TOKEN_NAME and YOUR_PAT as before
-echo YOUR_PAT | podman login ghcr.io -u TOKEN_NAME --password-stdin
-```
-
-2. Pull the image:
-```bash
-podman pull ghcr.io/julietkiloromeo/menu-app:latest
-```
-
-## Troubleshooting
-
-- If login fails, verify:
-  - Token name is correct (from GitHub settings, not your GitHub username)
-  - PAT hasn't expired
-  - PAT has correct permissions
-- If push fails, ensure:
-  - Repository exists and is properly configured for packages
-  - You have appropriate permissions on the repository
-  - Image is tagged correctly with the ghcr.io prefix
-
-## Security Notes
-
-- Never commit your PAT to version control
-- Use environment variables or secure secret management (like 1Password) to store PATs
-- Consider using fine-grained tokens with minimal necessary permissions
-- Regularly rotate your PATs
+Locally, put it in `.env` (see `.env.example`); that file is excluded from the
+image by `.dockerignore`.
