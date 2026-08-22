@@ -51,6 +51,65 @@ Every ingredient known to the app that has no kitchen zone assigned, each with a
 
 `canonical` is non-null when the ingredient is an alias pointing at a name that is itself unplaced. `suggested_zone` is `null` when nothing similar enough exists. `zones` is ordered by walking order, for populating a picker.
 
+Ingredient matching is case-insensitive throughout, so `Smør` and `smør` resolve to the same zone; the configured spelling is what gets displayed.
+
+## Shopping runs
+
+A *run* is a menu's shopping list frozen at the moment it was started, so it can be walked and ticked off. It is a snapshot, not a live view: editing a recipe mid-walk will not reorder the list or drop something already ticked.
+
+### `GET /api/menus`
+Menu files available to shop from, newest first: `{"menus": [{"name": "uge_34_2026", "modified": "..."}]}`.
+
+The data directory also holds configuration, so files are identified by shape — a menu maps a section name to a *list* of dishes — rather than by suffix alone.
+
+### `POST /api/runs`
+Body: `{ "menu": "uge_34_2026" }`. Response `201` with the run. `404` if the menu does not exist or is not a menu.
+
+The name must be a bare stem; it is resolved inside the data directory only.
+
+### `GET /api/runs/<id>`
+The run, with its items grouped into zones in walking order.
+
+```json
+{
+  "id": 1,
+  "menu": "uge_34_2026",
+  "created_at": "2026-08-22T15:54:27",
+  "checked": 3,
+  "total": 21,
+  "zones": [
+    {
+      "zone": "køl",
+      "items": [
+        {
+          "id": 7,
+          "ingredient": "smør",
+          "quantities": {"g": 20.0},
+          "recipes": ["Spinach Omelette"],
+          "zone": "køl",
+          "checked": false,
+          "checked_at": null,
+          "likely_stocked": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+`likely_stocked` marks an ingredient the kitchen usually already has. It is a hint only — such items are never pre-ticked and never hidden, because only the walk can confirm them.
+
+### `GET /api/runs/latest?menu=<name>`
+The most recent run for a menu, as `{"run": ...}`, or `{"run": null}` if it has never been walked. `400` without `menu`. Use this so a phone and a laptop meet on the same run.
+
+### `PATCH /api/runs/items/<id>`
+Body: `{ "checked": true }`. Returns the **whole run**, not just the item, so every reply carries current totals to whichever screens are open.
+
+### `GET|POST|DELETE /api/stocked`
+The list of ingredients the kitchen usually has in. `POST` body `{ "name": "salt" }`; names are normalised, and adding an existing one is a no-op. All three return `{"items": [{"id": 1, "name": "salt"}]}`.
+
+A brand-new database seeds itself with the 23 items in `data/usually_stocked.json`; use `scripts/seed_stocked.py --force` to add missing ones to an existing installation.
+
 ## Recipes
 ### `GET /api/recipes`
 Query params:

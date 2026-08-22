@@ -63,10 +63,10 @@ phone can reach it over the LAN. No auth, no multi-tenancy.
 
 | # | Story | Status |
 |---|---|---|
-| 5.1 | As a shopper, I want to walk through my kitchen ticking off what I already have, so I don't buy duplicates | ❌ |
+| 5.1 | As a shopper, I want to walk through my kitchen ticking off what I already have, so I don't buy duplicates | ⚠️ API only |
 | 5.2 | As a shopper, I want to say in bulk "I have X, Y, Z" and have them all drop off the list | ❌ |
-| 5.3 | As a shopper, I want the app to remember what I *usually* have, so the same items aren't proposed every week | ❌ |
-| 5.4 | As a shopper, I want check-off done on my phone to be visible on my laptop | ❌ |
+| 5.3 | As a shopper, I want the app to remember what I *usually* have, so the same items aren't proposed every week | ⚠️ flagged, not ticked |
+| 5.4 | As a shopper, I want check-off done on my phone to be visible on my laptop | ⚠️ API only |
 
 ## E6 — Order it online
 
@@ -83,7 +83,7 @@ phone can reach it over the LAN. No auth, no multi-tenancy.
 
 | # | Story | Status |
 |---|---|---|
-| 7.1 | As a shopper, I want the list on my phone in the kitchen and in the shop | ❌ |
+| 7.1 | As a shopper, I want the list on my phone in the kitchen and in the shop | ⚠️ API only |
 | 7.2 | As a cook, I want to drive the app from a chat client, so I can say what I want in words | ❌ |
 | 7.3 | As a shopper, I want to print the list on paper | ✅ |
 
@@ -105,7 +105,7 @@ Not every story suits every interface.
 |---|---|---|
 | 1 | Core extraction — structured shopping list, no behaviour change | foundation |
 | 2 | Kitchen zones made real: seed mappings, render names, surface unmapped | 4.1, 4.4, 4.5, 1.7, 3.4 |
-| 3 | Phone check-off | 5.1, 5.3, 5.4, 7.1 |
+| 3 | Phone check-off — backend done, UI outstanding | 5.1, 5.3, 5.4, 7.1 |
 | 4 | MCP server | 7.2, 5.2, 2.4, 2.5, 1.3 |
 | 5 | Provider abstraction + product search | 6.1, 6.2, 6.3, 6.6 |
 | 6 | Basket push via Playwright | 6.4, 6.5 |
