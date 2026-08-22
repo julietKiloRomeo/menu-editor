@@ -20,9 +20,12 @@ from sqlalchemy import or_
 from sqlmodel import select, Session
 from pydantic import BaseModel, Field
 
-from src.core.zones import seed_zones
+from src.core.ingredients import load_alias_map
+from src.core.ingredients import normalise as normalise_ingredient
+from src.core.zones import load_zone_config, seed_zones
 from src.models import (
     CategoryConfig,
+    IngredientAlias,
     IngredientConfig,
     Recipe,
     StapleItem,
@@ -524,6 +527,15 @@ def get_canonical_ingredient_names() -> list[str]:
     return names
 
 
+def fetch_aliases() -> List[IngredientAlias]:
+    with get_session() as session:
+        return list(session.exec(select(IngredientAlias)).all())
+
+
+def serialise_alias(alias: IngredientAlias) -> Dict[str, Any]:
+    return {"id": alias.id, "alias": alias.alias, "canonical": alias.canonical}
+
+
 def build_config_payload() -> Dict[str, Any]:
     categories, items = fetch_config()
     category_map = {category.id: category for category in categories}
@@ -537,6 +549,7 @@ def build_config_payload() -> Dict[str, Any]:
         "staples": [serialise_staple(item) for item in staples],
         "staple_label": get_staple_label(),
         "staple_label_options": STAPLE_LABEL_OPTIONS,
+        "aliases": [serialise_alias(alias) for alias in fetch_aliases()],
     }
 
 
@@ -1576,6 +1589,104 @@ def delete_ingredient_config(item_id: int):
         session.commit()
 
     return jsonify(build_config_payload())
+
+
+@app.route('/api/config/aliases', methods=['POST'])
+@staple_api
+def create_alias_api():
+    payload = request.get_json(silent=True) or {}
+    alias = (payload.get("alias") or "").strip()
+    canonical = (payload.get("canonical") or "").strip()
+
+    if not alias:
+        raise ValueError("Alias is required")
+    if not canonical:
+        raise ValueError("Canonical name is required")
+    if normalise_ingredient(alias) == normalise_ingredient(canonical):
+        raise ValueError("An ingredient cannot be an alias of itself")
+
+    with get_session() as session:
+        existing = session.exec(
+            select(IngredientAlias).where(IngredientAlias.alias == alias)
+        ).first()
+        if existing:
+            existing.canonical = canonical
+            session.add(existing)
+        else:
+            session.add(IngredientAlias(alias=alias, canonical=canonical))
+        session.commit()
+
+    return jsonify(build_config_payload()), 201
+
+
+@app.route('/api/config/aliases/<int:alias_id>', methods=['DELETE'])
+@staple_api
+def delete_alias_api(alias_id: int):
+    with get_session() as session:
+        alias = session.get(IngredientAlias, alias_id)
+        if not alias:
+            return jsonify({"error": "Alias not found"}), 404
+        session.delete(alias)
+        session.commit()
+
+    return jsonify(build_config_payload())
+
+
+@app.route('/api/zones/unplaced', methods=['GET'])
+def unplaced_ingredients():
+    """Ingredients used by recipes that have no kitchen zone yet.
+
+    Each comes with a suggested zone, borrowed from the closest already-placed
+    ingredient, so assigning them is one click rather than a decision.
+    """
+    try:
+        zone_config = load_zone_config()
+    except LookupError:
+        return jsonify({"unplaced": [], "zones": []})
+
+    aliases = load_alias_map()
+    known = _collect_all_ingredient_names()
+
+    unplaced = []
+    for name in sorted(known):
+        canonical = aliases.canonical(name)
+        if zone_config.is_mapped(canonical):
+            continue
+        unplaced.append(
+            {
+                "ingredient": name,
+                "canonical": canonical if canonical != name else None,
+                "suggested_zone": suggest_zone(canonical, zone_config),
+            }
+        )
+
+    zones = sorted(
+        ({"name": z.name, "order": z.order} for z in zone_config.zones.values()),
+        key=lambda z: z["order"],
+    )
+    return jsonify({"unplaced": unplaced, "zones": zones})
+
+
+def suggest_zone(ingredient: str, zone_config) -> Dict[str, Any] | None:
+    """Guess a zone from the most similar ingredient already placed."""
+    target = _norm_text(ingredient)
+    if not target:
+        return None
+
+    best_name = None
+    best_score = 0
+    for candidate in zone_config.assignments:
+        score = fuzz.ratio(target, _norm_text(candidate))
+        if score > best_score:
+            best_name, best_score = candidate, score
+
+    if best_name is None or best_score < 70:
+        return None
+    return {
+        "zone": zone_config.assignments[best_name],
+        "because_of": best_name,
+        "confidence": best_score,
+    }
 
 
 def data_dir() -> pathlib.Path:

@@ -11,6 +11,7 @@ import pathlib
 import click
 import yaml
 
+from src.core.ingredients import load_alias_map
 from src.core.recipes import load_recipe_data
 from src.core.shopping import aggregate_menu
 from src.core.zones import ZoneConfig, load_zone_config
@@ -58,6 +59,7 @@ def aggregate_menu_file(menu_path, silent_sections=None):
         _load_zone_config(),
         load_recipe=load_recipe_data,
         silent_sections=silent_sections,
+        aliases=load_alias_map(),
     )
 
 

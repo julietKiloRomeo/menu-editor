@@ -1,6 +1,6 @@
 # Backend API Reference
 
-Last updated: 2025-10-26.
+Last updated: 2026-08-22.
 
 ## Overview
 - Base URL: the Flask server default `http://localhost:5000`.
@@ -29,7 +29,27 @@ Body:
 ```
 Values represent requested plate counts. Unknown recipe names are silently ignored.
 
-Response: `{"markdown": "..."}` containing the rendered grocery list plus auto-appended staple items. The endpoint also writes `shopping.md` and the YAML snapshot under `uge_<week>_<year>.yaml` for downstream tooling.
+Response: `{"markdown": "..."}` containing the rendered grocery list plus auto-appended staple items. The endpoint also writes `shopping.md` and the YAML snapshot under `uge_<week>_<year>.yaml` for downstream tooling, both inside `MENU_DATA_DIR` (default: the process working directory).
+
+The shopping list is grouped into kitchen zones, one markdown table per zone, in walking order. Each table is headed by the zone name; ingredients with no zone yet appear under **ikke placeret**, followed by a footer naming them.
+
+### `GET /api/zones/unplaced`
+Every ingredient known to the app that has no kitchen zone assigned, each with a suggested zone borrowed from the most similar already-placed ingredient (fuzzy ratio, minimum 70).
+
+```json
+{
+  "unplaced": [
+    {
+      "ingredient": "rødløgg",
+      "canonical": null,
+      "suggested_zone": {"zone": "frugt", "because_of": "rødløg", "confidence": 92}
+    }
+  ],
+  "zones": [{"name": "frugt", "order": 2}]
+}
+```
+
+`canonical` is non-null when the ingredient is an alias pointing at a name that is itself unplaced. `suggested_zone` is `null` when nothing similar enough exists. `zones` is ordered by walking order, for populating a picker.
 
 ## Recipes
 ### `GET /api/recipes`
@@ -111,13 +131,25 @@ Body: `{ "name": "Brød", "amount": 1, "unit": "stk" }`. `amount` defaults to `1
 Body: `{ "label": "Weekly staples" }` or `{ "use_custom": true, "custom_label": "Picnic" }`. Response echoes the saved label + items list.
 
 ### `GET /api/config`
-Returns categories, ingredient mappings, staples, and the active staple label. Useful for bootstrapping React context.
+Returns categories (kitchen zones), ingredient mappings, staples, aliases, and the active staple label. Useful for bootstrapping React context.
+
+A brand-new database seeds itself on first boot with the default 13-zone layout from `data/kitchen_zones.yml` (501 ingredient mappings). An existing configuration is never overwritten; use `scripts/seed_zones.py --force` to update one deliberately.
 
 ### `POST /api/config/categories`
 Body: `{ "name": "Grønt", "priority": 10 }`. Response `201` with the full config snapshot. `PATCH` / `DELETE /api/config/categories/<id>` follow the same envelope.
 
+`priority` is the walking order: lower numbers are visited first when shopping.
+
 ### `POST /api/config/items`
 Body: `{ "name": "Tomat", "category_id": 1 }`. Response `201` with full config. `PATCH` / `DELETE /api/config/items/<id>` mirror this behavior.
+
+### `POST /api/config/aliases`
+Body: `{ "alias": "frisk koriander", "canonical": "koriander" }`. Declares that two spellings are one ingredient, so they aggregate onto a single shopping-list row and share a zone.
+
+Matching is case-insensitive; the canonical spelling is what gets rendered. Posting an existing alias updates its target. Aliasing a name to itself returns `400`. Response `201` with the full config snapshot.
+
+### `DELETE /api/config/aliases/<id>`
+Removes an alias and returns the refreshed config.
 
 ## Legacy helpers (still available during the migration)
 - `GET /` → serves the React bundle when it exists, otherwise renders the Flask/Jinja UI with preloaded recipe names.

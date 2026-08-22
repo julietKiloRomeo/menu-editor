@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable
 
+from src.core.ingredients import AliasMap
 from src.core.recipes import load_recipe_data
 from src.core.zones import UNKNOWN_ZONE, Zone, ZoneConfig
 
@@ -97,11 +98,14 @@ class _Accumulator:
     lines are ordered by zone walking order, then by ingredient name.
     """
 
-    def __init__(self, zone_config: ZoneConfig) -> None:
+    def __init__(self, zone_config: ZoneConfig, aliases: AliasMap | None = None) -> None:
         self._zones = zone_config
+        self._aliases = aliases or AliasMap()
         self._lines: dict[tuple[int, str], ShoppingLine] = {}
 
     def add(self, ingredient: str, amount: float, unit: str, recipe_name: str) -> None:
+        # Canonicalise first so aliases share a line *and* a zone.
+        ingredient = self._aliases.canonical(ingredient)
         zone = self._zones.zone_for(ingredient)
         key = (zone.order, ingredient)
 
@@ -173,6 +177,7 @@ def aggregate_menu(
     zone_config: ZoneConfig,
     load_recipe: RecipeLoader | None = None,
     silent_sections: Iterable[str] | None = None,
+    aliases: AliasMap | None = None,
 ) -> AggregatedMenu:
     """Expand a menu into its dishes and a consolidated shopping list.
 
@@ -185,7 +190,7 @@ def aggregate_menu(
     silent_set = {s.lower() for s in (silent_sections or set())}
     silent_set.add("andet")
 
-    acc = _Accumulator(zone_config)
+    acc = _Accumulator(zone_config, aliases)
     result = AggregatedMenu()
 
     for section_name, recipes in menu.items():

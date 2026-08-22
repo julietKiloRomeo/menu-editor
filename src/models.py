@@ -82,6 +82,19 @@ class IngredientConfig(SQLModel, table=True):
     category_id: Optional[int] = Field(default=None, foreign_key="categoryconfig.id")
 
 
+class IngredientAlias(SQLModel, table=True):
+    """Maps a writing of an ingredient onto the name the shopping list uses.
+
+    Recipes spell things differently -- "frisk koriander" and "koriander" are
+    the same bunch of herbs -- and without this they aggregate into two rows
+    and get bought twice.
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    alias: str = Field(index=True, unique=True)
+    canonical: str = Field(index=True)
+
+
 class StapleItem(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
