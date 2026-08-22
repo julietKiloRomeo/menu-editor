@@ -200,6 +200,24 @@ class TestZones:
             "mælk",
         ]
 
+    def test_capitalised_ingredient_still_finds_its_zone(self):
+        """Recipes capitalise inconsistently; the mapping holds one spelling."""
+        result = aggregate({"Andet": [{"Løg": {"amount": 2, "unit": "stk"}}]})
+
+        assert lines_by_name(result)["Løg"].zone.name == "frugt"
+
+    def test_names_sort_as_a_reader_scans_them_not_as_ascii_orders_them(self):
+        result = aggregate(
+            {
+                "Andet": [
+                    {"æble": {"amount": 1, "unit": "stk"}},
+                    {"Løg": {"amount": 1, "unit": "stk"}},
+                ]
+            }
+        )
+        # Both are in frugt; "Løg" must not jump ahead just for being capitalised.
+        assert [line.ingredient for line in result.shopping.lines] == ["Løg", "æble"]
+
     def test_unmapped_ingredient_lands_in_the_unknown_zone(self):
         result = aggregate({"Andet": [{"halloumi": {"amount": 1, "unit": "stk"}}]})
         line = lines_by_name(result)["halloumi"]

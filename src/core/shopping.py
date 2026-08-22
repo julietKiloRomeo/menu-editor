@@ -118,8 +118,14 @@ class _Accumulator:
         line.recipes.append(recipe_name)
 
     def build(self) -> ShoppingList:
+        # Sorted the way a reader scans the column, not the way ASCII orders
+        # it: otherwise every capitalised ingredient clumps ahead of the
+        # lowercase ones and "Smør" sits nowhere near "smørresmør".
         return ShoppingList(
-            lines=[self._lines[key] for key in sorted(self._lines)]
+            lines=[
+                self._lines[key]
+                for key in sorted(self._lines, key=lambda k: (k[0], k[1].casefold()))
+            ]
         )
 
 

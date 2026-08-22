@@ -29,6 +29,40 @@ def db(tmp_path, monkeypatch):
     return models
 
 
+class TestCaseInsensitiveMatching:
+    """Recipes capitalise inconsistently; the mapping holds one spelling."""
+
+    def config(self):
+        return ZoneConfig(
+            zones={"køl": Zone("køl", 9)}, assignments={"smør": "køl"}
+        )
+
+    def test_capitalised_ingredient_finds_its_zone(self):
+        assert self.config().zone_for("Smør").name == "køl"
+
+    def test_shouted_ingredient_finds_its_zone(self):
+        assert self.config().zone_for("SMØR").name == "køl"
+
+    def test_surrounding_whitespace_is_ignored(self):
+        assert self.config().zone_for("  smør ").name == "køl"
+
+    def test_is_mapped_agrees_with_zone_for(self):
+        config = self.config()
+
+        assert config.is_mapped("Smør") is True
+        assert config.zone_for("Smør").name != UNKNOWN_ZONE
+
+    def test_genuinely_unmapped_still_falls_back(self):
+        assert self.config().zone_for("Halloumi").name == UNKNOWN_ZONE
+
+    def test_configured_spelling_is_preserved_for_display(self):
+        """Matching folds case; the configured spelling is not rewritten."""
+        config = self.config()
+        config.zone_for("SMØR")
+
+        assert list(config.assignments) == ["smør"]
+
+
 class TestZoneConfig:
     def test_zone_for_known_ingredient(self):
         config = ZoneConfig(

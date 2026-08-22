@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 import yaml
 from sqlmodel import select
 
+from src.core.ingredients import normalise
 from src.models import CategoryConfig, IngredientConfig, get_session
 
 UNKNOWN_ZONE = "unknown"
@@ -38,7 +39,26 @@ class ZoneConfig:
     """Zone definitions plus the ingredient -> zone assignment."""
 
     zones: dict[str, Zone] = field(default_factory=dict)
+    #: keyed by the spelling as configured, which is what gets displayed
     assignments: dict[str, str] = field(default_factory=dict)
+    _index: dict[str, str] | None = field(
+        default=None, repr=False, compare=False
+    )
+
+    def _lookup(self) -> dict[str, str]:
+        """Assignments keyed for case-insensitive matching.
+
+        Recipes capitalise inconsistently -- "Smør" in one, "smør" in the next
+        -- and the configured mapping only ever holds one of them. Matching on
+        the raw string sent every other spelling to the unknown bucket, so the
+        printed list claimed things were unplaced that had been placed.
+
+        Where two spellings disagree about the zone, the last one configured
+        wins; that is a conflict to resolve in Settings, not here.
+        """
+        if self._index is None:
+            self._index = {normalise(k): v for k, v in self.assignments.items()}
+        return self._index
 
     def zone_for(self, ingredient: str) -> Zone:
         """Resolve an ingredient's zone, falling back to the unknown bucket.
@@ -46,7 +66,7 @@ class ZoneConfig:
         The fallback is deliberately a real Zone rather than a raised error so
         an unmapped ingredient can never drop off a shopping list silently.
         """
-        name = self.assignments.get(ingredient, UNKNOWN_ZONE)
+        name = self._lookup().get(normalise(ingredient), UNKNOWN_ZONE)
         zone = self.zones.get(name)
         if zone is not None:
             return zone
@@ -54,7 +74,7 @@ class ZoneConfig:
         return self.zones.get(UNKNOWN_ZONE, Zone(UNKNOWN_ZONE, UNKNOWN_ORDER))
 
     def is_mapped(self, ingredient: str) -> bool:
-        return ingredient in self.assignments
+        return normalise(ingredient) in self._lookup()
 
     # -- legacy interop -------------------------------------------------
     @classmethod
