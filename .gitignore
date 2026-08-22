@@ -9,6 +9,9 @@ __pycache__/*
 .vscode/*
 .ipynb_checkpoints/*
 recipes.db
+# WAL sidecars, created since the database runs in WAL mode
+recipes.db-shm
+recipes.db-wal
 *.pyc
 env/*
 openaienv/*

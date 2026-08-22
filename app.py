@@ -22,13 +22,23 @@ from pydantic import BaseModel, Field
 
 from src.core.ingredients import load_alias_map
 from src.core.ingredients import normalise as normalise_ingredient
+from src.core.runs import (
+    latest_run,
+    progress,
+    run_items,
+    set_checked,
+    start_run,
+)
 from src.core.zones import load_zone_config, seed_zones
 from src.models import (
     CategoryConfig,
     IngredientAlias,
     IngredientConfig,
     Recipe,
+    ShoppingRun,
+    ShoppingRunItem,
     StapleItem,
+    StockedItem,
     AppSetting,
     get_session,
     init_db,
@@ -1690,6 +1700,217 @@ def suggest_zone(ingredient: str, zone_config) -> Dict[str, Any] | None:
         "because_of": best_name,
         "confidence": best_score,
     }
+
+
+MENU_SUFFIXES = (".yaml", ".yml")
+
+
+def looks_like_menu(path: pathlib.Path) -> bool:
+    """True when a YAML file is a menu rather than some other config.
+
+    The data directory is shared with configuration -- ``kitchen_zones.yml``
+    lives there too -- so suffix alone is not enough. A menu maps a section
+    name to a *list* of dishes; the zone config maps names to mappings, so the
+    shape tells them apart without a filename denylist.
+    """
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            parsed = yaml.load(handle, Loader=yaml.FullLoader)
+    except (OSError, yaml.YAMLError):
+        return False
+
+    if not isinstance(parsed, dict) or not parsed:
+        return False
+    return all(isinstance(value, list) for value in parsed.values())
+
+
+def list_menu_files() -> list[pathlib.Path]:
+    """Menu files in the data directory, newest first."""
+    directory = data_dir()
+    files = [
+        path
+        for path in directory.iterdir()
+        if path.is_file() and path.suffix in MENU_SUFFIXES and looks_like_menu(path)
+    ]
+    return sorted(files, key=lambda p: p.stat().st_mtime, reverse=True)
+
+
+def menu_path_for(name: str) -> pathlib.Path | None:
+    """Resolve a menu name to a file, refusing to escape the data directory.
+
+    The name arrives from the client, so it is treated as hostile: only a bare
+    stem is accepted, and the resolved path must still sit inside the data
+    directory.
+    """
+    if not name or "/" in name or "\\" in name or name.startswith("."):
+        return None
+
+    directory = data_dir().resolve()
+    for suffix in MENU_SUFFIXES:
+        candidate = (directory / f"{name}{suffix}").resolve()
+        if candidate.parent != directory:
+            return None
+        if candidate.is_file() and looks_like_menu(candidate):
+            return candidate
+    return None
+
+
+def serialise_run_item(item: ShoppingRunItem) -> Dict[str, Any]:
+    return {
+        "id": item.id,
+        "ingredient": item.ingredient,
+        "quantities": item.quantities,
+        "recipes": item.recipes,
+        "zone": item.zone_name,
+        "checked": item.checked,
+        "checked_at": item.checked_at.isoformat() if item.checked_at else None,
+    }
+
+
+def serialise_run(run: ShoppingRun, items: List[ShoppingRunItem]) -> Dict[str, Any]:
+    """Group items into zones so the phone can render sticky headers directly."""
+    zones: List[Dict[str, Any]] = []
+    for item in items:
+        if not zones or zones[-1]["zone"] != item.zone_name:
+            zones.append({"zone": item.zone_name, "items": []})
+        zones[-1]["items"].append(serialise_run_item(item))
+
+    checked, total = progress(items)
+    return {
+        "id": run.id,
+        "menu": run.menu_name,
+        "created_at": run.created_at.isoformat() if run.created_at else None,
+        "checked": checked,
+        "total": total,
+        "zones": zones,
+    }
+
+
+@app.route('/api/menus', methods=['GET'])
+def list_menus():
+    """Menu files available to shop from, newest first."""
+    return jsonify(
+        {
+            "menus": [
+                {
+                    "name": path.stem,
+                    "modified": datetime.datetime.fromtimestamp(
+                        path.stat().st_mtime
+                    ).isoformat(),
+                }
+                for path in list_menu_files()
+            ]
+        }
+    )
+
+
+@app.route('/api/runs', methods=['POST'])
+def create_run():
+    """Freeze a menu's shopping list into a tickable run."""
+    payload = request.get_json(silent=True) or {}
+    name = (payload.get("menu") or "").strip()
+
+    menu_path = menu_path_for(name)
+    if menu_path is None:
+        return jsonify({"error": "Menu not found"}), 404
+
+    try:
+        aggregated = parser.aggregate_menu_file(
+            menu_path, silent_sections={get_staple_label()}
+        )
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    with get_session() as session:
+        run = start_run(name, aggregated.shopping, session)
+        return jsonify(serialise_run(run, run_items(run.id, session))), 201
+
+
+@app.route('/api/runs/latest', methods=['GET'])
+def get_latest_run():
+    """The run in progress for a menu, so phone and laptop meet on the same one."""
+    name = (request.args.get("menu") or "").strip()
+    if not name:
+        return jsonify({"error": "menu is required"}), 400
+
+    with get_session() as session:
+        run = latest_run(name, session)
+        if run is None:
+            return jsonify({"run": None})
+        return jsonify({"run": serialise_run(run, run_items(run.id, session))})
+
+
+@app.route('/api/runs/<int:run_id>', methods=['GET'])
+def get_run(run_id: int):
+    with get_session() as session:
+        run = session.get(ShoppingRun, run_id)
+        if run is None:
+            return jsonify({"error": "Run not found"}), 404
+        return jsonify(serialise_run(run, run_items(run.id, session)))
+
+
+@app.route('/api/runs/items/<int:item_id>', methods=['PATCH'])
+def update_run_item(item_id: int):
+    """Tick or untick one item.
+
+    Returns the whole run, not just the item: the phone and the laptop may both
+    be looking at this list, so every reply carries the current totals.
+    """
+    payload = request.get_json(silent=True) or {}
+    if "checked" not in payload:
+        return jsonify({"error": "checked is required"}), 400
+
+    with get_session() as session:
+        item = set_checked(item_id, bool(payload["checked"]), session)
+        if item is None:
+            return jsonify({"error": "Item not found"}), 404
+
+        run = session.get(ShoppingRun, item.run_id)
+        return jsonify(serialise_run(run, run_items(run.id, session)))
+
+
+def serialise_stocked(item: StockedItem) -> Dict[str, Any]:
+    return {"id": item.id, "name": item.name}
+
+
+@app.route('/api/stocked', methods=['GET'])
+def get_stocked():
+    """Ingredients normally already in the kitchen, so runs start them ticked."""
+    with get_session() as session:
+        rows = session.exec(select(StockedItem).order_by(StockedItem.name)).all()
+        return jsonify({"items": [serialise_stocked(row) for row in rows]})
+
+
+@app.route('/api/stocked', methods=['POST'])
+def add_stocked():
+    payload = request.get_json(silent=True) or {}
+    name = normalise_ingredient(payload.get("name") or "")
+    if not name:
+        return jsonify({"error": "name is required"}), 400
+
+    with get_session() as session:
+        existing = session.exec(
+            select(StockedItem).where(StockedItem.name == name)
+        ).first()
+        if existing is None:
+            session.add(StockedItem(name=name))
+            session.commit()
+
+        rows = session.exec(select(StockedItem).order_by(StockedItem.name)).all()
+        return jsonify({"items": [serialise_stocked(row) for row in rows]})
+
+
+@app.route('/api/stocked/<int:item_id>', methods=['DELETE'])
+def delete_stocked(item_id: int):
+    with get_session() as session:
+        item = session.get(StockedItem, item_id)
+        if item is None:
+            return jsonify({"error": "Item not found"}), 404
+        session.delete(item)
+        session.commit()
+
+        rows = session.exec(select(StockedItem).order_by(StockedItem.name)).all()
+        return jsonify({"items": [serialise_stocked(row) for row in rows]})
 
 
 def data_dir() -> pathlib.Path:

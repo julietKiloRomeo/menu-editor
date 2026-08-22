@@ -5,6 +5,7 @@ import os
 import sqlite3
 import tempfile
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional, Any
 
@@ -96,10 +97,78 @@ class IngredientAlias(SQLModel, table=True):
 
 
 class StapleItem(SQLModel, table=True):
+    """Something bought *every* week, injected into every menu.
+
+    Not to be confused with :class:`StockedItem`, which is the opposite idea:
+    something already in the kitchen that therefore should *not* be bought.
+    One of this table's display labels is "Pantry essentials", so the two are
+    easy to mix up -- the test is whether the item ends up in the basket.
+    """
+
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
     amount: float = Field(default=1.0)
     unit: str = Field(default="stk")
+
+
+class StockedItem(SQLModel, table=True):
+    """An ingredient the household normally already has in.
+
+    Salt, oil, most spices: they appear in recipe after recipe and are ticked
+    off unread every single week. Recording them lets a new run start with them
+    already ticked, so the list shows what actually needs attention (story 5.3).
+
+    They are *pre-ticked rather than hidden*, because "usually" is not "always"
+    -- when the oil finally runs out it must be possible to untick it.
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    #: stored :func:`src.core.ingredients.normalise`-d, so matching is
+    #: case-insensitive without every caller remembering to fold case
+    name: str = Field(index=True, unique=True)
+
+
+class ShoppingRun(SQLModel, table=True):
+    """One trip's shopping list, frozen at the moment it was started.
+
+    A run is a *snapshot*, not a live view of the menu. Editing a recipe while
+    halfway around the kitchen must not reorder the list underneath you, nor
+    silently drop an item you have already ticked. That means the zone name and
+    order are copied onto each item rather than joined at read time.
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    menu_name: str = Field(index=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
+
+
+class ShoppingRunItem(SQLModel, table=True):
+    """One tickable row of a :class:`ShoppingRun`."""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    run_id: Optional[int] = Field(
+        default=None, foreign_key="shoppingrun.id", index=True
+    )
+    #: position in the original list, so display order survives any re-sorting
+    position: int = Field(default=0)
+    ingredient: str = Field(index=True)
+    #: unit -> amount, mirroring ShoppingLine.quantities. Units are never
+    #: converted, so "100 g" and "1 kg" stay separate buckets.
+    quantities: Dict[str, float] = Field(
+        default_factory=dict,
+        sa_column=Column(JSON),
+    )
+    #: contributing recipe names, to answer "why is this on my list?"
+    recipes: list[str] = Field(
+        default_factory=list,
+        sa_column=Column(JSON),
+    )
+    zone_name: str = Field(default="")
+    zone_order: int = Field(default=0)
+    checked: bool = Field(default=False)
+    checked_at: Optional[datetime] = Field(default=None)
 
 
 class AppSetting(SQLModel, table=True):
@@ -171,7 +240,11 @@ def get_session() -> Session:
 __all__ = [
     "CategoryConfig",
     "IngredientConfig",
+    "IngredientAlias",
     "StapleItem",
+    "StockedItem",
+    "ShoppingRun",
+    "ShoppingRunItem",
     "AppSetting",
     "Recipe",
     "RecipeBase",
