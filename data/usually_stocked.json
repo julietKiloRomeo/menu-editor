@@ -1,0 +1,29 @@
+{
+  "_comment": "Ingredients the kitchen usually already has in. Items listed here are FLAGGED on a shopping run, never pre-ticked and never hidden: the walk exists to check reality, and a list that assumes you still have salt is the list that sends you home without any.",
+  "_source": "Toggled off by hand on 2026-08-22 while checking cupboards.",
+  "items": [
+    "chiliflager",
+    "dijon sennep",
+    "fine gryn",
+    "garam masala",
+    "honning",
+    "hvide bønner",
+    "hvidløg",
+    "hvidvinseddike",
+    "ingefær",
+    "kaffe",
+    "kikærter",
+    "køkkenrulle",
+    "parmesan",
+    "peanutbutter",
+    "pinjekerner",
+    "salt",
+    "smoothies",
+    "smør",
+    "smørresmør",
+    "sorte oliven",
+    "stødt spidskommen",
+    "toiletpapir",
+    "æg"
+  ]
+}

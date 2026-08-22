@@ -5,11 +5,16 @@ from __future__ import annotations
 import pytest
 from sqlmodel import Session
 
+import json
+
 from src.core.runs import (
+    DEFAULT_STOCKED_PATH,
     latest_run,
+    load_default_stocked,
     load_stocked_names,
     progress,
     run_items,
+    seed_stocked,
     set_checked,
     start_run,
 )
@@ -102,15 +107,26 @@ class TestStartRun:
 
 
 class TestStockedItems:
-    def test_known_stock_starts_ticked(self, session, db):
+    def test_known_stock_is_flagged(self, session, db):
         session.add(db.StockedItem(name="mælk"))
         session.commit()
 
         run = start_run("uge_34", make_list(), session)
         by_name = {item.ingredient: item for item in run_items(run.id, session)}
 
-        assert by_name["mælk"].checked is True
-        assert by_name["æble"].checked is False
+        assert by_name["mælk"].likely_stocked is True
+        assert by_name["æble"].likely_stocked is False
+
+    def test_known_stock_is_not_ticked(self, session, db):
+        """A list that pre-ticks salt is the list that sends you home without."""
+        session.add(db.StockedItem(name="mælk"))
+        session.commit()
+
+        run = start_run("uge_34", make_list(), session)
+        by_name = {item.ingredient: item for item in run_items(run.id, session)}
+
+        assert by_name["mælk"].checked is False
+        assert by_name["mælk"].checked_at is None
 
     def test_stock_matching_ignores_case(self, session, db):
         session.add(db.StockedItem(name="MÆLK"))
@@ -119,10 +135,9 @@ class TestStockedItems:
         run = start_run("uge_34", make_list(), session)
         by_name = {item.ingredient: item for item in run_items(run.id, session)}
 
-        assert by_name["mælk"].checked is True
+        assert by_name["mælk"].likely_stocked is True
 
     def test_stocked_items_are_shown_not_hidden(self, session, db):
-        """'Usually' is not 'always' -- you must be able to untick it."""
         session.add(db.StockedItem(name="mælk"))
         session.commit()
 
@@ -130,21 +145,72 @@ class TestStockedItems:
 
         assert len(run_items(run.id, session)) == 2
 
-    def test_pre_ticked_items_record_when(self, session, db):
+    def test_flagging_does_not_affect_progress(self, session, db):
         session.add(db.StockedItem(name="mælk"))
         session.commit()
 
         run = start_run("uge_34", make_list(), session)
-        by_name = {item.ingredient: item for item in run_items(run.id, session)}
 
-        assert by_name["mælk"].checked_at is not None
-        assert by_name["æble"].checked_at is None
+        assert progress(run_items(run.id, session)) == (0, 2)
 
     def test_load_stocked_names_normalises(self, session, db):
         session.add(db.StockedItem(name="  Salt "))
         session.commit()
 
         assert load_stocked_names(session) == {"salt"}
+
+
+class TestSeedingStock:
+    def test_shipped_list_is_the_one_checked_by_hand(self):
+        """The 23 cupboard items recorded on 2026-08-22."""
+        assert len(load_default_stocked()) == 23
+
+    def test_shipped_list_is_normalised(self):
+        names = load_default_stocked()
+
+        assert names == [n.strip().casefold() for n in names]
+
+    def test_shipped_file_is_not_yaml(self):
+        """A YAML ``items: [...]`` file would be mistaken for a menu."""
+        assert DEFAULT_STOCKED_PATH.suffix == ".json"
+
+    def test_seeds_an_empty_database(self, db, session):
+        result = seed_stocked()
+
+        assert result.added == 23
+        assert load_stocked_names(session) == set(load_default_stocked())
+
+    def test_skips_a_populated_database(self, db, session):
+        session.add(db.StockedItem(name="noget helt andet"))
+        session.commit()
+
+        result = seed_stocked()
+
+        assert result.skipped is True
+        assert result.added == 0
+
+    def test_force_is_additive_and_never_deletes(self, db, session):
+        session.add(db.StockedItem(name="noget helt andet"))
+        session.commit()
+
+        seed_stocked(only_if_empty=False)
+
+        assert "noget helt andet" in load_stocked_names(session)
+        assert "salt" in load_stocked_names(session)
+
+    def test_seeding_twice_adds_nothing_the_second_time(self, db):
+        seed_stocked()
+        again = seed_stocked(only_if_empty=False)
+
+        assert again.added == 0
+
+    def test_duplicates_in_the_source_are_collapsed(self, db, tmp_path):
+        path = tmp_path / "stocked.json"
+        path.write_text(
+            json.dumps({"items": ["Salt", "salt", " SALT "]}), encoding="utf-8"
+        )
+
+        assert load_default_stocked(path) == ["salt"]
 
 
 class TestChecking:

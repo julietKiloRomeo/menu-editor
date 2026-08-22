@@ -26,6 +26,7 @@ from src.core.runs import (
     latest_run,
     progress,
     run_items,
+    seed_stocked,
     set_checked,
     start_run,
 )
@@ -359,6 +360,18 @@ def seed_config_from_yaml() -> None:
             app.logger.exception(
                 "Could not seed default kitchen zones; configure them via /api/config."
             )
+
+    try:
+        stock = seed_stocked(only_if_empty=True)
+        if stock.added:
+            app.logger.info(
+                "Seeded %s usually-stocked ingredients.", stock.added
+            )
+    except Exception:  # pragma: no cover - seeding must never block start-up
+        app.logger.exception(
+            "Could not seed the usually-stocked list; manage it via /api/stocked."
+        )
+
     _config_seeded = True
 
 
@@ -1764,6 +1777,9 @@ def serialise_run_item(item: ShoppingRunItem) -> Dict[str, Any]:
         "zone": item.zone_name,
         "checked": item.checked,
         "checked_at": item.checked_at.isoformat() if item.checked_at else None,
+        # a hint that this is probably already in the cupboard; the item is
+        # still unticked, because only the walk can confirm it
+        "likely_stocked": item.likely_stocked,
     }
 
 

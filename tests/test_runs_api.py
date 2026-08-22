@@ -219,47 +219,74 @@ class TestChecking:
 
 
 class TestStockedItems:
-    def test_starts_empty(self, menu_client):
-        assert menu_client.get("/api/stocked").get_json()["items"] == []
+    def names(self, client):
+        return [i["name"] for i in client.get("/api/stocked").get_json()["items"]]
+
+    def test_ships_seeded_with_the_cupboard_list(self, menu_client):
+        """A fresh database starts with the 23 items checked by hand."""
+        names = self.names(menu_client)
+
+        assert len(names) == 23
+        assert "salt" in names
 
     def test_add_an_item(self, menu_client):
-        response = menu_client.post("/api/stocked", json={"name": "salt"})
+        before = len(self.names(menu_client))
+
+        response = menu_client.post("/api/stocked", json={"name": "kanelstang"})
 
         assert response.status_code == 200
-        assert [i["name"] for i in response.get_json()["items"]] == ["salt"]
+        assert "kanelstang" in [i["name"] for i in response.get_json()["items"]]
+        assert len(response.get_json()["items"]) == before + 1
 
     def test_names_are_normalised(self, menu_client):
-        menu_client.post("/api/stocked", json={"name": "  SALT "})
+        menu_client.post("/api/stocked", json={"name": "  KANELSTANG "})
 
-        assert [i["name"] for i in menu_client.get("/api/stocked").get_json()["items"]] == [
-            "salt"
-        ]
+        assert "kanelstang" in self.names(menu_client)
 
     def test_adding_twice_is_idempotent(self, menu_client):
-        menu_client.post("/api/stocked", json={"name": "salt"})
-        body = menu_client.post("/api/stocked", json={"name": "Salt"}).get_json()
+        menu_client.post("/api/stocked", json={"name": "kanelstang"})
+        before = len(self.names(menu_client))
 
-        assert len(body["items"]) == 1
+        menu_client.post("/api/stocked", json={"name": "Kanelstang"})
+
+        assert len(self.names(menu_client)) == before
 
     def test_name_is_required(self, menu_client):
         assert menu_client.post("/api/stocked", json={}).status_code == 400
 
     def test_delete_an_item(self, menu_client):
-        added = menu_client.post("/api/stocked", json={"name": "salt"}).get_json()
-        item_id = added["items"][0]["id"]
+        added = menu_client.post("/api/stocked", json={"name": "kanelstang"}).get_json()
+        item_id = next(i["id"] for i in added["items"] if i["name"] == "kanelstang")
 
         response = menu_client.delete(f"/api/stocked/{item_id}")
 
         assert response.status_code == 200
-        assert response.get_json()["items"] == []
+        assert "kanelstang" not in [i["name"] for i in response.get_json()["items"]]
 
     def test_delete_unknown_is_404(self, menu_client):
         assert menu_client.delete("/api/stocked/9999").status_code == 404
 
-    def test_stocked_items_start_a_run_ticked(self, menu_client):
+    def test_seeded_items_are_flagged_on_a_run(self, menu_client):
+        """mælk is not on the cupboard list; smør would be."""
+        body = create_run(menu_client).get_json()
+        flagged = {
+            item["ingredient"]: item["likely_stocked"]
+            for zone in body["zones"]
+            for item in zone["items"]
+        }
+
+        assert flagged["mælk"] is False
+        assert body["checked"] == 0
+
+    def test_stocked_items_are_flagged_but_not_ticked(self, menu_client):
         menu_client.post("/api/stocked", json={"name": "mælk"})
 
         body = create_run(menu_client).get_json()
+        flagged = {
+            item["ingredient"]: item["likely_stocked"]
+            for zone in body["zones"]
+            for item in zone["items"]
+        }
 
-        assert body["checked"] == 1
-        assert body["total"] == 2
+        assert flagged == {"mælk": True, "æble": False}
+        assert body["checked"] == 0

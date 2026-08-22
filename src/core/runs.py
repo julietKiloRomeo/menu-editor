@@ -12,6 +12,9 @@ Deliberately free of Flask, so the MCP server can drive the same behaviour.
 
 from __future__ import annotations
 
+import json
+import pathlib
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from sqlmodel import Session, select
@@ -19,6 +22,66 @@ from sqlmodel import Session, select
 from src.core.ingredients import normalise
 from src.core.shopping import ShoppingList
 from src.models import ShoppingRun, ShoppingRunItem, StockedItem, get_session
+
+#: JSON rather than YAML on purpose: the data directory also holds menus, and a
+#: YAML file shaped ``items: [...]`` is indistinguishable from a menu section.
+DEFAULT_STOCKED_PATH = (
+    pathlib.Path(__file__).resolve().parents[2] / "data" / "usually_stocked.json"
+)
+
+
+@dataclass
+class StockSeedResult:
+    added: int = 0
+    skipped: bool = False
+    reason: str = ""
+
+
+def load_default_stocked(path: pathlib.Path | None = None) -> list[str]:
+    """The shipped list of things the kitchen usually has in."""
+    target = path or DEFAULT_STOCKED_PATH
+    with target.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    seen: dict[str, None] = {}
+    for raw in payload.get("items", []):
+        name = normalise(raw)
+        if name:
+            seen.setdefault(name, None)
+    return list(seen)
+
+
+def seed_stocked(
+    path: pathlib.Path | None = None,
+    *,
+    only_if_empty: bool = True,
+) -> StockSeedResult:
+    """Load the default stock list into the database.
+
+    Idempotent and additive: it never deletes, so an item removed by hand
+    stays removed only until the next forced seed -- which is why the default
+    is to skip entirely once the table has anything in it.
+    """
+    names = load_default_stocked(path)
+    result = StockSeedResult()
+
+    with get_session() as session:
+        existing = session.exec(select(StockedItem)).all()
+        if only_if_empty and existing:
+            result.skipped = True
+            result.reason = f"{len(existing)} stocked items already exist"
+            return result
+
+        known = {row.name for row in existing}
+        for name in names:
+            if name in known:
+                continue
+            session.add(StockedItem(name=name))
+            known.add(name)
+            result.added += 1
+        session.commit()
+
+    return result
 
 
 def load_stocked_names(session: Session | None = None) -> set[str]:
@@ -39,9 +102,10 @@ def start_run(
 ) -> ShoppingRun:
     """Freeze ``shopping`` into a tickable run.
 
-    Items already known to be in the kitchen start ticked rather than hidden:
-    "usually" is not "always", and when the oil finally runs out you need to be
-    able to untick it.
+    Everything starts unticked, including things the kitchen usually has in.
+    Those are only *flagged* (``likely_stocked``): the walk exists to check
+    reality, and a list that pre-ticks salt on your behalf is the list that
+    sends you home without any.
     """
     if stocked is None:
         stocked = load_stocked_names(session)
@@ -52,9 +116,7 @@ def start_run(
     # so a concurrent reader never sees an empty list.
     session.flush()
 
-    now = datetime.now(timezone.utc)
     for position, line in enumerate(shopping.lines):
-        pre_checked = normalise(line.ingredient) in stocked
         session.add(
             ShoppingRunItem(
                 run_id=run.id,
@@ -64,8 +126,7 @@ def start_run(
                 recipes=line.contributing_recipes(),
                 zone_name=line.zone.name,
                 zone_order=line.zone.order,
-                checked=pre_checked,
-                checked_at=now if pre_checked else None,
+                likely_stocked=normalise(line.ingredient) in stocked,
             )
         )
 

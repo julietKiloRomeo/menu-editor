@@ -14,7 +14,7 @@ try:
 except ImportError:  # pragma: no cover - Windows has no fcntl
     fcntl = None
 
-from sqlalchemy import Column, event
+from sqlalchemy import Column, event, inspect
 from sqlalchemy.dialects.sqlite import JSON
 from sqlalchemy.engine import Engine
 from sqlmodel import Field, Session, SQLModel, create_engine
@@ -114,12 +114,13 @@ class StapleItem(SQLModel, table=True):
 class StockedItem(SQLModel, table=True):
     """An ingredient the household normally already has in.
 
-    Salt, oil, most spices: they appear in recipe after recipe and are ticked
-    off unread every single week. Recording them lets a new run start with them
-    already ticked, so the list shows what actually needs attention (story 5.3).
+    Salt, oil, most spices: they turn up in recipe after recipe and are usually
+    already in the cupboard. Recording them lets the list say so (story 5.3).
 
-    They are *pre-ticked rather than hidden*, because "usually" is not "always"
-    -- when the oil finally runs out it must be possible to untick it.
+    They are flagged, *not* ticked and *not* hidden. "Usually" is not "always",
+    and a list that quietly assumes you still have salt is the list that sends
+    you home without any. The hint saves you a decision; it does not make it
+    for you.
     """
 
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -169,6 +170,9 @@ class ShoppingRunItem(SQLModel, table=True):
     zone_order: int = Field(default=0)
     checked: bool = Field(default=False)
     checked_at: Optional[datetime] = Field(default=None)
+    #: matched a :class:`StockedItem` when the run started -- a hint that this
+    #: is probably already in the cupboard, never an assumption that it is
+    likely_stocked: bool = Field(default=False)
 
 
 class AppSetting(SQLModel, table=True):
@@ -226,9 +230,69 @@ def initialization_lock():
             fcntl.flock(handle, fcntl.LOCK_UN)
 
 
+def add_missing_columns(connection) -> list[str]:
+    """Bring existing tables up to date with the models, additively.
+
+    ``create_all`` only ever creates missing *tables*. A column added to a
+    model that already has a table is silently ignored, and the failure then
+    surfaces much later as "table X has no column named Y" on the first insert
+    -- in production, against real data, long after the tests passed on their
+    freshly created schemas.
+
+    Only additions are performed. Dropping, renaming or retyping a column is
+    never guessed at: those need a real migration, and are reported instead.
+
+    Returns a description of each column added.
+    """
+    inspector = inspect(connection)
+    existing_tables = set(inspector.get_table_names())
+    added: list[str] = []
+
+    for table in SQLModel.metadata.sorted_tables:
+        if table.name not in existing_tables:
+            continue  # create_all will make it in full
+
+        present = {col["name"] for col in inspector.get_columns(table.name)}
+        for column in table.columns:
+            if column.name in present:
+                continue
+
+            # A NOT NULL column with no default cannot be added to a table that
+            # already has rows; SQLite rejects it outright.
+            if not column.nullable and column.default is None:
+                raise RuntimeError(
+                    f"Cannot add required column {table.name}.{column.name} "
+                    "automatically: it is NOT NULL with no default. "
+                    "This needs a hand-written migration."
+                )
+
+            spec = column.type.compile(connection.dialect)
+            clause = f'ALTER TABLE "{table.name}" ADD COLUMN "{column.name}" {spec}'
+            if column.default is not None and column.default.is_scalar:
+                clause += f" DEFAULT {_sql_literal(column.default.arg)}"
+
+            connection.exec_driver_sql(clause)
+            added.append(f"{table.name}.{column.name}")
+
+    return added
+
+
+def _sql_literal(value: Any) -> str:
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    if isinstance(value, (int, float)):
+        return str(value)
+    if value is None:
+        return "NULL"
+    escaped = str(value).replace("'", "''")
+    return f"'{escaped}'"
+
+
 def init_db() -> None:
     with initialization_lock():
         SQLModel.metadata.create_all(engine)
+        with engine.begin() as connection:
+            add_missing_columns(connection)
 
 
 @contextmanager
@@ -248,6 +312,7 @@ __all__ = [
     "AppSetting",
     "Recipe",
     "RecipeBase",
+    "add_missing_columns",
     "engine",
     "init_db",
     "initialization_lock",
