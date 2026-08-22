@@ -333,15 +333,18 @@ def seed_config_from_yaml() -> None:
     if _config_seeded:
         return
 
-    categories, items = fetch_config()
-    if not categories and not items:
+    # Keyed on assignments, not categories: zones with nothing mapped into them
+    # do nothing at all, so that state is indistinguishable from unconfigured.
+    _categories, items = fetch_config()
+    if not items:
         try:
             result = seed_zones(only_if_empty=True)
-            app.logger.info(
-                "Seeded default kitchen zones: %s zones, %s ingredient assignments.",
-                result.zones_added,
-                result.assignments_added,
-            )
+            if result.changed:
+                app.logger.info(
+                    "Seeded default kitchen zones: %s zones, %s ingredient assignments.",
+                    result.zones_added,
+                    result.assignments_added,
+                )
         except Exception:  # pragma: no cover - seeding must never block start-up
             app.logger.exception(
                 "Could not seed default kitchen zones; configure them via /api/config."

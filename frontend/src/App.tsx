@@ -46,6 +46,28 @@ type MenuPreview = {
   shoppingHtml: string
 }
 
+type ZoneSuggestion = {
+  zone: string
+  because_of: string
+  confidence: number
+}
+
+type UnplacedIngredient = {
+  ingredient: string
+  canonical: string | null
+  suggested_zone: ZoneSuggestion | null
+}
+
+type ConfigPayload = {
+  categories?: Array<{ id: number; name: string; priority: number }>
+  items?: Array<{ id: number; name: string; category_id: number | null; category_name?: string | null }>
+  staples?: Array<{ id: number; name: string; amount: number; unit: string }>
+  staple_label?: string
+  staple_label_options?: string[]
+  aliases?: Array<{ id: number; alias: string; canonical: string }>
+  error?: string
+}
+
 type IngredientFormRow = {
   id: string
   navn: string
@@ -127,6 +149,9 @@ function App() {
   const [configLoading, setConfigLoading] = useState(false)
   const [configCategories, setConfigCategories] = useState<Array<{ id: number; name: string; priority: number }>>([])
   const [configItems, setConfigItems] = useState<Array<{ id: number; name: string; category_id: number | null; category_name?: string | null }>>([])
+  const [unplaced, setUnplaced] = useState<UnplacedIngredient[]>([])
+  const [unplacedLoading, setUnplacedLoading] = useState(false)
+  const [unplacedBusy, setUnplacedBusy] = useState<string | null>(null)
   const [configStaples, setConfigStaples] = useState<Array<{ id: number; name: string; amount: number; unit: string }>>([])
   const [configStapleLabel, setConfigStapleLabel] = useState('')
   const [configStapleOptions, setConfigStapleOptions] = useState<string[]>([])
@@ -818,6 +843,48 @@ function App() {
     }
   }, [handleConfigFailure, handleConfigSuccess])
 
+  const loadUnplaced = useCallback(async () => {
+    setUnplacedLoading(true)
+    try {
+      const response = await fetch(`${API_BASE}/api/zones/unplaced`)
+      const payload = await ensureJson<{ unplaced?: UnplacedIngredient[]; error?: string }>(response)
+      if (!response.ok) {
+        throw new Error(payload.error ?? `Failed to load unplaced ingredients (${response.status})`)
+      }
+      setUnplaced(payload.unplaced ?? [])
+    } catch (err) {
+      pushToast('error', (err as Error).message)
+    } finally {
+      setUnplacedLoading(false)
+    }
+  }, [pushToast])
+
+  const handleAssignZone = useCallback(async (ingredient: string, zoneName: string) => {
+    const category = configCategories.find((entry) => entry.name === zoneName)
+    if (!category) {
+      pushToast('error', `No zone called "${zoneName}".`)
+      return
+    }
+    setUnplacedBusy(ingredient)
+    try {
+      const response = await fetch(`${API_BASE}/api/config/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: ingredient, category_id: category.id }),
+      })
+      const payload = await ensureJson<ConfigPayload>(response)
+      if (!response.ok) {
+        throw new Error(payload.error ?? `Failed to place ingredient (${response.status})`)
+      }
+      handleConfigSuccess(payload, `“${ingredient}” placed in ${zoneName}.`)
+      setUnplaced((prev) => prev.filter((entry) => entry.ingredient !== ingredient))
+    } catch (err) {
+      pushToast('error', (err as Error).message)
+    } finally {
+      setUnplacedBusy(null)
+    }
+  }, [configCategories, handleConfigSuccess, pushToast])
+
   const handleIngredientCreate = useCallback(async () => {
     if (!newIngredientName.trim()) {
       setConfigStatus('Ingredient name is required.')
@@ -1008,6 +1075,13 @@ function App() {
       fetchConfigData()
     }
   }, [configLoaded, fetchConfigData, view])
+
+  // Recheck on every visit: cooking with a new recipe is what creates unplaced items.
+  useEffect(() => {
+    if (view === 'config') {
+      void loadUnplaced()
+    }
+  }, [view, loadUnplaced])
 
   const startCamera = useCallback(async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -2490,6 +2564,75 @@ function App() {
                 ))}
               </div>
             </section>
+
+            {(unplacedLoading || unplaced.length > 0) && (
+              <section className="rounded-panel border border-danger/30 bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="font-display text-2xl text-white">Not placed yet</h2>
+                    <p className="mt-1 text-sm text-white/70">
+                      These ingredients have no kitchen zone, so they end up in a mystery group at the bottom of the shopping list.
+                    </p>
+                  </div>
+                  {unplaced.length > 0 && (
+                    <span className="shrink-0 rounded-full bg-danger/20 px-3 py-1 text-sm font-semibold text-danger">
+                      {unplaced.length}
+                    </span>
+                  )}
+                </div>
+
+                {unplacedLoading && unplaced.length === 0 && (
+                  <p className="mt-4 text-xs text-white/60">Checking…</p>
+                )}
+
+                <div className="mt-4 space-y-2">
+                  {unplaced.map((entry) => (
+                    <div
+                      key={entry.ingredient}
+                      className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-white">{entry.ingredient}</p>
+                        {entry.canonical && (
+                          <p className="truncate text-xs text-white/50">alias of “{entry.canonical}”</p>
+                        )}
+                      </div>
+
+                      {entry.suggested_zone && (
+                        <button
+                          type="button"
+                          disabled={unplacedBusy === entry.ingredient}
+                          onClick={() => handleAssignZone(entry.ingredient, entry.suggested_zone!.zone)}
+                          title={`Because it looks like “${entry.suggested_zone.because_of}”`}
+                          className="rounded-full bg-brand-accent px-3 py-1.5 text-xs font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
+                        >
+                          {unplacedBusy === entry.ingredient ? 'Placing…' : `Place in ${entry.suggested_zone.zone}`}
+                        </button>
+                      )}
+
+                      <select
+                        value=""
+                        disabled={unplacedBusy === entry.ingredient}
+                        onChange={(event) => {
+                          if (event.target.value) handleAssignZone(entry.ingredient, event.target.value)
+                        }}
+                        aria-label={`Choose a zone for ${entry.ingredient}`}
+                        className="rounded-xl border border-white/10 bg-brand-surface/60 px-3 py-1.5 text-xs text-white outline-none focus:border-brand-accent disabled:opacity-50"
+                      >
+                        <option value="">{entry.suggested_zone ? 'Somewhere else…' : 'Choose a zone…'}</option>
+                        {[...configCategories]
+                          .sort((a, b) => a.priority - b.priority)
+                          .map((category) => (
+                            <option key={category.id} value={category.name}>
+                              {category.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <section className="rounded-panel bg-brand-surface/80 p-6 shadow-panel backdrop-blur">
               <div className="flex items-start justify-between gap-3">
