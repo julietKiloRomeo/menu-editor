@@ -76,6 +76,10 @@ app = Flask(
 app.config.setdefault("FRONTEND_DIST", os.getenv("FRONTEND_DIST", "frontend/dist"))
 app.config.setdefault("FRONTEND_INDEX", os.getenv("FRONTEND_INDEX", "index.html"))
 app.config.setdefault("FRONTEND_ORIGIN", os.getenv("FRONTEND_ORIGIN", "*"))
+# Where generated artifacts (uge_<week>_<year>.yaml, shopping.md) are written.
+# Defaults to the process CWD, which is the historic behaviour; set
+# MENU_DATA_DIR=data to keep them out of the repo root.
+app.config.setdefault("MENU_DATA_DIR", os.getenv("MENU_DATA_DIR", "."))
 CORS(app, resources={r"/api/*": {"origins": app.config["FRONTEND_ORIGIN"]}})
 
 init_db()
@@ -1068,7 +1072,11 @@ def generate_menu():
         silent_sections={get_staple_label()},
     )
 
-    return jsonify({"markdown": str(menu_text)})
+    markdown = str(menu_text)
+    # Written once, as an artifact for downstream tooling.
+    (data_dir() / "shopping.md").write_text(markdown, encoding="utf-8")
+
+    return jsonify({"markdown": markdown})
 
 
 app.add_url_rule(
@@ -1555,13 +1563,21 @@ def delete_ingredient_config(item_id: int):
     return jsonify(build_config_payload())
 
 
+def data_dir() -> pathlib.Path:
+    """Directory for generated artifacts; created on demand."""
+    target = pathlib.Path(app.config.get("MENU_DATA_DIR", "."))
+    target.mkdir(parents=True, exist_ok=True)
+    return target
+
+
 def save_menu(menu_dict: Dict[str, Any]) -> pathlib.Path:
     s = yaml.dump(menu_dict, allow_unicode=True, sort_keys=False)
     isodate = datetime.date.today().isocalendar()
-    recipe_file = pathlib.Path(f"uge_{isodate.week+1}_{isodate.year}.yaml")
+    directory = data_dir()
+    recipe_file = directory / f"uge_{isodate.week+1}_{isodate.year}.yaml"
     i = 1
     while recipe_file.exists():
-        recipe_file = pathlib.Path(f"uge_{isodate.week+1}_{isodate.year}({i}).yaml")
+        recipe_file = directory / f"uge_{isodate.week+1}_{isodate.year}({i}).yaml"
         i += 1
 
     with recipe_file.open("w", encoding="utf-8") as f:
@@ -1571,14 +1587,17 @@ def save_menu(menu_dict: Dict[str, Any]) -> pathlib.Path:
 
 
 class MenuText:
+    """Accumulates rendered lines.
+
+    Deliberately does not touch the filesystem: it used to rewrite the whole
+    of shopping.md once per printed line, which is O(n^2) in file writes.
+    """
 
     def __init__(self, menu: str = "") -> None:
         self.text = menu
 
     def add(self, s: str) -> None:
         self.text += s + "\n"
-        with open("shopping.md", "w", encoding="utf-8") as f:
-            f.write(self.text)
 
     def __str__(self) -> str:
         return self.text

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sqlite3
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
@@ -12,8 +13,9 @@ try:
 except ImportError:  # pragma: no cover - Windows has no fcntl
     fcntl = None
 
-from sqlalchemy import Column
+from sqlalchemy import Column, event
 from sqlalchemy.dialects.sqlite import JSON
+from sqlalchemy.engine import Engine
 from sqlmodel import Field, Session, SQLModel, create_engine
 
 
@@ -24,6 +26,24 @@ def _sqlite_kwargs(url: str) -> Dict[str, Dict[str, bool]]:
     if url.startswith("sqlite"):
         return {"connect_args": {"check_same_thread": False}}
     return {}
+
+
+@event.listens_for(Engine, "connect")
+def _set_sqlite_pragmas(dbapi_connection, _connection_record):
+    """Enable WAL so several processes can share one SQLite file.
+
+    The web app and the MCP server are separate processes reading and writing
+    the same database; without WAL a reader blocks a writer and vice versa.
+    """
+    if not isinstance(dbapi_connection, sqlite3.Connection):
+        return
+    cursor = dbapi_connection.cursor()
+    try:
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA busy_timeout=5000")
+        cursor.execute("PRAGMA foreign_keys=ON")
+    finally:
+        cursor.close()
 
 
 engine = create_engine(DATABASE_URL, **_sqlite_kwargs(DATABASE_URL))
