@@ -1,0 +1,569 @@
+kategorier:
+    bad: 0
+    vin: 1
+    frugt: 2
+    tilbehør: 3
+    krydderi: 4
+    brød: 5
+    frys: 6
+    fisk: 7
+    kød: 8
+    køl: 9
+    øl: 10
+    bryggers: 11
+    unknown: 1000
+    
+varer:
+    køkkenrulle: bryggers
+    toiletpapir: bryggers
+    
+    mou-tomatsuppe: frys
+
+    opvaskemiddel: bryggers
+
+    hakket lam: kød
+    hakket okse: kød
+    hakket svin: kød
+    kylling: kød
+    kyllingebryst filet: kød
+    kyllingebryst: kød
+    kyllinge lår/bryst: kød
+    svinekæber: kød
+    lammebov: kød
+
+    tun steak: fisk
+    laksefileter: fisk
+    laksefilet: fisk
+    lakse steak: fisk
+    rødspættefilet: fisk
+
+    A38: køl
+    bacon: køl
+    chorizo: køl
+    creme fraiche 18%: køl
+    creme fraiche: køl
+    feta: køl
+    fløde: køl
+    frisk mozzarella: køl
+    grove pølser: køl
+    græsk youghurt: køl
+    gouda: køl
+    gær: køl
+    kødpølse: køl
+    kærnemælk: køl
+    lufttørret skinke: køl
+    leverpostej: køl
+    naan brød: tilbehør
+    mælk: køl
+    parmaskinke: køl
+    parmesan: køl
+    piskefløde: køl
+    pillede rejer: køl
+    revet ost: køl
+    salsiccia: køl
+    spegepølse: køl
+    tortillachips: tilbehør
+    smør: køl
+    sødmælk: køl    
+    tørsaltet bacon: køl
+    youghurt naturelle: køl
+    æg: køl
+
+    agurk: frugt
+    avocado: frugt
+    babyspinat: frugt
+    banan: frugt
+    bladselleri: frugt
+    blomkål: frugt
+    blomme tomater: frugt
+    blåbær: frugt
+    bredbladet persille: frugt
+    broccoli: frugt
+    champignon: frugt
+    cherrytomater: frugt
+    cherrytomat: frugt
+    chili: frugt
+    citron: frugt
+    dild: frugt
+    frisk basilikum: frugt
+    basilikum: frugt
+    frisk dild: frugt
+    frisk ingefær: frugt
+    frisk koriander: frugt 
+    frisk mynte: frugt 
+    frisk purløg: frugt 
+    frisk rosmarin: frugt 
+    frisk salvie: frugt 
+    frisk timian: frugt
+    grønne bønner: frugt
+    granatæble: frugt
+    gulerødder: frugt
+    hvidkål: frugt
+    hvidløg: frugt
+    kartofler: frugt
+    knoldselleri: frugt
+    lime: frugt
+    løg: frugt
+    mango: frugt
+    persille: frugt
+    porre: frugt
+    porrer: frugt
+    purløg: frugt
+    romaine: frugt
+    romaine salat: frugt
+    rucola: frugt
+    rødløg: frugt
+    rød peberfrugt: frugt
+    salat: frugt
+    spinat: frugt
+    squash: frugt
+    sød kartoffel: frugt
+    timian: frugt
+    tomat: frugt
+    tomater: frugt
+    æble: frugt
+    æbler: frugt
+    økologisk citron: frugt
+    gulerod: frugt
+    ingefær: frugt
+    små tomater: frugt
+    rødbede: frugt
+    skoleagurk: frugt
+    pastinak: frugt
+    
+    balsamico: tilbehør
+    bagepulver: tilbehør
+    burgerboller: tilbehør
+    bønner: tilbehør
+    corn flakes: tilbehør
+    couscous: tilbehør
+    dijonsennep: tilbehør
+    dijon sennep: tilbehør
+    fishsauce: tilbehør
+    frisk pasta: køl
+    fuldkornsmel: tilbehør
+    grahamsmel: tilbehør
+    gul karrypasta: tilbehør
+    grødris: tilbehør
+    grønsagsbouillon: tilbehør
+    grøntsagsbouillon: tilbehør
+    grøn pesto: tilbehør
+    hakkede tomater: tilbehør
+    havregryn: tilbehør
+    hvedemel: tilbehør
+    hvedemel tipo00: tilbehør
+    honning: tilbehør
+    hønsebouillon: tilbehør
+    kiks: tilbehør
+    kidney bønner: tilbehør
+    kokosmælk: tilbehør
+    kokosolie: tilbehør
+    linguine: tilbehør
+    majs: tilbehør
+    majsstivelse: tilbehør
+    mandler: tilbehør
+    mayonnaise: tilbehør
+    mørk chokolade: tilbehør
+    oksebouillon: tilbehør
+    olie: tilbehør
+    olivenolie: tilbehør
+    oliven uden sten: tilbehør
+    pasta: tilbehør
+    peanuts: tilbehør
+    penne: tilbehør
+    perleløg: tilbehør
+    pinjekerner: tilbehør
+    pizzasovs: tilbehør
+    pålægschokolade: tilbehør
+    rapsolie: tilbehør
+    rasp: tilbehør
+    ris: tilbehør
+    rosin: tilbehør
+    rugbrød: tilbehør
+    rørsukker: tilbehør
+    røde linser: tilbehør
+    salsa: tilbehør
+    saltede mandler: tilbehør
+    sennep: tilbehør
+    sesamfrø: tilbehør
+    soja: tilbehør
+    soltørret tomat: tilbehør
+    soltørrede tomater: tilbehør
+    soltørrede tomater i olie: tilbehør
+    sorte oliven: tilbehør
+    sorte oliven uden sten: tilbehør
+    sorte bønner: tilbehør
+    spaghetti: tilbehør
+    sukker: tilbehør
+    tomatpurè: tilbehør
+    tipo 00: tilbehør
+    worcestershiresauce: tilbehør
+    æblecidereddike: tilbehør
+    hvidvinseddike: tilbehør
+    
+    chiliflager: krydderi
+    chilipulver: krydderi
+    chipotle salt: krydderi
+    garam masala: krydderi
+    gurkemeje: krydderi
+    kanel: krydderi
+    karry: krydderi
+    madraskarry: krydderi
+    løgpulver: krydderi
+    laurbærblade: krydderi
+    muskatnød: krydderi
+    nelliker: krydderi
+    oregano: krydderi
+    paprika: krydderi
+    peber: krydderi
+    peberkorn: krydderi
+    røget paprika: krydderi
+    salt: krydderi
+    stjerneanis: krydderi
+    stødt cayennepeber: krydderi 
+    stødt ingefær: krydderi
+    stødt kanel: krydderi
+    kardemomme: krydderi
+    stødt kardemomme: krydderi
+    stødt koriander: krydderi
+    sød paprika: krydderi
+    stødt spidskommen: krydderi
+    spidskommen: krydderi
+    tørret oregano: krydderi
+    tørret koriander: krydderi
+    tørret timian: krydderi
+
+    frosne ærter: frys
+    flutes: frys
+
+    groft brød: brød
+    fladbrød: brød
+
+    rødvin: vin
+    hvidvin: vin
+
+    porter: øl
+   
+    bacon i tern: køl
+    yoghurt: køl
+    gnocchi: køl
+    blegselleri: frugt
+    majskolber: frugt
+    champignon i glas: tilbehør
+    dolmio pastasovs: tilbehør
+    hakket oksekød: kød
+    hvidløgsbrød: frys
+    isterninger: frys
+    kål: frugt
+    mundbind: bad
+    mørk øl: øl
+    peberfrugt: frugt
+
+    blomstervandkande: tilbehør            
+    citronpeber: tilbehør                  
+    citronsyre: bryggers                   
+    fiskebouillon: tilbehør                
+    håndsprit: bad                    
+    lys fisk: fisk
+    mel: tilbehør                        
+    nigellafrø: tilbehør                   
+    ost: køl                          
+    revet cheddar: køl              
+    rød peber: frugt
+    fuldkorns rugmel: tilbehør                          
+    maltsirup: tilbehør      
+    tykmælk: køl
+
+    flormelis: tilbehør
+    kakao: tilbehør
+    kødboller: frys
+    musli: tilbehør
+    rosiner: tilbehør
+    tomatsuppe: frys
+    vanillesukker: tilbehør
+
+    andebryst: kød
+    appelsin: frugt
+    tørret rosmarin: krydderi
+
+    flagesalt: tilbehør
+    flæsk i skiver: kød
+    glukosesirup: tilbehør
+    hakket tomat: tilbehør
+    lagret cheddar: køl
+    lasagneplader: tilbehør
+    moskusgræskar: frugt
+    nye kartofler: frugt
+    oksekød: kød
+    toiletpapir: bryggers
+    tomatpuré: tilbehør
+    sirup: tilbehør
+    crüsli: tilbehør
+    kaffe: tilbehør
+    kikærter: tilbehør
+    papir: tilbehør
+    pitabrød: tilbehør
+    købepitabrød: tilbehør
+    hvide bønner: tilbehør
+    øl: øl
+    pålæg: køl
+    flødeost: køl
+    korianderfrø: krydderi
+    spidskommenfrø: krydderi
+    store kartofler: frugt
+
+    all in one kiks: tilbehør  
+    håndsæbe: bad  
+    opvasketabs: bryggers  
+    æblegrød / mos: tilbehør
+    æblemost: øl
+
+    15L plastikposer: tilbehør
+    chiafrø: tilbehør
+    fredagsslik: tilbehør
+    lakerol: tilbehør
+    peperoni: køl
+    pizza sovs: tilbehør
+    weekendøl: øl
+
+    chu chum: tilbehør
+    pølse: køl
+    skumfiduser: tilbehør
+    stout: øl
+    tagliatelle: tilbehør
+
+
+    fettuccine: tilbehør
+    frisk mozarella: køl
+    gedeost: køl
+    ketchup: tilbehør
+    macaroni: tilbehør
+    mini romaine: frugt
+    portobellosvampe: frugt
+    pølsebrød: tilbehør
+    pølser: køl
+    risottoris: tilbehør
+    ristet løg: tilbehør
+    salvie: frugt
+    vin: vin
+
+    wraps: tilbehør
+    madpakkefrugt: frugt
+
+    cremefraiche 18: køl
+    kyllingebryst m skind: kød
+    kammerjunker: tilbehør
+    vanillestang: tilbehør
+    ymer: køl
+    æggeblommer: køl
+    tun i olie: tilbehør
+
+    chu chum chili: tilbehør
+    jordskokker: frugt
+    koriander: frugt
+    kotelet: kød
+    pikant flødeost: køl
+    tomatpure: tilbehør
+    torskefilet: kød
+    torsk: kød
+    danskvand: øl
+    kartoffel: frugt
+    fredagsfrugt: frugt
+    fiskefars: kød
+
+    chorizo i tern: køl
+    cremefraiche 18%: køl
+    granatæblekerner: frugt
+    hytteost: køl
+    kogt kyllingefilet: kød
+    solsikkefrø: tilbehør
+    tærtedej: køl
+    tørrede tranebær: tilbehør
+
+    rød saft: øl
+
+    balsamic: tilbehør
+    brød: brød
+    cremefraiche: køl
+    fennikel: frugt
+    fettuccine: tilbehør
+    græsk yoghurt: køl
+    kyllingefond: tilbehør
+    købe naan: brød
+    muscovado: tilbehør
+    pancetta: køl
+    selleri: frugt
+    skyr m kokos: køl
+    sundt crusli: tilbehør
+    hasselnødder: tilbehør
+    småkager: brød
+    sodavand: øl
+    svin i terninger: kød
+    tørrede enebær: krydderi
+
+    courgetter: frugt
+    fine gryn: tilbehør
+    grove gryn: tilbehør
+
+    mornay_sauce: tilbehør
+    pizzasauce: tilbehør
+    ristede løg: tilbehør
+    rugmel: tilbehør
+    speltmel: tilbehør
+    youghurt naturel: køl
+    suppe: frys
+
+    medjool dadler: frugt
+    tran: bad
+    worcestershire sauce: tilbehør
+    købepita: tilbehør
+    madpakkeboller: brød
+    slikærter: frys
+
+    græskarkerner: tilbehør
+    grøn peber: frugt
+    hokkaido græskar: frugt
+
+    asparges: frugt
+    kyllinge lår: kød
+    pasteuriseret æg: køl
+    pesto: tilbehør
+
+    laksesteak: fisk
+    yoghurt naturelle: køl
+    grønne æbler: frugt
+    svampe: frugt
+    købe koldskål: køl
+    smørresmør: køl
+
+    bacontern: køl
+    madlavningsfløde: køl
+    tortillini med skinke: køl
+
+
+    ananas: frugt
+    coconut flesh: frugt
+    karry blade: tilbehør
+    king prawns: fisk
+    mild karry: tilbehør
+    nellike: tilbehør
+    puddersukker: tilbehør
+    skalotteløg: frugt
+    solsikke olie: tilbehør
+    tamarind pasta: tilbehør
+
+    fiskefrikadeller: fisk
+    hørfrø: tilbehør
+    købe pita: tilbehør
+    persillesovs: tilbehør
+    remoulade: tilbehør
+    rødbeder: tilbehør
+
+    brøndkarse: frugt
+    butterdej: køl
+    hindbær: frugt
+    husblas: frugt
+    ingefærkiks: tilbehør
+    jordbær: frugt
+    neutral flødeost: køl
+    revet mozzarella: køl
+    soltørret tomatpure: tilbehør
+
+    forårsløg: frugt
+    pizzadej: køl
+    søde kartofler: frugt
+
+    færdiglasagne: tilbehør
+    kidneybønner: tilbehør
+    madpakkepålæg: køl
+    rød chili: frugt
+    købe_koldskål: køl
+    revet_ost: køl
+
+    kalvebouillon: tilbehør
+    okse i strimler: kød
+    madæbler: frugt
+
+    fiskepålæg: køl
+    bagepapir i ark: bryggers
+    hvidløgspølse: køl
+    madpakkebrød: brød
+    cashewnødder: tilbehør
+    rodfrugter: frugt
+    tortilla: tilbehør
+    tyttebærsyltetøj: tilbehør
+
+    peanutsmør: tilbehør
+    vaskemiddel (kulørt): bryggers
+    pappardelle: tilbehør
+    fuldkornshvedemel: tilbehør
+    valnøddekerner: tilbehør
+
+    basmatiris: tilbehør
+    kardemommekapsler: krydderi
+    fennikkelfrø: krydderi
+    peanutbutter: tilbehør
+    hoisin sauce: tilbehør
+    sriracha: tilbehør
+
+    frisk estragon: frugt
+    pære: frugt
+    aubergine: frugt
+
+    belugalinser: tilbehør
+    passata: tilbehør
+    augergine: frugt
+    frossen spinat: frys
+
+    grønne linser: tilbehør
+    soya: tilbehør
+    kulør: tilbehør
+
+    rejer: køl
+    risoni: tilbehør
+    rosmarin: krydderi
+    rålakridspulver: tilbehør
+    rødvinseddike: tilbehør
+    sesamolie: tilbehør
+    stødt nellike: krydderi
+    syltede_rødløg: tilbehør
+
+    bulgur: tilbehør
+    cayennepeber: krydderi
+    cheddar: køl
+    cornichoner: tilbehør
+    cremefraiche 38%: køl
+    dadel: frugt
+    edamamebønner: frugt
+    entrecotes: kød
+    fenikkelfrø: krydderi
+    friske hindbær: frugt
+    grøn karrypasta: tilbehør
+    hampefrø: tilbehør
+    havtorn: frugt
+    hindbærmarmelade: tilbehør
+    hokkaidogræskar: frugt
+    hvidløgspulver: krydderi
+    icebergsalat: frugt
+    jalapenos: frugt
+    koldrøget laks: køl
+    kylling i tern: kød
+    kørvel: krydderi
+    lakridssirup: tilbehør
+    laks: fisk
+    lammeculotte: kød
+    majskerner: frugt
+    mynte: krydderi
+    nachos: tilbehør
+    nakkekotelet: kød
+    nudler: tilbehør
+    pistacienødder: tilbehør
+    sød sennep: tilbehør
+    tabascosauce: tilbehør
+    tun i vand: tilbehør
+    tørrede hindbær: tilbehør
+    tørret abrikos: tilbehør
+    valnødder: tilbehør
+    vanillepulver: tilbehør
+    wienerpølser: køl
+    æggeblomme: køl

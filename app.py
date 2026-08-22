@@ -20,6 +20,7 @@ from sqlalchemy import or_
 from sqlmodel import select, Session
 from pydantic import BaseModel, Field
 
+from src.core.zones import seed_zones
 from src.models import (
     CategoryConfig,
     IngredientConfig,
@@ -319,15 +320,29 @@ def set_staple_label(label: str) -> str:
 
 
 def seed_config_from_yaml() -> None:
+    """Give a brand-new database the default kitchen layout.
+
+    Only ever runs against a genuinely empty config -- an existing
+    installation keeps whatever zones its owner has set up. Use
+    ``scripts/seed_zones.py --force`` to update one deliberately.
+    """
     global _config_seeded
     if _config_seeded:
         return
 
-    categories, _items = fetch_config()
-    if not categories:
-        app.logger.info(
-            "No category config found in the database yet; seed via /api/config before using the planner."
-        )
+    categories, items = fetch_config()
+    if not categories and not items:
+        try:
+            result = seed_zones(only_if_empty=True)
+            app.logger.info(
+                "Seeded default kitchen zones: %s zones, %s ingredient assignments.",
+                result.zones_added,
+                result.assignments_added,
+            )
+        except Exception:  # pragma: no cover - seeding must never block start-up
+            app.logger.exception(
+                "Could not seed default kitchen zones; configure them via /api/config."
+            )
     _config_seeded = True
 
 

@@ -10,16 +10,25 @@ from __future__ import annotations
 from typing import Callable
 
 from src.core.shopping import AggregatedMenu, MenuEntry, ShoppingLine, ShoppingList
+from src.core.zones import UNKNOWN_ZONE, Zone
 
 Printer = Callable[[str], None]
 
 _RECIPE_NAME_WIDTH = 12
 _RECIPE_COLUMN_WIDTH = 30
 
-_NEW_TABLE = """
+#: Shown instead of the raw sentinel name for ingredients with no zone yet.
+UNMAPPED_LABEL = "ikke placeret"
 
-|          |          |       |
-|----------|----------|------:|"""
+_TABLE_SEPARATOR = "|----------|----------|------:|"
+
+
+def zone_label(zone: Zone) -> str:
+    return UNMAPPED_LABEL if zone.name == UNKNOWN_ZONE else zone.name
+
+
+def _table_header(zone: Zone) -> str:
+    return f"\n\n| **{zone_label(zone)}** |          |       |\n{_TABLE_SEPARATOR}"
 
 
 def _format_amount(value: float) -> str:
@@ -49,17 +58,27 @@ def render_menu_entry(entry: MenuEntry) -> str:
 
 
 def render_shopping(shopping: ShoppingList, printer: Printer = print) -> None:
-    """Emit the shopping table, starting a new table at each zone change."""
+    """Emit the shopping table, starting a new labelled table at each zone."""
     previous_order = None
     for line in shopping.lines:
         if line.zone.order != previous_order:
-            printer(_NEW_TABLE)
+            printer(_table_header(line.zone))
         previous_order = line.zone.order
 
         quantities = quantity_string(line)
         recipes = recipes_string(line)[:_RECIPE_COLUMN_WIDTH]
         printer(
             f"| {line.ingredient:40s} | {quantities:>10s} |  {recipes:30s}  | "
+        )
+
+    unmapped = shopping.unmapped()
+    if unmapped:
+        names = ", ".join(line.ingredient for line in unmapped)
+        noun = "vare mangler" if len(unmapped) == 1 else "varer mangler"
+        pronoun = "Tildel den" if len(unmapped) == 1 else "Tildel dem"
+        printer(
+            f"\n> {len(unmapped)} {noun} en zone: {names}."
+            f"\n> {pronoun} under Indstillinger, så de havner det rigtige sted næste gang."
         )
 
 
