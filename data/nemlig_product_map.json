@@ -1,57 +1,556 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Captured 2026-08-22 from menu-2026-08-22.md.",
-  "_source_menu": "menu-2026-08-22.md",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-08-29 from shopping-27.pdf (run #27).",
+  "_source_menu": "shopping-27.pdf (uge 35, 2026-08-29)",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
     "add": "POST https://www.nemlig.com/webapi/basket/AddToBasket (cookie auth, same-origin)",
-    "add_body": {"ProductId": "string", "quantity": 0, "AffectPartialQuantity": true, "disableQuantityValidation": false},
+    "add_body": {
+      "ProductId": "string",
+      "quantity": 0,
+      "AffectPartialQuantity": true,
+      "disableQuantityValidation": false
+    },
     "add_semantics": "AffectPartialQuantity=true sets ABSOLUTE quantity (idempotent). false = increment. quantity 0 removes the line.",
     "basket": "GET https://www.nemlig.com/webapi/basket/GetBasket"
   },
-
   "mappings": {
-    "avocado":            {"query": "avocado",         "product_id": "5004143", "name": "Avocado formodnet",            "pack": "2 stk. / Colombia / Klasse 1",        "price": 20.00, "last_qty": 1},
-    "banan":              {"query": "banan",           "product_id": "2301138", "name": "Banan",                        "pack": "1 stk. / Colombia / Klasse 1",        "price": 2.50,  "last_qty": 5, "note": "buys loose singles, not a bunch"},
-    "blomme tomater":     {"query": "tomater",         "product_id": "5014547", "name": "Cherrytomater Snackmix",       "pack": "200 g / Danmark / Klasse 1",          "price": 20.00, "last_qty": 2, "note": "nemlig has NO plum tomatoes; 2 packs also covered the separate 'cherrytomater' line"},
-    "cherrytomater":      {"query": "tomater",         "product_id": "5014547", "name": "Cherrytomater Snackmix",       "pack": "200 g / Danmark / Klasse 1",          "price": 20.00, "last_qty": 0, "note": "merged into 'blomme tomater' line"},
-    "frisk basilikum":    {"query": "basilikum frisk", "product_id": "5012405", "name": "Basilikum",                    "pack": "50 g / Kenya / Klasse 1",             "price": 25.00, "last_qty": 1, "note": "prefers cut herbs over potted"},
-    "koriander":          {"query": "koriander frisk", "product_id": "5012402", "name": "Koriander",                    "pack": "50 g / Kenya / Klasse 1",             "price": 25.00, "last_qty": 1, "note": "merge 'frisk koriander' + 'koriander' into one line"},
-    "grønne bønner":      {"query": "haricots verts",  "product_id": "5501753", "name": "Haricots verts øko.",          "pack": "500 g / frost / Frigodan",            "price": 15.50, "last_qty": 1, "note": "prefers frozen over fresh"},
-    "kartofler":          {"query": "kartofler",       "product_id": "5014541", "name": "Kartofler øko.",               "pack": "1 kg / Danmark / Klasse 1",           "price": 15.00, "last_qty": 1},
-    "lime":               {"query": "lime",            "product_id": "5004542", "name": "Lime øko.",                    "pack": "1 stk. / Colombia / Klasse 1",        "price": 4.50,  "last_qty": 1},
-    "løg":                {"query": "løg",             "product_id": "5070873", "name": "Løg i tern",                   "pack": "300 g / frost / Gestus",              "price": 19.95, "last_qty": 1, "note": "prefers pre-diced frozen onion"},
-    "madpakkefrugt":      {"query": "æbler",           "product_id": "5047005", "name": "Æbler Cosmic Crisp",           "pack": "4 stk. / ca. 900 g / Italien",        "price": 25.00, "last_qty": 1, "note": "list says '2 slags' but only apples were taken"},
-    "romaine salat":      {"query": "romainesalat",    "product_id": "5029152", "name": "Romaine salat øko",            "pack": "1 stk. / Ø-Grønt / Danmark",          "price": 20.00, "last_qty": 1},
-    "rødløg":             {"query": "rødløg",          "product_id": "5042129", "name": "Rødløg øko.",                  "pack": "750 g / Danmark / Klasse 1",          "price": 25.00, "last_qty": 1},
-    "hakkede tomater":    {"query": "hakkede tomater", "product_id": "5602152", "name": "Hakkede tomater øko.",         "pack": "400 g / Taste of Nature",             "price": 6.91,  "last_qty": 3, "note": "stocks up: bought 3 for a 1-can recipe"},
-    "olivenolie":         {"query": "olivenolie",      "product_id": "5058627", "name": "Ekstra jomfru olivenolie øko",  "pack": "0,50 l / koldpresset / Casaneo",      "price": 58.12, "last_qty": 1},
-    "pappardelle":        {"query": "pappardelle",     "product_id": "5065119", "name": "Pappardelle (fuglereder)",     "pack": "500 g / Garofalo",                    "price": 29.95, "last_qty": 1},
-    "pesto":              {"query": "pesto",           "product_id": "5020910", "name": "Basilikum pesto",              "pack": "130 g / Zelected Foods",              "price": 29.50, "last_qty": 1},
-    "pitabrød":           {"query": "pitabrød",        "product_id": "5501616", "name": "Soft pitabrød",                "pack": "5 stk. / 375 g / frost / Hatting",    "price": 13.05, "last_qty": 1, "note": "took 1 pack of 5 even though list said 6 stk"},
-    "ris":                {"query": "basmati ris",     "product_id": "5501735", "name": "Basmati ris",                  "pack": "4 ps / 500 g / Ris-Fix",              "price": 32.25, "last_qty": 1, "note": "prefers boil-in-bag"},
-    "rosiner":            {"query": "rosiner",         "product_id": "5061059", "name": "Rosiner",                      "pack": "550 g / Nordthy",                     "price": 37.50, "last_qty": 2},
-    "tomatpure":          {"query": "tomatpuré",       "product_id": "5602670", "name": "Tomatpuré øko.",               "pack": "200 g / tube / Pomme d'or",           "price": 12.95, "last_qty": 1, "note": "prefers tube over can"},
-    "tun i olie":         {"query": "tun i olie",      "product_id": "5066136", "name": "Tun i olie",                   "pack": "185 g / 140 g / Taste of Nature",     "price": 12.21, "last_qty": 2},
-    "stødt nellike":      {"query": "nellike stødt",   "product_id": "5026692", "name": "Nellike (stødt)",              "pack": "20 g / Santa Maria",                  "price": 13.75, "last_qty": 1},
-    "madpakkebrød":       {"query": "frokoststykker",  "product_id": "5064593", "name": "Frokoststykker",               "pack": "6 stk. / 400 g / Pågen",              "price": 28.95, "last_qty": 1},
-    "creme fraiche":      {"query": "creme fraiche",   "product_id": "102666",  "name": "Creme fraiche 18% øko.",       "pack": "200 g / Naturmælk",                   "price": 14.95, "last_qty": 1},
-    "fløde":              {"query": "fløde",           "product_id": "5004338", "name": "Piskefløde 38% øko.",          "pack": "0,50 l / Arla Karolines Køkken",      "price": 28.95, "last_qty": 1, "note": "search 'fløde' NOT 'piskefløde'; merge 'fløde' + 'piskefløde' lines"},
-    "piskefløde":         {"query": "fløde",           "product_id": "5004338", "name": "Piskefløde 38% øko.",          "pack": "0,50 l / Arla Karolines Køkken",      "price": 28.95, "last_qty": 0, "note": "merged into 'fløde'"},
-    "mælk":               {"query": "mælk",            "product_id": "701012",  "name": "Letmælk 1,5% øko.",            "pack": "1 l / Arla ØKO",                      "price": 13.95, "last_qty": 2, "note": "search 'mælk' NOT 'letmælk'"},
-    "græsk yoghurt":      {"query": "græsk yoghurt",   "product_id": "5046258", "name": "Græskinspireret yoghurt øko.", "pack": "500 g / 10% / Salakis",               "price": 23.69, "last_qty": 1},
-    "butterbeans":        {"query": "butter beans",    "product_id": "5043539", "name": "Butter beans øko.",            "pack": "400 g / 240 g / vegansk / Økomama",   "price": 15.32, "last_qty": 1},
-    "halloumi":           {"query": "halloumi",        "product_id": "5050440", "name": "Halloumi grillost",            "pack": "250 g / Taverna",                     "price": 32.25, "last_qty": 2}
+    "avocado": {
+      "query": "avocado",
+      "product_id": "5004143",
+      "name": "Avocado formodnet",
+      "pack": "2 stk. / Peru / Klasse 1",
+      "price": 20,
+      "last_qty": 1
+    },
+    "banan": {
+      "query": "banan",
+      "product_id": "2301138",
+      "name": "Banan",
+      "pack": "1 stk. / Colombia / Klasse 1",
+      "price": 2.5,
+      "last_qty": 5,
+      "note": "buys loose singles, not a bunch"
+    },
+    "blomme tomater": {
+      "query": "tomater",
+      "product_id": "5014547",
+      "name": "Cherrytomater Snackmix",
+      "pack": "200 g / Danmark / Klasse 1",
+      "price": 20.0,
+      "last_qty": 2,
+      "note": "nemlig has NO plum tomatoes; 2 packs also covered the separate 'cherrytomater' line"
+    },
+    "cherrytomater": {
+      "query": "tomater",
+      "product_id": "5014547",
+      "name": "Cherrytomater Snackmix",
+      "pack": "200 g / Danmark / Klasse 1",
+      "price": 20.0,
+      "last_qty": 0,
+      "note": "merged into 'blomme tomater' line"
+    },
+    "frisk basilikum": {
+      "query": "frisk basilikum",
+      "product_id": "5012405",
+      "name": "Basilikum",
+      "pack": "50 g / Kenya / Klasse 1",
+      "price": 25,
+      "last_qty": 1,
+      "note": "prefers cut herbs over potted"
+    },
+    "koriander": {
+      "query": "koriander frisk",
+      "product_id": "5012402",
+      "name": "Koriander",
+      "pack": "50 g / Kenya / Klasse 1",
+      "price": 25.0,
+      "last_qty": 1,
+      "note": "merge 'frisk koriander' + 'koriander' into one line"
+    },
+    "grønne bønner": {
+      "query": "haricots verts",
+      "product_id": "5501753",
+      "name": "Haricots verts øko.",
+      "pack": "500 g / frost / Frigodan",
+      "price": 15.5,
+      "last_qty": 1,
+      "note": "prefers frozen over fresh"
+    },
+    "kartofler": {
+      "query": "kartofler",
+      "product_id": "5014541",
+      "name": "Kartofler øko.",
+      "pack": "1 kg / Danmark / Klasse 1",
+      "price": 15,
+      "last_qty": 1
+    },
+    "lime": {
+      "query": "lime",
+      "product_id": "5004542",
+      "name": "Lime øko.",
+      "pack": "1 stk. / Colombia / Klasse 1",
+      "price": 4.5,
+      "last_qty": 1
+    },
+    "løg": {
+      "query": "løg",
+      "product_id": "5070873",
+      "name": "Løg i tern",
+      "pack": "300 g / frost / Gestus",
+      "price": 19.95,
+      "last_qty": 1,
+      "note": "prefers pre-diced frozen onion"
+    },
+    "madpakkefrugt": {
+      "query": "æbler",
+      "product_id": "5604123",
+      "name": "Æbler Joya",
+      "pack": "900g / 4-6 stk., / Italien / Klasse 1",
+      "price": 25.0,
+      "last_qty": 1,
+      "note": "Cosmic Crisp var udsolgt 29/08 - Æbler Joya er nærmeste erstatning (900 g/4-6 stk/Italien). Stadig kun 1 slags valgt, listen siger '2 slags'"
+    },
+    "romaine salat": {
+      "query": "romainesalat",
+      "product_id": "5029152",
+      "name": "Romaine salat øko",
+      "pack": "1 stk. / Ø-Grønt / Danmark",
+      "price": 20.0,
+      "last_qty": 1
+    },
+    "rødløg": {
+      "query": "rødløg",
+      "product_id": "5042129",
+      "name": "Rødløg øko.",
+      "pack": "750 g / Danmark / Klasse 1",
+      "price": 25.0,
+      "last_qty": 1
+    },
+    "hakkede tomater": {
+      "query": "hakkede tomater",
+      "product_id": "5602152",
+      "name": "Hakkede tomater øko.",
+      "pack": "400 g / Taste of Nature",
+      "price": 6.91,
+      "last_qty": 3,
+      "note": "stocks up: bought 3 for a 1-can recipe"
+    },
+    "olivenolie": {
+      "query": "olivenolie",
+      "product_id": "5058627",
+      "name": "Ekstra jomfru olivenolie øko",
+      "pack": "0,50 l / koldpresset / Casaneo",
+      "price": 58.12,
+      "last_qty": 1
+    },
+    "pappardelle": {
+      "query": "pappardelle",
+      "product_id": "5065119",
+      "name": "Pappardelle (fuglereder)",
+      "pack": "500 g / Garofalo",
+      "price": 29.95,
+      "last_qty": 1
+    },
+    "pesto": {
+      "query": "pesto",
+      "product_id": "5020910",
+      "name": "Basilikum pesto",
+      "pack": "130 g / Zelected Foods",
+      "price": 29.5,
+      "last_qty": 1
+    },
+    "pitabrød": {
+      "query": "pitabrød",
+      "product_id": "5501616",
+      "name": "Soft pitabrød",
+      "pack": "5 stk. / 375 g / frost / Hatting",
+      "price": 13.05,
+      "last_qty": 1,
+      "note": "took 1 pack of 5 even though list said 6 stk"
+    },
+    "ris": {
+      "query": "basmati ris",
+      "product_id": "5501735",
+      "name": "Basmati ris",
+      "pack": "4 ps / 500 g / Ris-Fix",
+      "price": 32.25,
+      "last_qty": 1,
+      "note": "prefers boil-in-bag"
+    },
+    "rosiner": {
+      "query": "rosiner",
+      "product_id": "5061059",
+      "name": "Rosiner",
+      "pack": "550 g / Nordthy",
+      "price": 37.5,
+      "last_qty": 2
+    },
+    "tomatpure": {
+      "query": "tomatpuré",
+      "product_id": "5602670",
+      "name": "Tomatpuré øko.",
+      "pack": "200 g / tube / Pomme d'or",
+      "price": 12.95,
+      "last_qty": 1,
+      "note": "prefers tube over can"
+    },
+    "tun i olie": {
+      "query": "tun i olie",
+      "product_id": "5066136",
+      "name": "Tun i olie",
+      "pack": "185 g / 140 g / Taste of Nature",
+      "price": 12.21,
+      "last_qty": 2
+    },
+    "stødt nellike": {
+      "query": "nellike stødt",
+      "product_id": "5026692",
+      "name": "Nellike (stødt)",
+      "pack": "20 g / Santa Maria",
+      "price": 13.75,
+      "last_qty": 1
+    },
+    "madpakkebrød": {
+      "query": "madpakkebrød",
+      "product_id": "5064593",
+      "name": "Frokoststykker",
+      "pack": "6 stk. / 400 g / Pågen",
+      "price": 20,
+      "last_qty": 1
+    },
+    "creme fraiche": {
+      "query": "creme fraiche",
+      "product_id": "5008993",
+      "name": "Creme fraiche 18%",
+      "pack": "500 g / Arla Karolines Køkken  ★ købt før",
+      "price": 29.5,
+      "last_qty": 1
+    },
+    "fløde": {
+      "query": "fløde",
+      "product_id": "5004338",
+      "name": "Piskefløde 38% øko.",
+      "pack": "0,50 l / Arla Karolines Køkken",
+      "price": 28.95,
+      "last_qty": 2,
+      "note": "dækker også 'piskefløde'; 0,25 l + 1,5 dl + 0,25 l = 2 stk. a 0,5 l"
+    },
+    "piskefløde": {
+      "query": "piskefløde",
+      "product_id": "5004338",
+      "name": "Piskefløde 38% øko.",
+      "pack": "0,50 l / Arla Karolines Køkken",
+      "price": 28.95,
+      "last_qty": 2,
+      "note": "samme vare som 'fløde' - læg mængderne sammen før antal beregnes"
+    },
+    "mælk": {
+      "query": "mælk",
+      "product_id": "701012",
+      "name": "Letmælk 1,5% øko.",
+      "pack": "1 l / Arla ØKO",
+      "price": 13.95,
+      "last_qty": 2,
+      "note": "search 'mælk' NOT 'letmælk'"
+    },
+    "græsk yoghurt": {
+      "query": "græsk yoghurt",
+      "product_id": "5046258",
+      "name": "Græskinspireret yoghurt øko.",
+      "pack": "500 g / 10% / Salakis",
+      "price": 23.69,
+      "last_qty": 1
+    },
+    "butterbeans": {
+      "query": "butter beans",
+      "product_id": "5043539",
+      "name": "Butter beans øko.",
+      "pack": "400 g / 240 g / vegansk / Økomama",
+      "price": 15.32,
+      "last_qty": 1
+    },
+    "halloumi": {
+      "query": "halloumi",
+      "product_id": "5050440",
+      "name": "Halloumi grillost",
+      "pack": "250 g / Taverna",
+      "price": 32.25,
+      "last_qty": 2
+    },
+    "agurk": {
+      "product_id": "106593",
+      "name": "Agurk øko.",
+      "pack": "1 stk. / Spanien / Klasse 1",
+      "price": 13,
+      "query": "agurk",
+      "last_qty": 1
+    },
+    "broccoli": {
+      "product_id": "5060611",
+      "name": "Broccoli buketter øko.",
+      "pack": "400 g / frost / Grøn Balance",
+      "price": 13.95,
+      "query": "broccoli",
+      "last_qty": 1
+    },
+    "brøndkarse": {
+      "product_id": "5019921",
+      "name": "Brøndkarse øko.",
+      "pack": "10,5 cm pt. / Danmark / Klasse 1  ★ købt før",
+      "price": 17,
+      "query": "brøndkarse",
+      "last_qty": 1
+    },
+    "champignon": {
+      "product_id": "5040333",
+      "name": "Champignon i skiver øko.",
+      "pack": "200 g / Danmark / Tvedemose  ★ købt før",
+      "price": 16,
+      "query": "champignon",
+      "last_qty": 1
+    },
+    "frisk koriander": {
+      "product_id": "5012402",
+      "name": "Koriander",
+      "pack": "50 g / Kenya / Klasse 1",
+      "price": 25,
+      "query": "koriander frisk",
+      "last_qty": 1
+    },
+    "frisk rosmarin": {
+      "product_id": "5012403",
+      "name": "Rosmarin",
+      "pack": "50 g / Kenya / Klasse 1",
+      "price": 25,
+      "query": "rosmarin",
+      "last_qty": 1,
+      "note": "skåret rosmarin 50 g, ikke potteurt - søg 'rosmarin', ikke 'rosmarin frisk'"
+    },
+    "gulerod": {
+      "product_id": "5000790",
+      "name": "Gulerødder Lammefjorden",
+      "pack": "1 kg / Danmark / Klasse 1  ★ købt før",
+      "price": 22,
+      "query": "gulerødder",
+      "last_qty": 1
+    },
+    "peberfrugt": {
+      "product_id": "5026336",
+      "name": "Peberfrugter røde",
+      "pack": "2 stk. / Danmark / Klasse 1",
+      "price": 30,
+      "query": "peberfrugt",
+      "last_qty": 1
+    },
+    "porre": {
+      "product_id": "5001631",
+      "name": "Porrer øko.",
+      "pack": "1 bdt. / Danmark / Klasse 1",
+      "price": 28,
+      "query": "porre",
+      "last_qty": 1
+    },
+    "små tomater": {
+      "product_id": "5014547",
+      "name": "Cherrytomater Snackmix",
+      "pack": "200 g / Danmark / Klasse 1",
+      "price": 20,
+      "query": "tomater",
+      "last_qty": 2,
+      "note": "stavevariant af 'blomme tomater'/'cherrytomater'"
+    },
+    "bønner": {
+      "product_id": "5602876",
+      "name": "Røde kidneybønner",
+      "pack": "400 g / 240 g / Taste of Nature",
+      "price": 7.15,
+      "query": "kidneybønner",
+      "last_qty": 2
+    },
+    "hakket tomat": {
+      "product_id": "5054625",
+      "name": "Hakkede tomater øko.",
+      "pack": "400 g / Rodolfi",
+      "price": 18.95,
+      "query": "hakkede tomater",
+      "last_qty": 2,
+      "note": "stavevariant af 'hakkede tomater'"
+    },
+    "hasselnødder": {
+      "product_id": "5605349",
+      "name": "Hasselnødder",
+      "pack": "100 g / Nordthy",
+      "price": 18.95,
+      "query": "hasselnødder",
+      "last_qty": 2
+    },
+    "majs": {
+      "product_id": "5058689",
+      "name": "Majs",
+      "pack": "3 x 150 g / 3 x 140 g / Taste of Nature  ★ købt før",
+      "price": 18.5,
+      "query": "majs",
+      "last_qty": 1
+    },
+    "soltørret tomatpure": {
+      "product_id": "5602670",
+      "name": "Tomatpuré øko.",
+      "pack": "200 g / tube / Pomme d'or  ★ købt før",
+      "price": 12.95,
+      "query": "soltørret tomat",
+      "last_qty": 1
+    },
+    "spaghetti": {
+      "product_id": "5049578",
+      "name": "Spaghetti øko.",
+      "pack": "500 g / De Cecco  ★ købt før",
+      "price": 31.5,
+      "query": "spaghetti",
+      "last_qty": 1
+    },
+    "spidskommen": {
+      "product_id": "5602933",
+      "name": "Spidskommen (stødt) øko.",
+      "pack": "50 g / Dava",
+      "price": 16.17,
+      "query": "spidskommen",
+      "last_qty": 1
+    },
+    "stødt koriander": {
+      "product_id": "5602925",
+      "name": "Koriander (stødt) øko.",
+      "pack": "45 g / Dava  ★ købt før",
+      "price": 21.17,
+      "query": "stødt koriander",
+      "last_qty": 1
+    },
+    "hakket svin": {
+      "product_id": "5603994",
+      "name": "Hakket grisekød 6-9% øko.",
+      "pack": "600 g / Friland  ★ købt før",
+      "price": 84,
+      "query": "hakket grisekød",
+      "last_qty": 1
+    },
+    "svin i terninger": {
+      "product_id": "5063650",
+      "name": "Grisekød i tern øko.",
+      "pack": "400 g / Jyske gårde",
+      "price": 130,
+      "query": null,
+      "last_qty": 1,
+      "note": "nemlig kalder det 'grisekød', ikke 'svinekød' - og produktet kan IKKE findes via søgning overhovedet, kun via direkte link /grisekoed-i-tern-oeko-5063650"
+    },
+    "butterdej": {
+      "product_id": "5068592",
+      "name": "Tærtedej m. fuldkorn",
+      "pack": "275 g / Gestus",
+      "price": 11.95,
+      "query": "butterdej",
+      "last_qty": 1,
+      "note": "bruger Tærtedej m. fuldkorn til broccolitærten, ikke butterdej"
+    },
+    "chorizo": {
+      "product_id": "5606046",
+      "name": "Chorizo i tern",
+      "pack": "100 g / Tulip",
+      "price": 20.95,
+      "query": "chorizo",
+      "last_qty": 1
+    },
+    "pålæg": {
+      "product_id": "5600943",
+      "name": "Ost i skiver ML",
+      "pack": "150 g / Danbo / Arla Klovborg",
+      "price": 25.5,
+      "query": "ost i skiver",
+      "last_qty": 1,
+      "note": "valgte ost i skiver (Danbo ML) - listen siger '2 pakker', kun 1 slags valgt"
+    },
+    "revet cheddar": {
+      "product_id": "5024584",
+      "name": "Cheddar (revet) øko.",
+      "pack": "140 g / Økolandet  ★ købt før",
+      "price": 30.95,
+      "query": "revet cheddar",
+      "last_qty": 2,
+      "note": "dækker også linjen 'revet ost'; 150 g + 100 g = 2 pk."
+    },
+    "revet mozzarella": {
+      "product_id": "5031388",
+      "name": "Mozzarella (revet) 16%",
+      "pack": "150 g / nemlig basic",
+      "price": 21.25,
+      "query": "revet mozzarella",
+      "last_qty": 1
+    },
+    "revet ost": {
+      "product_id": "5024584",
+      "name": "Cheddar (revet) øko.",
+      "pack": "140 g / Økolandet  ★ købt før",
+      "price": 30.95,
+      "query": "revet cheddar",
+      "last_qty": 2,
+      "note": "samme vare som 'revet cheddar' - læg dem sammen til én linje"
+    },
+    "æg": {
+      "product_id": "102252",
+      "name": "Frilandsæg str. M/L",
+      "pack": "6 stk. / Danæg  ★ købt før",
+      "price": 26.15,
+      "query": "æg",
+      "last_qty": 1
+    },
+    "toiletpapir": {
+      "product_id": "5601188",
+      "name": "Toiletpapir",
+      "pack": "16 rl. / Comfort / Lotus  ★ købt før",
+      "price": 85.5,
+      "query": "toiletpapir",
+      "last_qty": 1
+    }
   },
-
   "no_default_yet": {
-    "olie":          {"reason": "skipped twice; 'olie' in recipes is generic cooking oil — ask which"},
-    "pålæg":         {"reason": "skipped; '2 pakker' is too vague, needs a variety picker"},
-    "madpakkefrugt": {"reason": "'2 slags' — only 1 kind chosen; second kind still open"}
+    "pålæg": {
+      "reason": "har nu en default (ost i skiver), men listen siger '2 pakker' - anden slags mangler stadig"
+    },
+    "madpakkefrugt": {
+      "reason": "'2 slags' - kun æbler valgt igen (uge 35); anden slags mangler"
+    },
+    "tyttebærsyltetøj": {
+      "reason": "nemlig fører INGEN tyttebær - skal købes et andet sted eller erstattes bevidst"
+    }
   },
-
   "usually_in_the_kitchen": {
     "_comment": "Toggled off by hand on 2026-08-22 while checking cupboards. Treat as 'likely have', still show, default unchecked.",
-    "items": ["hvidløg", "ingefær", "dijon sennep", "fine gryn", "honning", "hvide bønner", "hvidvinseddike", "kaffe", "kikærter", "peanutbutter", "pinjekerner", "sorte oliven", "chiliflager", "garam masala", "salt", "stødt spidskommen", "parmesan", "smør", "smørresmør", "æg", "køkkenrulle", "toiletpapir", "smoothies"]
+    "items": [
+      "chiliflager",
+      "dijon sennep",
+      "fine gryn",
+      "garam masala",
+      "honning",
+      "hvide bønner",
+      "hvidløg",
+      "hvidvinseddike",
+      "ingefær",
+      "kaffe",
+      "kikærter",
+      "køkkenrulle",
+      "løg",
+      "olivenolie",
+      "parmesan",
+      "peanutbutter",
+      "pinjekerner",
+      "rosiner",
+      "salt",
+      "smoothies",
+      "smør",
+      "smørresmør",
+      "sorte oliven",
+      "stødt spidskommen",
+      "toiletpapir",
+      "æg"
+    ]
   }
 }

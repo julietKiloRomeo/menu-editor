@@ -22,6 +22,7 @@ menus.png
 uge_*.yaml
 **/.ipynb_checkpoints/*
 .env
+.worktrees/
 
 # Frontend build artefacts
 frontend/node_modules/
@@ -36,6 +37,6 @@ coverage*.xml
 *.lcov
 .coverage
 
-# Playwright artifacts
-playwright/.auth/
-playwright/logs/
+
+# local backups written by the nemlig-shopping skill
+*.json.bak
