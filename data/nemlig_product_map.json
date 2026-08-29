@@ -47,8 +47,8 @@
       "name": "Cherrytomater Snackmix",
       "pack": "200 g / Danmark / Klasse 1",
       "price": 20.0,
-      "last_qty": 0,
-      "note": "merged into 'blomme tomater' line"
+      "last_qty": 2,
+      "note": "kanonisk række for 'blomme tomater' og 'små tomater'"
     },
     "frisk basilikum": {
       "query": "frisk basilikum",
@@ -129,12 +129,12 @@
     },
     "hakkede tomater": {
       "query": "hakkede tomater",
-      "product_id": "5602152",
+      "product_id": "5054625",
       "name": "Hakkede tomater øko.",
-      "pack": "400 g / Taste of Nature",
-      "price": 6.91,
-      "last_qty": 3,
-      "note": "stocks up: bought 3 for a 1-can recipe"
+      "pack": "400 g / Rodolfi",
+      "price": 18.95,
+      "last_qty": 2,
+      "note": "Taste of Nature (5602152) var udsolgt 29/08 - Rodolfi er erstatningen og en favorit"
     },
     "olivenolie": {
       "query": "olivenolie",
