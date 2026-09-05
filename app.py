@@ -22,6 +22,28 @@ from pydantic import BaseModel, Field
 
 from src.core.ingredients import load_alias_map
 from src.core.ingredients import normalise as normalise_ingredient
+from src.core.nemlig import (
+    ACTIONS,
+    DEFAULT_MAP_PATH as NEMLIG_MAP_PATH,
+    adapt_product,
+    adapt_search_results,
+    load_product_map,
+    merge_add_lines,
+    reconcile_basket,
+    record_run,
+    save_product_map,
+    summarise_map,
+)
+from src.core.orders import (
+    attach_search_results,
+    mark_recorded,
+    order_items,
+    pending_queries,
+    progress as order_progress,
+    recent_orders,
+    set_choice,
+    start_order,
+)
 from src.core.runs import (
     latest_run,
     progress,
@@ -37,6 +59,8 @@ from src.models import (
     CategoryConfig,
     IngredientAlias,
     IngredientConfig,
+    NemligOrder,
+    NemligOrderItem,
     Recipe,
     ShoppingRun,
     ShoppingRunItem,
@@ -1953,6 +1977,277 @@ def delete_stocked(item_id: int):
 
         rows = session.exec(select(StockedItem).order_by(StockedItem.name)).all()
         return jsonify({"items": [serialise_stocked(row) for row in rows]})
+
+
+def product_map_path() -> pathlib.Path:
+    """Where the nemlig memory lives.
+
+    Configurable so tests never touch the real file. ``record`` rewrites it in
+    place, and a test suite that clobbers a year of learned product choices is
+    a bad afternoon.
+    """
+    configured = app.config.get("NEMLIG_MAP_PATH")
+    return pathlib.Path(configured) if configured else NEMLIG_MAP_PATH
+
+
+def serialise_order_item(item: NemligOrderItem) -> Dict[str, Any]:
+    return {
+        "id": item.id,
+        "ingredient": item.ingredient,
+        "need": item.need,
+        "recipes": item.recipes,
+        "zone": item.zone_name,
+        "status": item.status,
+        "query": item.query or None,
+        "candidates": item.candidates or [],
+        "warning": item.warning,
+        "action": item.action,
+        "product_id": item.product_id,
+        "product": item.product,
+        "qty": item.qty,
+        "note": item.note,
+        "url": item.url,
+    }
+
+
+def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[str, Any]:
+    decided, total = order_progress(items)
+    return {
+        "id": order.id,
+        "run_id": order.run_id,
+        "source": order.source,
+        "created_at": order.created_at.isoformat() if order.created_at else None,
+        "recorded_at": order.recorded_at.isoformat() if order.recorded_at else None,
+        "decided": decided,
+        "total": total,
+        "items": [serialise_order_item(item) for item in items],
+    }
+
+
+@app.route('/api/orders', methods=['GET'])
+def list_orders():
+    """Baskets in progress, newest first."""
+    with get_session() as session:
+        orders = recent_orders(session)
+        return jsonify(
+            {
+                "orders": [
+                    serialise_order(order, order_items(order.id, session))
+                    for order in orders
+                ]
+            }
+        )
+
+
+@app.route('/api/orders', methods=['POST'])
+def create_order():
+    """Open a basket for whatever the kitchen walk did not tick off."""
+    payload = request.get_json(silent=True) or {}
+    run_id = payload.get("run_id")
+    if not isinstance(run_id, int):
+        return jsonify({"error": "run_id is required"}), 400
+
+    with get_session() as session:
+        order = start_order(
+            run_id,
+            load_product_map(product_map_path()),
+            session,
+            source=(payload.get("source") or "").strip(),
+            include_checked=bool(payload.get("include_checked")),
+        )
+        if order is None:
+            return jsonify({"error": "Run not found"}), 404
+        return jsonify(serialise_order(order, order_items(order.id, session))), 201
+
+
+@app.route('/api/orders/<int:order_id>', methods=['GET'])
+def get_order(order_id: int):
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+        return jsonify(serialise_order(order, order_items(order.id, session)))
+
+
+@app.route('/api/orders/<int:order_id>/queries', methods=['GET'])
+def get_order_queries(order_id: int):
+    """The searches still worth running, ready to paste into a logged-in tab.
+
+    The app cannot run them itself: nemlig's search needs a bearer token and
+    several session parameters that only exist inside a logged-in browser, and
+    the basket authenticates on a rotating HttpOnly cookie set. So the queries
+    go out and the results come back.
+    """
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+        return jsonify({"queries": pending_queries(order_id, session)})
+
+
+@app.route('/api/orders/<int:order_id>/search-results', methods=['POST'])
+def post_order_search_results(order_id: int):
+    """Attach a batch of search results, as ``{query: [product, ...]}``.
+
+    Accepts nemlig's own product shape as well as the flattened one, because
+    whoever ran the searches should not have to reshape them by hand.
+    """
+    payload = request.get_json(silent=True) or {}
+    results = payload.get("results")
+    if not isinstance(results, dict):
+        return jsonify({"error": "results must be an object of query -> products"}), 400
+
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+
+        touched = attach_search_results(
+            order_id, adapt_search_results(results), load_product_map(product_map_path()), session
+        )
+        items = order_items(order_id, session)
+        return jsonify(
+            {
+                "updated": touched,
+                "without_candidates": [
+                    item.ingredient
+                    for item in items
+                    if not item.action and item.query and not item.candidates
+                ],
+                "order": serialise_order(order, items),
+            }
+        )
+
+
+@app.route('/api/orders/items/<int:item_id>', methods=['PATCH'])
+def update_order_item(item_id: int):
+    """Record one decision. Saved immediately, never at a submit."""
+    payload = request.get_json(silent=True) or {}
+    fields: Dict[str, Any] = {}
+
+    if "action" in payload:
+        action = payload["action"]
+        if action is not None and action not in ACTIONS:
+            return jsonify({"error": f"unknown action {action!r}"}), 400
+        fields["action"] = action
+    for key in ("product_id", "qty", "note", "url"):
+        if key in payload:
+            fields[key] = payload[key]
+    if "product" in payload:
+        product = payload["product"]
+        fields["product"] = adapt_product(product) if product else None
+    if not fields:
+        return jsonify({"error": "nothing to update"}), 400
+
+    with get_session() as session:
+        item = set_choice(item_id, session, **fields)
+        if item is None:
+            return jsonify({"error": "Item not found"}), 404
+
+        order = session.get(NemligOrder, item.order_id)
+        return jsonify(serialise_order(order, order_items(order.id, session)))
+
+
+@app.route('/api/orders/<int:order_id>/basket', methods=['GET'])
+def get_order_basket(order_id: int):
+    """The basket lines to post, with quantities summed per product.
+
+    Summing is not a nicety. ``AddToBasket`` is called with
+    ``AffectPartialQuantity: true``, so the quantity is absolute: two rows
+    resolving to the same product and posted separately leave one pack in the
+    basket rather than two, silently.
+    """
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+
+        choices = [serialise_order_item(item) for item in order_items(order_id, session)]
+        return jsonify(merge_add_lines(choices))
+
+
+@app.route('/api/orders/<int:order_id>/reconcile', methods=['POST'])
+def post_order_reconcile(order_id: int):
+    """Check a GetBasket response against what was asked for.
+
+    A 200 from AddToBasket is not proof of purchase: a sold-out product is
+    accepted, reports success, and lands as a line with ``Quantity: 0``.
+    """
+    payload = request.get_json(silent=True) or {}
+    basket = payload.get("basket")
+    if not isinstance(basket, dict):
+        return jsonify({"error": "basket is required"}), 400
+
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+
+        choices = [serialise_order_item(item) for item in order_items(order_id, session)]
+        lines = merge_add_lines(choices)["lines"]
+        return jsonify(reconcile_basket(lines, basket))
+
+
+@app.route('/api/orders/<int:order_id>/record', methods=['POST'])
+def post_order_record(order_id: int):
+    """Fold what this order learned back into the product map.
+
+    ``dry_run`` returns the summary without writing, so the diff can be looked
+    at first. Writing keeps one backup.
+    """
+    payload = request.get_json(silent=True) or {}
+    dry_run = bool(payload.get("dry_run"))
+
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+
+        items = order_items(order_id, session)
+        choices = [serialise_order_item(item) for item in items]
+        lines = merge_add_lines(choices)["lines"]
+
+        result = record_run(
+            load_product_map(product_map_path()),
+            choices,
+            lines,
+            replaced=payload.get("replaced") or {},
+            source=(payload.get("source") or order.source),
+            on_date=payload.get("date") or datetime.date.today(),
+        )
+
+        updated_map = result.pop("map")
+        if not dry_run:
+            save_product_map(updated_map, product_map_path())
+            # Staples learned here belong in the database too, or the phone's
+            # next walk will not know about them.
+            for name in result["learned_staples"]:
+                normalised = normalise_ingredient(name)
+                existing = session.exec(
+                    select(StockedItem).where(StockedItem.name == normalised)
+                ).first()
+                if existing is None:
+                    session.add(StockedItem(name=normalised))
+            session.commit()
+            mark_recorded(order_id, session)
+
+        result["dry_run"] = dry_run
+        result["summary"] = summarise_map(updated_map)
+        return jsonify(result)
+
+
+@app.route('/api/nemlig/map', methods=['GET'])
+def get_product_map():
+    """The durable memory, so what the app knows is visible rather than implied."""
+    product_map = load_product_map(product_map_path())
+    return jsonify(
+        {
+            "summary": summarise_map(product_map),
+            "mappings": product_map.get("mappings", {}),
+            "unresolved": product_map.get("no_default_yet", {}),
+            "stocked": product_map.get("usually_in_the_kitchen", {}).get("items", []),
+        }
+    )
 
 
 def data_dir() -> pathlib.Path:

@@ -175,6 +175,65 @@ class ShoppingRunItem(SQLModel, table=True):
     likely_stocked: bool = Field(default=False)
 
 
+class NemligOrder(SQLModel, table=True):
+    """One attempt at turning a walked run into a nemlig.com basket.
+
+    Separate from :class:`ShoppingRun` because they answer different questions
+    and have different lifetimes. A run is "what does the kitchen still need",
+    settled once you have walked it. An order is "which product, how many" --
+    thirty to sixty judgement calls that take half an hour, get interrupted, and
+    must survive a closed tab. It is also legitimately one-to-many: a basket can
+    be abandoned and restarted against the same run.
+    """
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    run_id: Optional[int] = Field(default=None, foreign_key="shoppingrun.id", index=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
+    #: free text naming where the list came from, copied into the product map
+    source: str = Field(default="")
+    #: set when the learnings have been folded back into the product map, so a
+    #: half-finished order is never mistaken for a finished one
+    recorded_at: Optional[datetime] = Field(default=None)
+
+
+class NemligOrderItem(SQLModel, table=True):
+    """One row of the picker: an ingredient and what was decided about it."""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order_id: Optional[int] = Field(default=None, foreign_key="nemligorder.id", index=True)
+    #: preserves the walked list's zone-then-position order, because the picker
+    #: is compared line by line against the list it came from
+    position: int = Field(default=0)
+    ingredient: str = Field(index=True)
+    #: the quantity as the recipes asked for it, pre-rendered ("3 dl + 300 g").
+    #: Kept as text: it is shown to a human deciding how many packs to buy, and
+    #: is never arithmetic again.
+    need: str = Field(default="")
+    recipes: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    zone_name: str = Field(default="")
+    #: mapped / stocked / new -- what the product map knew before this run
+    status: str = Field(default="new")
+    #: what to search nemlig for; empty when the product is unreachable by
+    #: search and only a pasted link will do
+    query: str = Field(default="")
+    candidates: list[dict] = Field(default_factory=list, sa_column=Column(JSON))
+    #: why this row was unresolved last time, carried from the product map's
+    #: no_default_yet. Kept apart from ``note`` so the map's own warning is
+    #: never mistaken for something the user typed and written back as one.
+    warning: str = Field(default="")
+    #: one of src.core.nemlig.ACTIONS, or None while undecided
+    action: Optional[str] = Field(default=None)
+    product_id: Optional[str] = Field(default=None)
+    #: the chosen candidate, copied so the basket stays reviewable even if the
+    #: candidate list is later rebuilt from a fresh search
+    product: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+    qty: int = Field(default=1)
+    note: str = Field(default="")
+    url: str = Field(default="")
+
+
 class AppSetting(SQLModel, table=True):
     key: str = Field(primary_key=True)
     value: Optional[str] = None
