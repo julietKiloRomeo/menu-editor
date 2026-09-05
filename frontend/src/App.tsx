@@ -3,6 +3,7 @@ import type { ChangeEvent, DragEvent, FormEvent } from 'react'
 import { marked } from 'marked'
 import html2pdf from 'html2pdf.js'
 import { useLocation, useNavigate } from 'react-router-dom'
+import OrderPicker from './OrderPicker'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 const RECIPES_ENDPOINT = `${API_BASE}/api/recipes?include_blacklisted=0`
@@ -41,7 +42,7 @@ type Toast = {
   message: string
 }
 
-type View = 'planner' | 'add' | 'edit' | 'shopping' | 'tools' | 'config' | 'run'
+type View = 'planner' | 'add' | 'edit' | 'shopping' | 'tools' | 'config' | 'run' | 'order'
 
 type RunItem = {
   id: number
@@ -80,6 +81,11 @@ type RunSummary = {
 type MenuPreview = {
   menuHtml: string
   shoppingHtml: string
+}
+
+type MenuSummary = {
+  name: string
+  modified: string
 }
 
 type ZoneSuggestion = {
@@ -265,6 +271,8 @@ function App() {
         return 'tools'
       case '/run':
         return 'run'
+      case '/order':
+        return 'order'
       default:
         return 'planner'
     }
@@ -292,6 +300,9 @@ function App() {
         break
       case 'run':
         navigate('/run')
+        break
+      case 'order':
+        navigate('/order')
         break
     }
   }, [navigate])
@@ -380,14 +391,55 @@ function App() {
     }
   }, [])
 
+  // Menus available to freeze into a new walk.
+  const [menuOptions, setMenuOptions] = useState<MenuSummary[]>([])
+  const [startingRun, setStartingRun] = useState(false)
+
+  const loadMenus = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/menus`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const body = await response.json()
+      setMenuOptions(body.menus ?? [])
+    } catch {
+      // The run list is the point of this screen; a missing menu list only
+      // costs the ability to start a new one, so it fails quietly.
+    }
+  }, [])
+
+  const startRunFromMenu = useCallback(
+    async (menu: string) => {
+      setStartingRun(true)
+      try {
+        const response = await fetch(`${API_BASE}/api/runs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ menu }),
+        })
+        const body = await response.json()
+        if (!response.ok) throw new Error(body.error || `HTTP ${response.status}`)
+        setActiveRun(body)
+        window.localStorage.setItem(ACTIVE_RUN_KEY, String(body.id))
+        void loadRunList()
+        pushToast('success', `${body.total} items to walk`)
+      } catch (error) {
+        pushToast('error', error instanceof Error ? error.message : 'Could not start that walk')
+      } finally {
+        setStartingRun(false)
+      }
+    },
+    [loadRunList, pushToast],
+  )
+
   // Reopen whatever was being walked, so locking the phone does not lose your place.
   useEffect(() => {
     if (view !== 'run') return
     void loadRunList()
+    void loadMenus()
     if (activeRun) return
     const remembered = window.localStorage.getItem(ACTIVE_RUN_KEY)
     if (remembered) void openRun(Number(remembered))
-  }, [view, loadRunList, openRun, activeRun])
+  }, [view, loadRunList, loadMenus, openRun, activeRun])
 
   const toggleRunItem = useCallback(
     async (item: RunItem) => {
@@ -1767,6 +1819,10 @@ function App() {
   const recipesActive = view === 'add' || view === 'edit' || view === 'tools'
   const settingsActive = view === 'config'
   const shopActive = view === 'run'
+  // Ordering is a sit-down job: forty product choices, images, side-by-side
+  // comparison. It gets a desktop destination only, and the phone keeps its
+  // four thumb-sized tabs rather than cramming in a fifth it cannot use well.
+  const orderActive = view === 'order'
 
   return (
     <div className="app-shell min-h-screen px-4 py-6 pb-24 text-muted sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
@@ -1808,6 +1864,7 @@ function App() {
               {([
                 { key: 'planner' as View, label: 'Plan', active: planActive },
                 { key: 'run' as View, label: 'Shop', active: shopActive },
+                { key: 'order' as View, label: 'Order', active: orderActive },
                 { key: 'edit' as View, label: 'Recipes', active: recipesActive },
                 { key: 'config' as View, label: 'Settings', active: settingsActive },
               ]).map(({ key, label, active }) => (
@@ -3002,6 +3059,16 @@ function App() {
           </div>
         )}
 
+        {view === 'order' && (
+          <>
+            <p className="no-print rounded-panel border border-white/10 bg-brand-dark/30 px-4 py-3 text-xs text-white/50 lg:hidden">
+              Ordering works best on a laptop — it compares products side by side and needs a
+              browser console. The kitchen walk on the Shop tab is the phone half.
+            </p>
+            <OrderPicker apiBase={API_BASE} pushToast={pushToast} />
+          </>
+        )}
+
         {view === 'run' && (
           <section className="rounded-panel bg-brand-surface/80 p-4 shadow-panel backdrop-blur sm:p-6">
             {!activeRun && (
@@ -3025,8 +3092,44 @@ function App() {
                 {runLoading && !runError && <p className="mt-4 text-sm text-white/60">Loading…</p>}
                 {!runLoading && !runError && runList.length === 0 && (
                   <p className="mt-4 text-sm text-white/60">
-                    No shopping runs yet. Start one from a saved menu.
+                    No shopping runs yet. Start one from a saved menu below.
                   </p>
+                )}
+
+                {menuOptions.length > 0 && (
+                  <div className="mt-4 rounded-2xl border border-white/10 bg-brand-dark/30 p-4">
+                    <h3 className="text-xs uppercase tracking-[0.2em] text-white/40">
+                      Start a new walk
+                    </h3>
+                    <p className="mt-1 text-xs text-white/40">
+                      Freezes the menu's shopping list as it is now, so editing a recipe
+                      mid-walk cannot reshuffle the rows under your thumb.
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {menuOptions.slice(0, 5).map((menu) => (
+                        <li key={menu.name}>
+                          <button
+                            type="button"
+                            disabled={startingRun}
+                            onClick={() => void startRunFromMenu(menu.name)}
+                            className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-brand-dark/40 px-4 py-3 text-left transition hover:border-brand-accent/60 disabled:opacity-40"
+                          >
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm font-medium text-white">
+                                {menu.name}
+                              </span>
+                              <span className="block text-xs text-white/40">
+                                {new Date(menu.modified).toLocaleDateString()}
+                              </span>
+                            </span>
+                            <span className="shrink-0 text-xs text-brand-accent">
+                              {startingRun ? '…' : 'Walk it'}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
 
                 <ul className="mt-4 space-y-2">
@@ -3404,7 +3507,10 @@ function App() {
       {/* Mobile bottom tab bar */}
       <nav
         className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-brand-dark/95 backdrop-blur lg:hidden"
-        aria-label="Primary"
+        // Distinct from the header nav's label: both are in the DOM at all
+        // times and only CSS hides one, so identical labels announce two
+        // "Primary" landmarks to a screen reader.
+        aria-label="Primary (mobile)"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
       >
         <div className="mx-auto flex max-w-md items-stretch justify-around">
