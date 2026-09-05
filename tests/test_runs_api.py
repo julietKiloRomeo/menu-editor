@@ -159,6 +159,41 @@ class TestReadRun:
         assert menu_client.get("/api/runs/latest").status_code == 400
 
 
+class TestListRuns:
+    """The phone picks a run from here, so it must not depend on menu files."""
+
+    def test_empty_before_any_run(self, menu_client):
+        assert menu_client.get("/api/runs").get_json()["runs"] == []
+
+    def test_lists_runs_newest_first(self, menu_client):
+        first = create_run(menu_client).get_json()["id"]
+        second = create_run(menu_client).get_json()["id"]
+
+        runs = menu_client.get("/api/runs").get_json()["runs"]
+
+        assert [run["id"] for run in runs] == [second, first]
+
+    def test_reports_progress(self, menu_client):
+        body = create_run(menu_client).get_json()
+        item_id = body["zones"][0]["items"][0]["id"]
+        menu_client.patch(f"/api/runs/items/{item_id}", json={"checked": True})
+
+        run = menu_client.get("/api/runs").get_json()["runs"][0]
+
+        assert (run["checked"], run["total"]) == (1, body["total"])
+
+    def test_survives_the_menu_file_disappearing(self, menu_app, menu_client):
+        """A half-ticked run stays reachable even once its menu is gone."""
+        app_module, _ = menu_app
+        run_id = create_run(menu_client).get_json()["id"]
+        (app_module.data_dir() / "uge_34_2026.yaml").unlink()
+
+        runs = menu_client.get("/api/runs").get_json()["runs"]
+
+        assert [run["id"] for run in runs] == [run_id]
+        assert menu_client.get("/api/menus").get_json()["menus"] == []
+
+
 class TestChecking:
     def first_item_id(self, body):
         return body["zones"][0]["items"][0]["id"]

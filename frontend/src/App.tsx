@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 const RECIPES_ENDPOINT = `${API_BASE}/api/recipes?include_blacklisted=0`
+/** Which run this device is walking, so a locked screen does not lose your place. */
+const ACTIVE_RUN_KEY = 'menu-spinner.activeRun.v1'
 
 type IngredientBucket = {
   amount: number
@@ -39,7 +41,41 @@ type Toast = {
   message: string
 }
 
-type View = 'planner' | 'add' | 'edit' | 'shopping' | 'tools' | 'config'
+type View = 'planner' | 'add' | 'edit' | 'shopping' | 'tools' | 'config' | 'run'
+
+type RunItem = {
+  id: number
+  ingredient: string
+  quantities: Record<string, number>
+  recipes: string[]
+  zone: string
+  checked: boolean
+  checked_at: string | null
+  /** Usually in the cupboard. A hint only -- the walk is what confirms it. */
+  likely_stocked: boolean
+}
+
+type RunZone = {
+  zone: string
+  items: RunItem[]
+}
+
+type Run = {
+  id: number
+  menu: string
+  created_at: string | null
+  checked: number
+  total: number
+  zones: RunZone[]
+}
+
+type RunSummary = {
+  id: number
+  menu: string
+  created_at: string | null
+  checked: number
+  total: number
+}
 
 type MenuPreview = {
   menuHtml: string
@@ -99,6 +135,30 @@ const ensureJson = async <T,>(response: Response): Promise<T> => {
   return response.json() as Promise<T>
 }
 
+/** A copy of ``run`` with one item ticked or unticked, totals kept in step. */
+function applyCheck(run: Run, itemId: number, checked: boolean): Run {
+  let delta = 0
+  const zones = run.zones.map((zone) => ({
+    ...zone,
+    items: zone.items.map((item) => {
+      if (item.id !== itemId || item.checked === checked) return item
+      delta += checked ? 1 : -1
+      return { ...item, checked }
+    }),
+  }))
+  return { ...run, zones, checked: run.checked + delta }
+}
+
+/** ``{dl: 3, g: 300}`` -> ``"3 dl + 300 g"``. Units are never merged. */
+function formatQuantities(quantities: Record<string, number>): string {
+  return Object.entries(quantities)
+    .map(([unit, amount]) => {
+      const rounded = Math.round(amount * 100) / 100
+      return unit ? `${rounded} ${unit}` : String(rounded)
+    })
+    .join(' + ')
+}
+
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
@@ -119,6 +179,7 @@ function App() {
   const [menuMarkdown, setMenuMarkdown] = useState<string>('')
   const [menuPreview, setMenuPreview] = useState<MenuPreview | null>(null)
   const [exporting, setExporting] = useState(false)
+  const [autoPrintPending, setAutoPrintPending] = useState(false)
   const [formName, setFormName] = useState('')
   const [formPlacement, setFormPlacement] = useState('')
   const [formServings, setFormServings] = useState(4)
@@ -202,6 +263,8 @@ function App() {
         return 'shopping'
       case '/tools':
         return 'tools'
+      case '/run':
+        return 'run'
       default:
         return 'planner'
     }
@@ -226,6 +289,9 @@ function App() {
         break
       case 'tools':
         navigate('/tools')
+        break
+      case 'run':
+        navigate('/run')
         break
     }
   }, [navigate])
@@ -273,6 +339,88 @@ function App() {
     }, 4000)
     toastTimeouts.current.push(timeout)
   }, [])
+
+  // --- Shopping run (kitchen / shop check-off) ------------------------------
+
+  const [runList, setRunList] = useState<RunSummary[]>([])
+  const [activeRun, setActiveRun] = useState<Run | null>(null)
+  const [runLoading, setRunLoading] = useState(false)
+  const [runError, setRunError] = useState<string | null>(null)
+  const [hideChecked, setHideChecked] = useState(false)
+  // Items with a PATCH in flight, so a double-tap cannot race itself.
+  const [pendingItems, setPendingItems] = useState<Set<number>>(new Set())
+
+  const loadRunList = useCallback(async () => {
+    setRunLoading(true)
+    setRunError(null)
+    try {
+      const response = await fetch(`${API_BASE}/api/runs`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const body = await response.json()
+      setRunList(body.runs ?? [])
+    } catch (error) {
+      setRunError(error instanceof Error ? error.message : 'Could not load runs')
+    } finally {
+      setRunLoading(false)
+    }
+  }, [])
+
+  const openRun = useCallback(async (runId: number) => {
+    setRunLoading(true)
+    setRunError(null)
+    try {
+      const response = await fetch(`${API_BASE}/api/runs/${runId}`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      setActiveRun(await response.json())
+      window.localStorage.setItem(ACTIVE_RUN_KEY, String(runId))
+    } catch (error) {
+      setRunError(error instanceof Error ? error.message : 'Could not load that run')
+    } finally {
+      setRunLoading(false)
+    }
+  }, [])
+
+  // Reopen whatever was being walked, so locking the phone does not lose your place.
+  useEffect(() => {
+    if (view !== 'run') return
+    void loadRunList()
+    if (activeRun) return
+    const remembered = window.localStorage.getItem(ACTIVE_RUN_KEY)
+    if (remembered) void openRun(Number(remembered))
+  }, [view, loadRunList, openRun, activeRun])
+
+  const toggleRunItem = useCallback(
+    async (item: RunItem) => {
+      if (pendingItems.has(item.id)) return
+      const next = !item.checked
+
+      setPendingItems((prev) => new Set(prev).add(item.id))
+      // Optimistic: a tick must feel instant with cold hands in a shop.
+      setActiveRun((prev) => (prev ? applyCheck(prev, item.id, next) : prev))
+
+      try {
+        const response = await fetch(`${API_BASE}/api/runs/items/${item.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ checked: next }),
+        })
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        // The server returns the whole run, so totals stay right even when
+        // the other device ticked something while this one was offline.
+        setActiveRun(await response.json())
+      } catch (error) {
+        setActiveRun((prev) => (prev ? applyCheck(prev, item.id, item.checked) : prev))
+        pushToast('error', `Could not save "${item.ingredient}" — ${error instanceof Error ? error.message : 'offline?'}`)
+      } finally {
+        setPendingItems((prev) => {
+          const copy = new Set(prev)
+          copy.delete(item.id)
+          return copy
+        })
+      }
+    },
+    [pendingItems, pushToast],
+  )
 
   useEffect(() => {
     return () => {
@@ -1490,6 +1638,30 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, hasSelection, selectionSignature])
 
+  // Auto-open the browser print dialog once the preview is ready, when requested from the Plan page.
+  useEffect(() => {
+    if (!autoPrintPending) return
+    if (view !== 'shopping') return
+    if (!menuPreview) return
+    if (exporting) return
+    // Wait for the preview DOM to paint before invoking the print dialog,
+    // so the browser snapshots the rendered menu rather than an empty page.
+    const id = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        setAutoPrintPending(false)
+        window.print()
+      })
+    })
+    return () => window.cancelAnimationFrame(id)
+  }, [autoPrintPending, view, menuPreview, exporting])
+
+  // If the user navigates away before the preview is ready, drop the pending auto-print.
+  useEffect(() => {
+    if (view !== 'shopping' && autoPrintPending) {
+      setAutoPrintPending(false)
+    }
+  }, [view, autoPrintPending])
+
   const handleDownloadMarkdown = useCallback(() => {
     if (!menuMarkdown) return
     const blob = new Blob([menuMarkdown], { type: 'text/markdown' })
@@ -1594,6 +1766,7 @@ function App() {
   const planActive = view === 'planner' || view === 'shopping'
   const recipesActive = view === 'add' || view === 'edit' || view === 'tools'
   const settingsActive = view === 'config'
+  const shopActive = view === 'run'
 
   return (
     <div className="app-shell min-h-screen px-4 py-6 pb-24 text-muted sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
@@ -1634,6 +1807,7 @@ function App() {
             <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary">
               {([
                 { key: 'planner' as View, label: 'Plan', active: planActive },
+                { key: 'run' as View, label: 'Shop', active: shopActive },
                 { key: 'edit' as View, label: 'Recipes', active: recipesActive },
                 { key: 'config' as View, label: 'Settings', active: settingsActive },
               ]).map(({ key, label, active }) => (
@@ -1656,21 +1830,11 @@ function App() {
         </header>
 
         {/* Secondary sub-tabs under the active primary destination (desktop & mobile) */}
-        {(recipesActive || planActive) && (
+        {recipesActive && (
           <div className="no-print -mt-2 flex flex-wrap items-center gap-2 px-1 text-xs sm:text-sm">
-            {planActive && (
-              <>
-                <SubTab label="Pick recipes" active={view === 'planner'} onClick={() => goToView('planner')} />
-                <SubTab label={hasSelection ? `Print menu (${Object.keys(selection).length})` : 'Print menu'} active={view === 'shopping'} onClick={() => hasSelection && goToView('shopping')} disabled={!hasSelection} />
-              </>
-            )}
-            {recipesActive && (
-              <>
-                <SubTab label="All recipes" active={view === 'edit'} onClick={() => goToView('edit')} />
-                <SubTab label="Add new" active={view === 'add'} onClick={() => goToView('add')} />
-                <SubTab label="Bulk rename" active={view === 'tools'} onClick={() => goToView('tools')} />
-              </>
-            )}
+            <SubTab label="All recipes" active={view === 'edit'} onClick={() => goToView('edit')} />
+            <SubTab label="Add new" active={view === 'add'} onClick={() => goToView('add')} />
+            <SubTab label="Bulk rename" active={view === 'tools'} onClick={() => goToView('tools')} />
           </div>
         )}
 
@@ -1884,7 +2048,7 @@ function App() {
                 <button
                   type="button"
                   className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-accent px-5 py-3 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-40"
-                  onClick={() => goToView('shopping')}
+                  onClick={() => { setAutoPrintPending(true); goToView('shopping') }}
                   disabled={!hasSelection}
                 >
                   Print menu →
@@ -1898,7 +2062,7 @@ function App() {
                 <button
                   type="button"
                   className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-brand-dark shadow-2xl shadow-brand-accent/40"
-                  onClick={() => goToView('shopping')}
+                  onClick={() => { setAutoPrintPending(true); goToView('shopping') }}
                 >
                   {selectionEntries.length} recipe{selectionEntries.length === 1 ? '' : 's'} · Print menu →
                 </button>
@@ -2838,6 +3002,192 @@ function App() {
           </div>
         )}
 
+        {view === 'run' && (
+          <section className="rounded-panel bg-brand-surface/80 p-4 shadow-panel backdrop-blur sm:p-6">
+            {!activeRun && (
+              <>
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-lg font-semibold text-white">Pick a list to walk</h2>
+                  <button
+                    type="button"
+                    onClick={() => void loadRunList()}
+                    className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 hover:text-white"
+                  >
+                    Refresh
+                  </button>
+                </div>
+
+                {runError && (
+                  <p className="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
+                    {runError}
+                  </p>
+                )}
+                {runLoading && !runError && <p className="mt-4 text-sm text-white/60">Loading…</p>}
+                {!runLoading && !runError && runList.length === 0 && (
+                  <p className="mt-4 text-sm text-white/60">
+                    No shopping runs yet. Start one from a saved menu.
+                  </p>
+                )}
+
+                <ul className="mt-4 space-y-2">
+                  {runList.map((run) => {
+                    const remaining = run.total - run.checked
+                    return (
+                      <li key={run.id}>
+                        <button
+                          type="button"
+                          onClick={() => void openRun(run.id)}
+                          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/10 bg-brand-dark/40 px-4 py-4 text-left transition hover:border-brand-accent/60"
+                        >
+                          <span className="min-w-0">
+                            <span className="block truncate font-medium text-white">{run.menu}</span>
+                            <span className="block text-xs text-white/50">
+                              {run.created_at ? new Date(run.created_at).toLocaleString() : 'unknown date'}
+                            </span>
+                          </span>
+                          <span className="shrink-0 text-right text-xs">
+                            <span className="block font-semibold text-brand-accent">
+                              {remaining} left
+                            </span>
+                            <span className="block text-white/40">
+                              {run.checked}/{run.total}
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </>
+            )}
+
+            {activeRun && (
+              <>
+                {/* Progress header: the one thing worth seeing mid-aisle */}
+                <div className="sticky-safe sticky top-0 z-20 -mx-4 mb-3 border-b border-white/10 bg-brand-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveRun(null)
+                        window.localStorage.removeItem(ACTIVE_RUN_KEY)
+                      }}
+                      aria-label="Back to run list"
+                      className="rounded-full border border-white/15 px-3 py-2 text-sm text-white/70 hover:text-white"
+                    >
+                      ←
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-white">{activeRun.menu}</p>
+                      <p className="text-xs text-white/50">
+                        {activeRun.total - activeRun.checked} left of {activeRun.total}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setHideChecked((prev) => !prev)}
+                      className={`rounded-full border px-3 py-2 text-xs transition ${
+                        hideChecked
+                          ? 'border-brand-accent bg-brand-accent text-brand-dark'
+                          : 'border-white/15 text-white/70'
+                      }`}
+                    >
+                      {hideChecked ? 'Show all' : 'Hide done'}
+                    </button>
+                  </div>
+                  <div
+                    className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10"
+                    role="progressbar"
+                    aria-valuenow={activeRun.checked}
+                    aria-valuemin={0}
+                    aria-valuemax={activeRun.total}
+                  >
+                    <div
+                      className="h-full rounded-full bg-brand-accent transition-all"
+                      style={{
+                        width: `${activeRun.total ? (activeRun.checked / activeRun.total) * 100 : 0}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {activeRun.zones.map((zone) => {
+                  const visible = hideChecked ? zone.items.filter((item) => !item.checked) : zone.items
+                  if (visible.length === 0) return null
+                  return (
+                    <div key={zone.zone} className="mb-4">
+                      <h3 className="sticky top-[104px] z-10 -mx-4 bg-brand-dark/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-accent backdrop-blur sm:-mx-6 sm:px-6">
+                        {zone.zone}
+                      </h3>
+                      <ul className="mt-1 divide-y divide-white/5">
+                        {visible.map((item) => (
+                          <li key={item.id}>
+                            <button
+                              type="button"
+                              onClick={() => void toggleRunItem(item)}
+                              aria-pressed={item.checked}
+                              className={`flex w-full items-start gap-3 px-1 py-4 text-left transition active:bg-white/5 ${
+                                pendingItems.has(item.id) ? 'opacity-60' : ''
+                              }`}
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-sm ${
+                                  item.checked
+                                    ? 'border-brand-accent bg-brand-accent text-brand-dark'
+                                    : 'border-white/25'
+                                }`}
+                              >
+                                {item.checked ? '✓' : ''}
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span
+                                  className={`block text-base font-medium ${
+                                    item.checked ? 'text-white/40 line-through' : 'text-white'
+                                  }`}
+                                >
+                                  {item.ingredient}
+                                  {item.likely_stocked && !item.checked && (
+                                    <span className="ml-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-2 py-0.5 align-middle text-[10px] font-normal uppercase tracking-wide text-amber-200">
+                                      usually have
+                                    </span>
+                                  )}
+                                </span>
+                                <span
+                                  className={`block text-sm ${
+                                    item.checked ? 'text-white/25' : 'text-white/60'
+                                  }`}
+                                >
+                                  {formatQuantities(item.quantities)}
+                                </span>
+                                {/* A staple records itself as its own source; that is
+                                    not an answer to "why is this on my list?" */}
+                                {item.recipes.some(
+                                  (name) => name.toLowerCase() !== item.ingredient.toLowerCase(),
+                                ) && (
+                                  <span className="mt-0.5 block truncate text-xs text-white/35">
+                                    {item.recipes.join(' · ')}
+                                  </span>
+                                )}
+                              </span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )
+                })}
+
+                {activeRun.checked === activeRun.total && activeRun.total > 0 && (
+                  <p className="rounded-2xl border border-brand-accent/30 bg-brand-accent/10 p-4 text-center text-sm text-brand-accent">
+                    Everything ticked. Nothing left to buy.
+                  </p>
+                )}
+              </>
+            )}
+          </section>
+        )}
+
         {view === 'shopping' && (
           <div className="flex flex-col gap-5">
             {/* Action bar */}
@@ -3060,6 +3410,7 @@ function App() {
         <div className="mx-auto flex max-w-md items-stretch justify-around">
           {([
             { key: 'planner' as View, label: 'Plan', active: planActive, icon: '📋' },
+            { key: 'run' as View, label: 'Shop', active: shopActive, icon: '🛒' },
             { key: 'edit' as View, label: 'Recipes', active: recipesActive, icon: '📖' },
             { key: 'config' as View, label: 'Settings', active: settingsActive, icon: '⚙️' },
           ]).map(({ key, label, active, icon }) => (

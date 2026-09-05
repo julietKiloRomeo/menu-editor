@@ -17,6 +17,7 @@ import pathlib
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
+from sqlalchemy import Integer, func
 from sqlmodel import Session, select
 
 from src.core.ingredients import normalise
@@ -144,6 +145,40 @@ def run_items(run_id: int, session: Session) -> list[ShoppingRunItem]:
             .order_by(ShoppingRunItem.zone_order, ShoppingRunItem.position)
         ).all()
     )
+
+
+def recent_runs(session: Session, limit: int = 25) -> list[ShoppingRun]:
+    """Runs most recently started first -- what the phone offers to resume.
+
+    Runs are listed from the database rather than derived from the menu files
+    on disk, because a run outlives its menu: menus are regenerated, renamed
+    and imported from elsewhere, and a half-ticked list must stay reachable
+    regardless.
+    """
+    return list(
+        session.exec(
+            select(ShoppingRun)
+            .order_by(ShoppingRun.created_at.desc(), ShoppingRun.id.desc())
+            .limit(limit)
+        ).all()
+    )
+
+
+def progress_by_run(session: Session) -> dict[int, tuple[int, int]]:
+    """``run_id -> (checked, total)`` for every run, in one query.
+
+    Counted in SQL rather than by loading each run's items: the list screen
+    only needs the totals, and loading every item of every run to add them up
+    would be the whole database for two numbers per row.
+    """
+    rows = session.exec(
+        select(
+            ShoppingRunItem.run_id,
+            func.count(ShoppingRunItem.id),
+            func.sum(func.cast(ShoppingRunItem.checked, Integer)),
+        ).group_by(ShoppingRunItem.run_id)
+    ).all()
+    return {run_id: (int(checked or 0), int(total or 0)) for run_id, total, checked in rows}
 
 
 def latest_run(menu_name: str, session: Session) -> ShoppingRun | None:

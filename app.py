@@ -25,6 +25,8 @@ from src.core.ingredients import normalise as normalise_ingredient
 from src.core.runs import (
     latest_run,
     progress,
+    progress_by_run,
+    recent_runs,
     run_items,
     seed_stocked,
     set_checked,
@@ -1818,6 +1820,30 @@ def list_menus():
             ]
         }
     )
+
+
+@app.route('/api/runs', methods=['GET'])
+def list_runs():
+    """Runs available to walk or resume, newest first."""
+    with get_session() as session:
+        runs = recent_runs(session)
+        totals = progress_by_run(session)
+        return jsonify(
+            {
+                "runs": [
+                    {
+                        "id": run.id,
+                        "menu": run.menu_name,
+                        "created_at": (
+                            run.created_at.isoformat() if run.created_at else None
+                        ),
+                        "checked": totals.get(run.id, (0, 0))[0],
+                        "total": totals.get(run.id, (0, 0))[1],
+                    }
+                    for run in runs
+                ]
+            }
+        )
 
 
 @app.route('/api/runs', methods=['POST'])
