@@ -80,9 +80,12 @@ class TestUnplacedEndpoint:
     so these exercise the real shipped mappings."""
 
     def test_reports_an_ingredient_with_no_zone(self, client):
-        make_recipe_with(client, "Test", ["halloumi"])
+        # Deliberately not a real grocery: this used to use "halloumi", which
+        # broke the moment halloumi was given a zone. The assertion is about
+        # the endpoint, not about which foods happen to be unplaced today.
+        make_recipe_with(client, "Test", ["zzz-testvare"])
         payload = client.get("/api/zones/unplaced").get_json()
-        assert "halloumi" in [item["ingredient"] for item in payload["unplaced"]]
+        assert "zzz-testvare" in [item["ingredient"] for item in payload["unplaced"]]
 
     def test_placed_ingredients_are_not_reported(self, client):
         make_recipe_with(client, "Test", ["koriander"])

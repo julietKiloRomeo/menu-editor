@@ -1,0 +1,49 @@
+antal: 4
+navn: Fiskekager i bowl med ris, asiatisk mayo og grønt
+placering: Valde side 153
+ingredienser:
+  basmatiris:
+    amount: 3.0
+    unit: dl
+  bredbladet persille:
+    amount: 1.0
+    unit: bundt
+  fiskefrikadeller:
+    amount: 500.0
+    unit: g
+  fishsauce:
+    amount: 2.0
+    unit: spsk
+  forårsløg:
+    amount: 1.0
+    unit: bdt
+  gulerod:
+    amount: 2.0
+    unit: stk
+  hvidløg:
+    amount: 2.0
+    unit: fed
+  ingefær:
+    amount: 3.0
+    unit: tsk
+  kokosmælk:
+    amount: 400.0
+    unit: ml
+  lime:
+    amount: 1.0
+    unit: stk
+  mayonnaise:
+    amount: 4.0
+    unit: spsk
+  pak choi:
+    amount: 400.0
+    unit: g
+  sesamolie:
+    amount: 3.0
+    unit: spsk
+  soja:
+    amount: 1.0
+    unit: spsk
+  squash:
+    amount: 1.0
+    unit: stk

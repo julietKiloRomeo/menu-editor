@@ -99,7 +99,7 @@ class TestDefaults:
     def test_shipped_defaults_are_loadable(self):
         config = load_default_zones()
         assert len(config.zones) == 13
-        assert len(config.assignments) == 501
+        assert len(config.assignments) == 536
 
     def test_shipped_defaults_include_the_unknown_bucket(self):
         assert UNKNOWN_ZONE in load_default_zones().zones
@@ -118,7 +118,7 @@ class TestSeeding:
     def test_seeds_an_empty_database(self, db):
         result = seed_zones()
         assert result.zones_added == 13
-        assert result.assignments_added == 501
+        assert result.assignments_added == 536
 
         config = load_zone_config()
         assert config.zone_for("æble").name == "frugt"
