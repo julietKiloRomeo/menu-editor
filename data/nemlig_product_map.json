@@ -1,6 +1,6 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-09-05 from menu-editor run 3 (menu-2026-09-05, uge 36).",
-  "_source_menu": "menu-editor run 3 (menu-2026-09-05, uge 36)",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-09-12 from menu-2026-09-12.",
+  "_source_menu": "menu-2026-09-12",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
@@ -104,12 +104,12 @@
     },
     "madpakkefrugt": {
       "query": "æbler",
-      "product_id": "5047005",
-      "name": "Æbler Cosmic Crisp",
-      "pack": "4 stk. / ca. 900g  ★ købt før",
+      "product_id": "5604123",
+      "name": "Æbler Joya",
+      "pack": "4 stk. / 900g",
       "price": 25,
       "last_qty": 1,
-      "note": "Cosmic Crisp var udsolgt 29/08 - Æbler Joya er nærmeste erstatning (900 g/4-6 stk/Italien). Stadig kun 1 slags valgt, listen siger '2 slags'"
+      "note": "Cosmic Crisp sold out; substituted Joya"
     },
     "romaine salat": {
       "query": "romainesalat",
@@ -216,7 +216,7 @@
       "product_id": "5005477",
       "name": "Lingongrova rugbrød",
       "pack": "500 g / skiver / Pågen",
-      "price": 0,
+      "price": 24.75,
       "last_qty": 1,
       "note": "skiftet fra Frokoststykker (Pågen) til Lingongrova rugbrød 05/09 - valgt via direkte link"
     },
@@ -224,7 +224,7 @@
       "query": "creme fraiche",
       "product_id": "5008993",
       "name": "Creme fraiche 18%",
-      "pack": "500 g / Arla Karolines Køkken  ★ købt før",
+      "pack": "500 g / Arla Karolines Køkken",
       "price": 29.5,
       "last_qty": 1
     },
@@ -233,7 +233,7 @@
       "product_id": "5004338",
       "name": "Piskefløde 38% øko.",
       "pack": "0,50 l / Arla Karolines Køkken",
-      "price": 28.95,
+      "price": 24.5,
       "last_qty": 1,
       "note": "dækker også 'piskefløde'; 0,25 l + 1,5 dl + 0,25 l = 2 stk. a 0,5 l"
     },
@@ -242,8 +242,8 @@
       "product_id": "5004338",
       "name": "Piskefløde 38% øko.",
       "pack": "0,50 l / Arla Karolines Køkken",
-      "price": 28.95,
-      "last_qty": 2,
+      "price": 24.5,
+      "last_qty": 1,
       "note": "samme vare som 'fløde' - læg mængderne sammen før antal beregnes"
     },
     "mælk": {
@@ -282,7 +282,7 @@
     "agurk": {
       "product_id": "106593",
       "name": "Agurk øko.",
-      "pack": "1 stk. / Spanien / Klasse 1",
+      "pack": "1 stk.",
       "price": 13,
       "query": "agurk",
       "last_qty": 1
@@ -298,7 +298,7 @@
     "brøndkarse": {
       "product_id": "5019921",
       "name": "Brøndkarse øko.",
-      "pack": "10,5 cm pt. / Danmark / Klasse 1  ★ købt før",
+      "pack": "10,5 cm pt.",
       "price": 17,
       "query": "brøndkarse",
       "last_qty": 1
@@ -355,7 +355,7 @@
     "små tomater": {
       "product_id": "5014547",
       "name": "Cherrytomater Snackmix",
-      "pack": "200 g / Danmark / Klasse 1",
+      "pack": "200 g / 3 farver",
       "price": 20,
       "query": "tomater",
       "last_qty": 2,
@@ -472,10 +472,10 @@
     "revet cheddar": {
       "product_id": "5024584",
       "name": "Cheddar (revet) øko.",
-      "pack": "140 g / Økolandet  ★ købt før",
+      "pack": "140 g / Økolandet",
       "price": 30.95,
       "query": "revet cheddar",
-      "last_qty": 2,
+      "last_qty": 1,
       "note": "dækker også linjen 'revet ost'; 150 g + 100 g = 2 pk."
     },
     "revet mozzarella": {
@@ -489,10 +489,10 @@
     "revet ost": {
       "product_id": "5024584",
       "name": "Cheddar (revet) øko.",
-      "pack": "140 g / Økolandet  ★ købt før",
+      "pack": "140 g / Økolandet",
       "price": 30.95,
       "query": "revet cheddar",
-      "last_qty": 2,
+      "last_qty": 1,
       "note": "samme vare som 'revet cheddar' - læg dem sammen til én linje"
     },
     "æg": {
@@ -506,7 +506,7 @@
     "toiletpapir": {
       "product_id": "5601188",
       "name": "Toiletpapir",
-      "pack": "16 rl. / Comfort / Lotus  ★ købt før",
+      "pack": "16 rl. / Comfort / Lotus",
       "price": 85.5,
       "query": "toiletpapir",
       "last_qty": 1
@@ -530,7 +530,7 @@
     "citron": {
       "product_id": "5012344",
       "name": "Citron lille øko.",
-      "pack": "1 stk.  ★ købt før",
+      "pack": "1 stk.",
       "price": 6,
       "last_qty": 1,
       "query": "citron"
@@ -587,7 +587,7 @@
     "fine gryn": {
       "product_id": "5050406",
       "name": "Havregryn (finvalsede) øko.",
-      "pack": "1 kg / Go' Morgen  ★ købt før",
+      "pack": "1 kg / Go' Morgen",
       "price": 9.95,
       "last_qty": 2,
       "query": "fine gryn"
@@ -702,15 +702,73 @@
       "last_qty": 1,
       "note": "maybe this should also be removed - but buy it for now and I will check later",
       "query": "rød karrypasta"
+    },
+    "icebergsalat": {
+      "product_id": "2301084",
+      "name": "Iceberg salat",
+      "pack": "1 stk.",
+      "price": 12,
+      "last_qty": 1,
+      "query": "icebergsalat"
+    },
+    "soltørrede tomater": {
+      "product_id": "5067508",
+      "name": "Soltørrede tomater",
+      "pack": "280 g / 180 g / Taste of Nature",
+      "price": 13.93,
+      "last_qty": 1,
+      "query": "soltørrede tomater"
+    },
+    "hvidløgspulver": {
+      "product_id": "5055607",
+      "name": "Hvidløgspulver",
+      "pack": "85 g / Krydderispecialisten",
+      "price": 11.95,
+      "last_qty": 1,
+      "query": "hvidløgspulver"
+    },
+    "hakket okse": {
+      "product_id": "5602040",
+      "name": "Hakket oksekød 4-7% øko.",
+      "pack": "400 g / Friland",
+      "price": 75.28,
+      "last_qty": 1,
+      "query": "hakket okse"
+    },
+    "cheddar": {
+      "product_id": "5024584",
+      "name": "Cheddar (revet) øko.",
+      "pack": "140 g / Økolandet",
+      "price": 30.95,
+      "last_qty": 1,
+      "query": "cheddar"
+    },
+    "kærnemælk": {
+      "product_id": "102653",
+      "name": "Kærnemælk øko.",
+      "pack": "1 l / Naturmælk",
+      "price": 14.95,
+      "last_qty": 1,
+      "query": "kærnemælk"
+    },
+    "ymer": {
+      "product_id": "922159",
+      "name": "Ymer øko.",
+      "pack": "1 l / Naturmælk",
+      "price": 30.17,
+      "last_qty": 1,
+      "query": "ymer"
+    },
+    "æggeblommer": {
+      "product_id": "5063888",
+      "name": "Æggeblommer",
+      "pack": "150 g / pasteuriserede / Danæg",
+      "price": 14.97,
+      "last_qty": 1,
+      "query": "æggeblommer"
     }
   },
   "no_default_yet": {
-    "pålæg": {
-      "reason": "har nu en default (ost i skiver), men listen siger '2 pakker' - anden slags mangler stadig"
-    },
-    "madpakkefrugt": {
-      "reason": "'2 slags' - kun æbler valgt igen (uge 35); anden slags mangler"
-    },
     "tyttebærsyltetøj": {
       "reason": "nemlig fører INGEN tyttebær - skal købes et andet sted eller erstattes bevidst"
     },
