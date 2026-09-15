@@ -3,11 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 /**
  * The desktop half of the weekly shop: turning a walked list into a nemlig basket.
  *
- * The app deliberately never talks to nemlig. Search needs a bearer token plus
- * session parameters that only exist inside a logged-in tab, and the basket
- * authenticates on a large rotating HttpOnly cookie set. So this screen hands
- * out a snippet to run in that tab and takes the answer back. The token stays
- * in the browser where it was minted, and nothing about the session is stored.
+ * The app deliberately never authenticates to nemlig itself. Search needs a
+ * bearer token plus session parameters that only exist inside a logged-in tab,
+ * and the basket authenticates on a large rotating HttpOnly cookie set. So the
+ * backend drives the tab the user is already logged into, over the Chrome
+ * DevTools Protocol, and only the results come back. The token stays in the
+ * browser where it was minted; nothing about the session is stored here.
+ *
+ * This screen is desktop-only on purpose: comparing product photographs side
+ * by side is the one part of the week that a phone is bad at.
  */
 
 type Candidate = {
@@ -75,9 +79,14 @@ type Reconciliation = {
   sold_out: Array<BasketLine & { basket_name?: string }>
   missing: BasketLine[]
   mismatched: Array<BasketLine & { basket_qty: number }>
+  /** In the basket but not on this list: the user's own extras, or a surprise. */
+  unexpected?: Array<{ product_id: string; name: string; qty: number; price: number | null }>
   total: number | null
   product_count: number | null
 }
+
+/** Whether the backend can reach a logged-in nemlig tab, and why not if it can't. */
+type BrowserStatus = { reachable: boolean; tab: string | null; detail: string }
 
 type RunSummary = { id: number; menu: string; checked: number; total: number }
 
@@ -97,131 +106,30 @@ const DECLINE: Array<{ action: Action; label: string; hint: string }> = [
 const money = (value: number | null | undefined) =>
   typeof value === 'number' ? `${value.toFixed(2).replace('.', ',')} kr` : ''
 
-/**
- * A console snippet that runs the searches inside the logged-in tab.
- *
- * It harvests the session parameters from a search the site itself has already
- * made, because they cannot be guessed and a bare query returns a 500 that
- * reads exactly like an auth failure.
- */
-function searchSnippet(queries: string[]): string {
-  return `(async () => {
-  const QUERIES = ${JSON.stringify(queries)};
-  const ref = performance.getEntriesByType('resource').map(e => e.name)
-    .find(n => n.includes('searchgateway/api/search'));
-  if (!ref) return console.error('Search for something on nemlig first, then run this again.');
-  const params = new URL(ref).searchParams;
-  const token = (await (await fetch('/webapi/Token', { credentials: 'include' })).json()).access_token;
-  const out = {};
-  for (const q of QUERIES) {
-    const url = new URL('https://webapi.prod.knl.nemlig.it/searchgateway/api/search');
-    params.forEach((v, k) => url.searchParams.set(k, v));
-    url.searchParams.set('query', q);
-    url.searchParams.set('take', '8');
-    url.searchParams.set('skip', '0');
-    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
-    out[q] = r.ok ? ((await r.json()).Products?.Products ?? []) : [];
-    console.log(out[q].length, q);
-    await new Promise(s => setTimeout(s, 120));
-  }
-  copy(JSON.stringify({ results: out }));
-  console.log('Copied. Paste it back into the app.');
-})()`
-}
 
 /**
- * A console snippet that fills the basket and reports what actually landed.
+ * Why the browser cannot be driven, and what to do about it.
  *
- * ``AffectPartialQuantity: true`` makes the quantity absolute, so re-running
- * after a crash is safe rather than doubling the order. Only the three fields
- * the app needs come back, so no address or account details leave the tab.
+ * Every one of these is something only the user can fix, so the text is the
+ * whole point of the component.
  */
-function basketSnippet(lines: BasketLine[]): string {
-  const payload = lines.map((line) => ({ id: line.product_id, qty: line.qty, name: line.product_name }))
-  return `(async () => {
-  const LINES = ${JSON.stringify(payload)};
-  for (const l of LINES) {
-    const r = await fetch('/webapi/basket/AddToBasket', {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ProductId: l.id, quantity: l.qty, AffectPartialQuantity: true, disableQuantityValidation: false }),
-    });
-    console.log(r.status, 'x' + l.qty, l.name);
-    await new Promise(s => setTimeout(s, 200));
-  }
-  const b = await (await fetch('/webapi/basket/GetBasket', { credentials: 'include' })).json();
-  copy(JSON.stringify({ basket: {
-    Lines: (b.Lines || []).map(l => ({ ProductId: l.ProductId, Quantity: l.Quantity, Name: l.Name })),
-    TotalProductsPrice: b.TotalProductsPrice, NumberOfProducts: b.NumberOfProducts,
-  } }));
-  console.log('Basket copied. Paste it back to check what really landed.');
-})()`
-}
-
-function Snippet({ code, label }: { code: string; label: string }) {
-  const [copied, setCopied] = useState(false)
-  return (
-    <div className="rounded-2xl border border-white/10 bg-brand-dark/60">
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2">
-        <span className="text-xs uppercase tracking-[0.2em] text-white/40">{label}</span>
-        <button
-          type="button"
-          onClick={() => {
-            void navigator.clipboard.writeText(code)
-            setCopied(true)
-            window.setTimeout(() => setCopied(false), 1500)
-          }}
-          className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 transition hover:text-white"
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </button>
-      </div>
-      <pre className="max-h-40 overflow-auto px-4 py-3 text-[11px] leading-relaxed text-white/60">{code}</pre>
-    </div>
-  )
-}
-
-function Paste({
-  label,
-  placeholder,
-  onSubmit,
-  busy,
+function BrowserNotice({
+  status,
+  onRecheck,
 }: {
-  label: string
-  placeholder: string
-  onSubmit: (parsed: unknown) => void
-  busy: boolean
+  status: BrowserStatus | null
+  onRecheck: () => void
 }) {
-  const [text, setText] = useState('')
-  const [error, setError] = useState<string | null>(null)
-
+  if (!status || (status.reachable && status.tab)) return null
   return (
-    <div className="space-y-2">
-      <textarea
-        value={text}
-        onChange={(event) => {
-          setText(event.target.value)
-          setError(null)
-        }}
-        rows={3}
-        placeholder={placeholder}
-        className="w-full rounded-2xl border border-white/10 bg-brand-dark/50 px-4 py-3 font-mono text-xs text-white/80 focus:border-brand-accent focus:outline-none"
-      />
-      {error && <p className="text-xs text-red-300">{error}</p>}
+    <div className="mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3 text-xs text-amber-100">
+      <span className="min-w-0 flex-1">{status.detail}</span>
       <button
         type="button"
-        disabled={!text.trim() || busy}
-        onClick={() => {
-          try {
-            onSubmit(JSON.parse(text))
-            setText('')
-          } catch {
-            setError('That is not valid JSON. Copy the whole clipboard contents.')
-          }
-        }}
-        className="rounded-full bg-brand-accent px-5 py-2 text-sm font-medium text-brand-dark transition disabled:opacity-40"
+        onClick={onRecheck}
+        className="shrink-0 rounded-full border border-amber-200/40 px-3 py-1 text-amber-100 transition hover:text-white"
       >
-        {busy ? 'Working…' : label}
+        Check again
       </button>
     </div>
   )
@@ -233,6 +141,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
   const [order, setOrder] = useState<Order | null>(null)
   const [basket, setBasket] = useState<BasketPlan | null>(null)
   const [reconciliation, setReconciliation] = useState<Reconciliation | null>(null)
+  const [browser, setBrowser] = useState<BrowserStatus | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -262,9 +171,18 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
     }
   }, [call])
 
+  const checkBrowser = useCallback(async () => {
+    try {
+      setBrowser(await call<BrowserStatus>('/api/browser/status'))
+    } catch {
+      // The notice is advisory; failing to fetch it must not block picking.
+    }
+  }, [call])
+
   useEffect(() => {
     void refreshLists()
-  }, [refreshLists])
+    void checkBrowser()
+  }, [refreshLists, checkBrowser])
 
   const loadBasket = useCallback(
     async (orderId: number) => {
@@ -343,6 +261,54 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
     },
     [call, loadBasket, openOrder, order, pushToast],
   )
+
+  const runSearch = useCallback(async () => {
+    if (!order) return
+    setBusy(true)
+    try {
+      const body = await call<{ searched: number; without_candidates: string[]; order: Order }>(
+        `/api/orders/${order.id}/run-search`,
+        { method: 'POST', body: '{}' },
+      )
+      setOrder(body.order)
+      if (body.without_candidates.length) {
+        pushToast('info', `No hits for ${body.without_candidates.join(', ')} — try a different word`)
+      } else {
+        pushToast('success', `Searched ${body.searched} things`)
+      }
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : 'Search failed'
+      pushToast('error', message)
+      void checkBrowser()
+    } finally {
+      setBusy(false)
+    }
+  }, [call, order, pushToast, checkBrowser])
+
+  const fillBasket = useCallback(async () => {
+    if (!order) return
+    setBusy(true)
+    try {
+      const body = await call<{
+        failed: Array<{ product_name: string }>
+        reconciliation: Reconciliation
+      }>(`/api/orders/${order.id}/fill-basket`, { method: 'POST', body: '{}' })
+      setReconciliation(body.reconciliation)
+      if (body.failed.length) {
+        pushToast('error', `${body.failed.length} lines were refused by nemlig`)
+      } else if (body.reconciliation.ok) {
+        pushToast('success', 'Basket filled')
+      } else {
+        pushToast('info', 'Basket filled, but check the report below')
+      }
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : 'Could not fill the basket'
+      pushToast('error', message)
+      void checkBrowser()
+    } finally {
+      setBusy(false)
+    }
+  }, [call, order, pushToast, checkBrowser])
 
   const queries = useMemo(() => {
     if (!order) return []
@@ -471,45 +437,29 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
         </div>
       </div>
 
-      {/* Step 1 -- searches, run in the tab that has the session */}
+      {/* Step 1 -- searches, run in the tab that already has the session */}
       {queries.length > 0 && (
-        <details open={!order.items.some((item) => item.candidates.length)} className="mb-5">
-          <summary className="cursor-pointer text-sm font-semibold text-white">
-            1 · Search nemlig for {queries.length} {queries.length === 1 ? 'thing' : 'things'}
-          </summary>
-          <div className="mt-3 space-y-3">
-            <p className="text-xs text-white/50">
-              Open nemlig.com logged in, search for anything once so the site reveals its session
-              parameters, then paste this into the browser console. Your token never leaves that tab.
-            </p>
-            <Snippet label="Run in the nemlig console" code={searchSnippet(queries)} />
-            <Paste
-              label="Load search results"
-              placeholder='{"results": { "gulerødder": [ … ] }}'
-              busy={busy}
-              onSubmit={(parsed) => {
-                setBusy(true)
-                void call<{ without_candidates: string[]; order: Order }>(
-                  `/api/orders/${order.id}/search-results`,
-                  { method: 'POST', body: JSON.stringify(parsed) },
-                )
-                  .then((body) => {
-                    setOrder(body.order)
-                    if (body.without_candidates.length) {
-                      pushToast(
-                        'info',
-                        `No hits for ${body.without_candidates.join(', ')} — try a different word`,
-                      )
-                    } else {
-                      pushToast('success', 'Products loaded')
-                    }
-                  })
-                  .catch((caught) => pushToast('error', caught.message))
-                  .finally(() => setBusy(false))
-              }}
-            />
+        <div className="mb-5 rounded-2xl border border-white/10 bg-brand-dark/40 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-white">
+                1 · Search nemlig for {queries.length} {queries.length === 1 ? 'thing' : 'things'}
+              </p>
+              <p className="mt-1 text-xs text-white/50">
+                Runs in your logged-in nemlig tab. Your token stays in the browser.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={busy || browser?.reachable === false}
+              onClick={() => void runSearch()}
+              className="rounded-full bg-brand-accent px-5 py-2 text-sm font-medium text-brand-dark transition disabled:opacity-40"
+            >
+              {busy ? 'Searching…' : 'Search nemlig'}
+            </button>
           </div>
-        </details>
+          <BrowserNotice status={browser} onRecheck={() => void checkBrowser()} />
+        </div>
       )}
 
       {/* Step 2 -- the choices themselves */}
@@ -693,25 +643,21 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
           )}
 
           {basket.lines.length > 0 && (
-            <div className="mt-3 space-y-3">
-              <Snippet label="Run in the nemlig console" code={basketSnippet(basket.lines)} />
-              <Paste
-                label="Check what landed"
-                placeholder='{"basket": { "Lines": [ … ] }}'
-                busy={busy}
-                onSubmit={(parsed) => {
-                  setBusy(true)
-                  void call<Reconciliation>(`/api/orders/${order.id}/reconcile`, {
-                    method: 'POST',
-                    body: JSON.stringify(parsed),
-                  })
-                    .then(setReconciliation)
-                    .catch((caught) => pushToast('error', caught.message))
-                    .finally(() => setBusy(false))
-                }}
-              />
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={busy || browser?.reachable === false}
+                onClick={() => void fillBasket()}
+                className="rounded-full bg-brand-accent px-5 py-2 text-sm font-medium text-brand-dark transition disabled:opacity-40"
+              >
+                {busy ? 'Filling…' : `Add ${basket.lines.length} lines to the basket`}
+              </button>
+              <p className="text-xs text-white/50">
+                Then add your own extras and pay on nemlig.com.
+              </p>
             </div>
           )}
+          <BrowserNotice status={browser} onRecheck={() => void checkBrowser()} />
 
           {reconciliation && (
             <div
@@ -744,6 +690,22 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                   ))}
                 </ul>
               )}
+            </div>
+          )}
+
+          {/* Lines nobody asked for: your own extras, or a surprise. Either
+              way, better named than silently ignored. */}
+          {reconciliation && reconciliation.unexpected && reconciliation.unexpected.length > 0 && (
+            <div className="mt-3 rounded-xl border border-white/15 bg-brand-dark/50 p-3 text-xs text-white/70">
+              <p className="font-medium text-white/90">Also in the basket, not from this list:</p>
+              <ul className="mt-1 space-y-0.5">
+                {reconciliation.unexpected.map((line) => (
+                  <li key={`u${line.product_id}`}>
+                    {line.name} × {line.qty}
+                    {line.price ? ` · ${money(line.price)}` : ''}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

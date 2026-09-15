@@ -34,6 +34,13 @@ from src.core.nemlig import (
     save_product_map,
     summarise_map,
 )
+from src.browser import BrowserUnavailable, status as browser_status
+from src.nemlig_tab import (
+    add_line as tab_add_line,
+    ensure_session as tab_ensure_session,
+    read_basket as tab_read_basket,
+    search as tab_search,
+)
 from src.core.orders import (
     attach_search_results,
     mark_recorded,
@@ -2117,6 +2124,104 @@ def post_order_search_results(order_id: int):
                 "order": serialise_order(order, items),
             }
         )
+
+
+@app.route('/api/browser/status')
+def get_browser_status():
+    """Whether the Order screen can drive the browser, and why not if it can't."""
+    return jsonify(browser_status())
+
+
+@app.route('/api/orders/<int:order_id>/run-search', methods=['POST'])
+def post_order_run_search(order_id: int):
+    """Search nemlig for every undecided row, straight from the logged-in tab.
+
+    The loop lives here rather than in the page: one long awaited evaluate
+    exceeds the socket timeout and loses its results, while many short ones
+    cannot.
+    """
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+        queries = pending_queries(order_id, session)
+
+    if not queries:
+        return jsonify({"error": "Nothing left to search"}), 400
+
+    try:
+        tab_ensure_session()
+        results = {query: tab_search(query) for query in queries}
+    except BrowserUnavailable as exc:
+        return jsonify({"error": str(exc)}), 503
+
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        touched = attach_search_results(
+            order_id, adapt_search_results(results), load_product_map(product_map_path()), session
+        )
+        items = order_items(order_id, session)
+        return jsonify(
+            {
+                "searched": len(queries),
+                "updated": touched,
+                "without_candidates": [
+                    item.ingredient
+                    for item in items
+                    if not item.action and item.query and not item.candidates
+                ],
+                "order": serialise_order(order, items),
+            }
+        )
+
+
+@app.route('/api/orders/<int:order_id>/fill-basket', methods=['POST'])
+def post_order_fill_basket(order_id: int):
+    """Add every chosen line to the basket, then report what really landed.
+
+    Reconciliation is not optional here: AddToBasket answers 200 for a
+    sold-out product and quietly lands it at quantity zero.
+    """
+    with get_session() as session:
+        order = session.get(NemligOrder, order_id)
+        if order is None:
+            return jsonify({"error": "Order not found"}), 404
+        choices = [serialise_order_item(item) for item in order_items(order_id, session)]
+
+    merged = merge_add_lines(choices)
+    lines = merged["lines"]
+    if not lines:
+        return jsonify({"error": "Nothing chosen to buy yet"}), 400
+
+    try:
+        statuses = [
+            {
+                "product_name": line["product_name"],
+                "qty": line["qty"],
+                "status": tab_add_line(line["product_id"], line["qty"]),
+            }
+            for line in lines
+        ]
+        basket = tab_read_basket()
+    except BrowserUnavailable as exc:
+        return jsonify({"error": str(exc)}), 503
+
+    reconciliation = reconcile_basket(lines, basket)
+    # Anything in the basket we did not ask for: the user's own extras, or a
+    # surprise. Either way it should be visible rather than silently ignored.
+    asked = {str(line["product_id"]) for line in lines}
+    reconciliation["unexpected"] = [
+        {"product_id": str(l.get("ProductId")), "name": l.get("Name"),
+         "qty": l.get("Quantity"), "price": l.get("Price")}
+        for l in basket.get("Lines") or []
+        if str(l.get("ProductId")) not in asked and l.get("Quantity")
+    ]
+    return jsonify({
+        "added": statuses,
+        "failed": [s for s in statuses if s["status"] != 200],
+        "merged": merged,
+        "reconciliation": reconciliation,
+    })
 
 
 @app.route('/api/orders/items/<int:item_id>', methods=['PATCH'])

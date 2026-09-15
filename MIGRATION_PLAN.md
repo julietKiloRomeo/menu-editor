@@ -1,7 +1,7 @@
 # Menu Planner React/Tailwind Migration & Repo Cleanup
 
 ## 1. Inventory & Archival Prep ✅ (2025-10-26)
-- Root now contains only the live Flask app + config tables: `app.py`, `assets/`, `src/`, `templates/`, `static/`, `menus/`, `recipes/`, `pyproject.toml`, `uv.lock`, `Dockerfile`, `playwright/`, and supporting docs (`README.md`, `MIGRATION_PLAN.md`). The legacy `config.yml` now lives in `archive/2025-10-26-legacy/` for reference only.
+- Root now contains only the live Flask app + config tables: `app.py`, `assets/`, `src/`, `templates/`, `static/`, `menus/`, `recipes/`, `pyproject.toml`, `uv.lock`, `Dockerfile`, and supporting docs (`README.md`, `MIGRATION_PLAN.md`). The legacy `config.yml` now lives in `archive/2025-10-26-legacy/` for reference only.
 - Archived experiments + notebooks + scripts live under `archive/2025-10-26-legacy/` (see its README for the exact files: notebooks, automation docs, helper CLIs, YAML exports, etc.).
 - `.gitignore` now anticipates the upcoming frontend toolchain (`frontend/dist`, `frontend/node_modules`, Vite cache) plus coverage artefacts so the repo stays clean once React/Tailwind bootstraps.
 - Continue to drop any additional legacy artefacts into a dated folder under `archive/` to keep the root tidy.
