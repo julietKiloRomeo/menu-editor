@@ -95,8 +95,8 @@ inventory bump in the homelab repo afterwards.
 
 `recipes.db` is bind-mounted from `menu/data/` inside the compose project
 directory on valhalla, so it survives image pulls and is included in
-`bin/backup-valhalla`. The weekly `uge_*.yaml` files and `shopping.md` are *not*
-persisted — they are regenerated on demand.
+`bin/backup-valhalla`. The weekly `uge_*.yaml` snapshots are *not* persisted —
+they are regenerated on demand.
 
 ### Secrets
 

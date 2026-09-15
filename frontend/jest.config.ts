@@ -9,11 +9,10 @@ const config: Config = {
   },
   transformIgnorePatterns: [
     // Force-transform ESM-only packages that ship .mjs/ESM sources.
-    'node_modules/(?!(marked|html2pdf\\.js)/)',
+    'node_modules/(?!(marked)/)',
   ],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/styleMock.js',
-    '^html2pdf.js$': '<rootDir>/mocks/html2pdf.js',
   },
 }
 

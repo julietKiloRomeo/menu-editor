@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, DragEvent, FormEvent } from 'react'
 import { marked } from 'marked'
-import html2pdf from 'html2pdf.js'
 import { useLocation, useNavigate } from 'react-router-dom'
 import OrderPicker from './OrderPicker'
 
@@ -80,7 +79,14 @@ type RunSummary = {
 
 type MenuPreview = {
   menuHtml: string
-  shoppingHtml: string
+}
+
+/** The machine-readable hand-off that scripts/import_menu.py turns into a run. */
+type MenuExport = {
+  schema: number
+  name: string
+  generated: string
+  shopping: unknown[]
 }
 
 type MenuSummary = {
@@ -183,6 +189,7 @@ function App() {
   })
   const [spinnerResults, setSpinnerResults] = useState<Recipe[]>([])
   const [menuMarkdown, setMenuMarkdown] = useState<string>('')
+  const [menuExport, setMenuExport] = useState<MenuExport | null>(null)
   const [menuPreview, setMenuPreview] = useState<MenuPreview | null>(null)
   const [exporting, setExporting] = useState(false)
   const [autoPrintPending, setAutoPrintPending] = useState(false)
@@ -247,7 +254,6 @@ function App() {
   const DRAG_MIME = 'application/x-recipe-row'
   const [toasts, setToasts] = useState<Toast[]>([])
   const toastTimeouts = useRef<number[]>([])
-  const pdfPreviewRef = useRef<HTMLDivElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -585,6 +591,7 @@ function App() {
     stopCamera()
     setMenuPreview(null)
     setMenuMarkdown('')
+    setMenuExport(null)
     setDropActive(false)
   }, [imagePreviewUrl, stopCamera])
 
@@ -1644,6 +1651,7 @@ function App() {
     setExporting(true)
     if (!silent) {
       setMenuMarkdown('')
+      setMenuExport(null)
       setMenuPreview(null)
     }
     try {
@@ -1657,20 +1665,17 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ menu_data: menuData }),
       })
-      const payload = await ensureJson<{ markdown?: string; error?: string }>(response)
+      const payload = await ensureJson<{ markdown?: string; export?: MenuExport; error?: string }>(response)
       if (!response.ok) {
         const message = payload.error ?? `Failed with status ${response.status}`
         throw new Error(message)
       }
       const markdown = payload.markdown ?? ''
       setMenuMarkdown(markdown)
+      setMenuExport(payload.export ?? null)
 
-      const parts = markdown.split(/^#\s+Shopping/m)
-      const menuPart = parts[0] ?? ''
-      const shoppingPart = parts[1] ? `## Shopping${parts[1]}` : ''
-      const menuHtml = (await marked.parse(menuPart, { breaks: true })) as string
-      const shoppingHtml = shoppingPart ? ((await marked.parse(shoppingPart, { breaks: true })) as string) : ''
-      setMenuPreview({ menuHtml, shoppingHtml })
+      const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
+      setMenuPreview({ menuHtml })
       setLastRenderedSig(selectionSignature)
       if (!silent) pushToast('success', 'Menu ready to print.')
     } catch (err) {
@@ -1740,27 +1745,24 @@ function App() {
     }
   }, [menuMarkdown, pushToast])
 
-  const handleDownloadPdf = useCallback(async () => {
-    if (!menuPreview || !pdfPreviewRef.current) {
-      pushToast('info', 'Generate the shopping list first.')
+  // The shopping list leaves as data, not as a printed page: scripts/import_menu.py
+  // reads this file and turns it back into a tickable run.
+  const handleDownloadExport = useCallback(() => {
+    if (!menuExport) {
+      pushToast('info', 'Generate the menu first.')
       return
     }
-    try {
-      await (html2pdf as any)()
-        .set({
-          margin: 12,
-          filename: 'shopping.pdf',
-          html2canvas: { scale: 2, useCORS: true },
-          pagebreak: { mode: ['css', 'legacy'] },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        })
-        .from(pdfPreviewRef.current)
-        .save()
-      pushToast('success', 'PDF downloaded.')
-    } catch (err) {
-      pushToast('error', `PDF generation failed: ${(err as Error).message}`)
-    }
-  }, [menuPreview, pushToast])
+    const blob = new Blob([JSON.stringify(menuExport, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${menuExport.name || 'menu'}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    pushToast('success', `Shopping list exported (${menuExport.shopping.length} items).`)
+  }, [menuExport, pushToast])
 
   const handleRenameSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -3325,10 +3327,11 @@ function App() {
                   <button
                     type="button"
                     className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
-                    onClick={handleDownloadPdf}
-                    disabled={!menuPreview || exporting}
+                    onClick={handleDownloadExport}
+                    disabled={!menuExport || exporting}
+                    title="Download the shopping list for scripts/import_menu.py"
                   >
-                    ⬇ Save as PDF
+                    ⬇ Export shopping list
                   </button>
                 </div>
               </div>
@@ -3387,14 +3390,8 @@ function App() {
                   </button>
                 </div>
               ) : menuPreview ? (
-                <div
-                  ref={pdfPreviewRef}
-                  className="shopping-pdf space-y-6 bg-white"
-                >
+                <div className="menu-print space-y-6 bg-white">
                   <article dangerouslySetInnerHTML={{ __html: menuPreview.menuHtml }} />
-                  {menuPreview.shoppingHtml && (
-                    <article className="page-break" dangerouslySetInnerHTML={{ __html: menuPreview.shoppingHtml }} />
-                  )}
                 </div>
               ) : (
                 <div className="py-10 text-center text-sm text-slate-600">

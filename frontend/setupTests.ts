@@ -9,9 +9,6 @@ Object.defineProperty(global, 'URL', {
   writable: true,
 })
 
-// Mock html2pdf to avoid loading during tests
-jest.mock('html2pdf.js', () => ({ __esModule: true, default: {} }))
-
 // Mock play() to resolve
 // @ts-ignore
 HTMLMediaElement.prototype.play = jest.fn().mockResolvedValue(void 0)

@@ -23,10 +23,10 @@ that ruled out a Python HTTP client in the first place
 ## Target flow
 
 ```
-uv run python scripts/weekly_run.py ~/Downloads/menu-2026-09-19.md
+uv run python scripts/weekly_run.py ~/Downloads/uge_38_2026.json
 ```
 
-1. Import the markdown → shopping run. *(exists: `import_menu_markdown.py`)*
+1. Import the export → shopping run. *(exists: `import_menu.py`)*
 2. Print the phone URL, wait for the kitchen walk. *(exists)*
 3. On resume: open the order from the unticked rows. *(exists: `POST /api/orders`)*
 4. Drive the browser: search every query, attach results. *(scripted in run 4)*
@@ -77,8 +77,8 @@ which currently sends agents to the skill with "Do not re-derive the workflow".
 
 ## Smaller follow-ups
 
-- `scripts/import_menu_markdown.py` has **zero tests** and the whole week now
-  depends on it.
+- `scripts/import_menu.py` has **zero tests** of its own; the format it reads
+  is covered by `tests/test_render_export.py`, the CLI around it is not.
 - `GET /api/orders/<id>/queries` exists and is tested, but `OrderPicker.tsx`
   re-derives the query list client-side. Two places to drift.
 - `GET /api/nemlig/map` and `summarise_map()` are never called by any UI, so

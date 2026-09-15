@@ -30,7 +30,6 @@ Known data discrepancies, so they are not mistaken for bugs:
 
 - `recipes.db` currently holds 6 English demo recipes. The real corpus is the
   135 `.yml` files in `recipes/`.
-- `shopping.md` in the repo root is stale relative to both.
 
 Frontend build/run tips:
 - Dev server: `bun --cwd frontend run dev` (expects API at `http://localhost:5000` unless `VITE_API_BASE` is set)

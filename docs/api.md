@@ -29,9 +29,30 @@ Body:
 ```
 Values represent requested plate counts. Unknown recipe names are silently ignored.
 
-Response: `{"markdown": "..."}` containing the rendered grocery list plus auto-appended staple items. The endpoint also writes `shopping.md` and the YAML snapshot under `uge_<week>_<year>.yaml` for downstream tooling, both inside `MENU_DATA_DIR` (default: the process working directory).
+Response: `{"markdown": "...", "export": {...}}`.
 
-The shopping list is grouped into kitchen zones, one markdown table per zone, in walking order. Each table is headed by the zone name; ingredients with no zone yet appear under **ikke placeret**, followed by a footer naming them.
+`markdown` is the **printable menu** — dishes and where to find them, nothing else. Staples are appended to the shopping but stay off the printed page.
+
+`export` is the machine-readable hand-off, and the only place the shopping list appears:
+
+```json
+{
+  "schema": 1,
+  "name": "uge_38_2026",
+  "generated": "2026-09-12",
+  "menu": [{"section": "Mandag", "silent": false, "entries": [
+    {"name": "Grød", "placering": "side 12", "multiplier": 2, "silent": false}
+  ]}],
+  "shopping": [
+    {"ingredient": "Havregryn", "quantities": {"g": 500}, "recipes": ["Grød"],
+     "zone": "tørvarer", "zone_order": 4}
+  ]
+}
+```
+
+Rows are in walking order, and `quantities` keeps units as separate buckets — `100 g` and `1 kg` are never merged. `recipes` is the full, untruncated list of contributing dishes. Ingredients with no zone carry `"zone": "unknown"`.
+
+Save it from the app's **Export shopping list** button and feed it to `scripts/import_menu.py` to create a tickable run on another instance. The endpoint also writes the YAML snapshot `uge_<week>_<year>.yaml` inside `MENU_DATA_DIR` (default: the process working directory).
 
 ### `GET /api/zones/unplaced`
 Every ingredient known to the app that has no kitchen zone assigned, each with a suggested zone borrowed from the most similar already-placed ingredient (fuzzy ratio, minimum 70).

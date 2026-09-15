@@ -13,7 +13,6 @@
 **/*.db
 **/*.db-wal
 **/*.db-shm
-**/shopping.md
 **/uge_*.yaml
 
 # VCS and worktrees

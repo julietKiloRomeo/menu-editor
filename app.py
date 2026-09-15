@@ -62,6 +62,8 @@ from src.core.runs import (
     start_run,
 )
 from src.core.zones import load_zone_config, seed_zones
+from src.render.export import to_dict as menu_export
+from src.render.markdown import render as render_markdown
 from src.models import (
     CategoryConfig,
     IngredientAlias,
@@ -124,7 +126,7 @@ app = Flask(
 app.config.setdefault("FRONTEND_DIST", os.getenv("FRONTEND_DIST", "frontend/dist"))
 app.config.setdefault("FRONTEND_INDEX", os.getenv("FRONTEND_INDEX", "index.html"))
 app.config.setdefault("FRONTEND_ORIGIN", os.getenv("FRONTEND_ORIGIN", "*"))
-# Where generated artifacts (uge_<week>_<year>.yaml, shopping.md) are written.
+# Where the generated uge_<week>_<year>.yaml menu snapshots are written.
 # Defaults to the process CWD, which is the historic behaviour; set
 # MENU_DATA_DIR=data to keep them out of the repo root.
 app.config.setdefault("MENU_DATA_DIR", os.getenv("MENU_DATA_DIR", "."))
@@ -1152,18 +1154,20 @@ def generate_menu():
     add_standard_items(menu_structure)
     menu_path = save_menu(menu_structure)
 
-    menu_text = MenuText()
-    parser.write_menu(
+    aggregated = parser.aggregate_menu_file(
         menu_path,
-        printer=menu_text.add,
         silent_sections={get_staple_label()},
     )
 
-    markdown = str(menu_text)
-    # Written once, as an artifact for downstream tooling.
-    (data_dir() / "shopping.md").write_text(markdown, encoding="utf-8")
+    menu_text = MenuText()
+    render_markdown(aggregated, printer=menu_text.add)
 
-    return jsonify({"markdown": markdown})
+    # The markdown is the printable menu; the export is the machine-readable
+    # hand-off that scripts/import_menu.py turns back into a shopping run.
+    return jsonify({
+        "markdown": str(menu_text),
+        "export": menu_export(aggregated, name=menu_path.stem),
+    })
 
 
 app.add_url_rule(
@@ -2394,7 +2398,7 @@ class MenuText:
     """Accumulates rendered lines.
 
     Deliberately does not touch the filesystem: it used to rewrite the whole
-    of shopping.md once per printed line, which is O(n^2) in file writes.
+    output file once per printed line, which is O(n^2) in file writes.
     """
 
     def __init__(self, menu: str = "") -> None:

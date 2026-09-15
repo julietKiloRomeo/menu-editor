@@ -227,19 +227,21 @@ def test_menu_generation_includes_staples(client, app_module, add_category, monk
 
     response = client.post("/api/menu/generate", json={"menu_data": {recipe_name: 4}})
     assert response.status_code == 200
-    markdown = response.get_json()["markdown"]
+    payload = response.get_json()
+
+    markdown = payload["markdown"]
     assert "# Menu" in markdown
     assert recipe_name in markdown
 
-    # Staples must NOT appear in the printed menu section, but MUST appear in
-    # the shopping list section.
-    menu_part, _, shopping_part = markdown.partition("# Shopping")
-    assert shopping_part, "expected a shopping section in the generated markdown"
-
+    # Staples must NOT appear on the printed menu, but MUST be bought: they
+    # live in the export now, which is what becomes a shopping run.
     staple_label = app_module.get_staple_label()
-    assert f"## {staple_label}" not in menu_part
-    assert "Salt" not in menu_part
-    assert "Salt" in shopping_part
+    assert f"## {staple_label}" not in markdown
+    assert "Salt" not in markdown
+
+    bought = {row["ingredient"] for row in payload["export"]["shopping"]}
+    assert "Salt" in bought
+    assert "Kartoffel" in bought
 
     monkeypatch.setattr(app_module.MenuText, "add", original_add)
 
