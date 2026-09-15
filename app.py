@@ -2303,6 +2303,18 @@ def post_order_record(order_id: int):
     payload = request.get_json(silent=True) or {}
     dry_run = bool(payload.get("dry_run"))
 
+    # Each substitution must carry the replacement's product_id; a bare reason
+    # string cannot say what was bought instead. Caught here because
+    # record_run would otherwise index into the string and raise a 500.
+    replaced = payload.get("replaced") or {}
+    if not isinstance(replaced, dict):
+        return jsonify({"error": "'replaced' must be an object"}), 400
+    for name, substitute in replaced.items():
+        if not isinstance(substitute, dict) or not substitute.get("product_id"):
+            return jsonify({
+                "error": f"replaced[{name!r}] must be an object with a product_id",
+            }), 400
+
     with get_session() as session:
         order = session.get(NemligOrder, order_id)
         if order is None:
@@ -2316,7 +2328,7 @@ def post_order_record(order_id: int):
             load_product_map(product_map_path()),
             choices,
             lines,
-            replaced=payload.get("replaced") or {},
+            replaced=replaced,
             source=(payload.get("source") or order.source),
             on_date=payload.get("date") or datetime.date.today(),
         )

@@ -186,6 +186,53 @@ class TestSearchResults:
         assert milk["candidates"][0]["product_id"] == "111"
         assert milk["candidates"][0]["previous"] is True
 
+    def test_last_weeks_product_is_chosen_automatically(self, order_client, run_id):
+        """Re-picking an unchanged staple is typing, not deciding."""
+        order = open_order(order_client, run_id).get_json()
+
+        response = order_client.post(
+            f"/api/orders/{order['id']}/search-results",
+            json={"results": {"letmælk": [
+                {"Id": "999", "Name": "Anden mælk", "Price": 9},
+                {"Id": "111", "Name": "Letmælk", "Price": 12},
+            ]}},
+        )
+
+        milk = items_of(response.get_json()["order"])["mælk"]
+        assert milk["action"] == "buy"
+        assert milk["product_id"] == "111"
+
+    def test_a_product_missing_from_this_weeks_results_is_not_chosen(
+        self, order_client, run_id
+    ):
+        """Reconstructed-from-memory means sold out, renamed or unsearchable.
+
+        It is still offered first, but buying it unattended is how a sold-out
+        product silently reaches the basket at quantity zero.
+        """
+        order = open_order(order_client, run_id).get_json()
+
+        response = order_client.post(
+            f"/api/orders/{order['id']}/search-results",
+            json={"results": {"letmælk": [{"Id": "999", "Name": "Anden mælk", "Price": 9}]}},
+        )
+
+        milk = items_of(response.get_json()["order"])["mælk"]
+        assert milk["candidates"][0]["from_memory"] is True
+        assert milk["action"] is None
+
+    def test_an_existing_decision_is_never_overwritten(self, order_client, run_id):
+        order = open_order(order_client, run_id).get_json()
+        milk_id = items_of(order)["mælk"]["id"]
+        order_client.patch(f"/api/orders/items/{milk_id}", json={"action": "have_it"})
+
+        response = order_client.post(
+            f"/api/orders/{order['id']}/search-results",
+            json={"results": {"letmælk": [{"Id": "111", "Name": "Letmælk", "Price": 12}]}},
+        )
+
+        assert items_of(response.get_json()["order"])["mælk"]["action"] == "have_it"
+
     def test_nemligs_own_shape_is_accepted_unreshaped(self, order_client, run_id):
         order = open_order(order_client, run_id).get_json()
 
@@ -458,6 +505,48 @@ class TestRecord:
         assert saved["mappings"]["æble"]["product_id"] == "5"
         assert saved["mappings"]["æble"]["last_qty"] == 3
         assert map_path.with_suffix(".json.bak").exists()
+
+    def test_a_substitution_reason_without_a_product_is_refused(
+        self, order_app, order_client, run_id
+    ):
+        """A bare reason string cannot say what was bought instead.
+
+        record_run indexes the substitute for ``product_id``, so a string
+        used to surface as a 500 rather than a complaint about the request.
+        """
+        order = open_order(order_client, run_id).get_json()
+
+        response = order_client.post(
+            f"/api/orders/{order['id']}/record",
+            json={"replaced": {"æble": "Cosmic Crisp was sold out"}},
+        )
+
+        assert response.status_code == 400
+        assert "product_id" in response.get_json()["error"]
+
+    def test_a_substitution_records_what_was_bought_instead(
+        self, order_app, order_client, run_id
+    ):
+        _, _, map_path = order_app
+        order = open_order(order_client, run_id).get_json()
+        order_client.patch(
+            f"/api/orders/items/{items_of(order)['æble']['id']}",
+            json={"action": "buy", "product_id": "5", "qty": 1,
+                  "product": {"Id": "5", "Name": "Æbler"}},
+        )
+
+        response = order_client.post(
+            f"/api/orders/{order['id']}/record",
+            json={"replaced": {"æble": {
+                "product_id": "9", "name": "Æbler Joya", "pack": "4 stk.",
+                "price": 25, "reason": "Cosmic Crisp sold out",
+            }}},
+        )
+
+        assert response.status_code == 200
+        saved = json.loads(map_path.read_text(encoding="utf-8"))
+        assert saved["mappings"]["æble"]["product_id"] == "9"
+        assert saved["mappings"]["æble"]["note"] == "Cosmic Crisp sold out"
 
     def test_a_dry_run_changes_nothing_on_disk(self, order_app, order_client, run_id):
         _, _, map_path = order_app

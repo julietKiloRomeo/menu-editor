@@ -123,6 +123,12 @@ def attach_search_results(
     Only undecided rows are touched. Someone who has already picked a product
     should not have it swapped out because a later search returned a different
     order.
+
+    A row whose search turned up the *same product bought last week* is chosen
+    automatically. Re-picking an unchanged staple thirty times is not a
+    decision, it is typing, and leaving it undecided hid the handful of rows
+    that genuinely needed thought. Only an exact previous-product match
+    qualifies: a mere favourite is not evidence about this ingredient.
     """
     mappings = product_map.get("mappings", {})
     touched = 0
@@ -135,6 +141,16 @@ def attach_search_results(
             continue
         previous_id = (mappings.get(item.ingredient) or {}).get("product_id")
         item.candidates = rank_candidates(hits, previous_id, product_map)
+
+        preselected = next(
+            (c for c in item.candidates if c.get("previous") and not c.get("from_memory")),
+            None,
+        )
+        if preselected is not None:
+            item.action = "buy"
+            item.product_id = preselected["product_id"]
+            item.product = preselected
+
         session.add(item)
         touched += 1
 
