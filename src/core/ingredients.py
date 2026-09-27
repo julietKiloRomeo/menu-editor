@@ -8,6 +8,8 @@ without editing every recipe that mentions them.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
+from typing import Iterable
 
 from sqlmodel import select
 
@@ -46,3 +48,41 @@ def load_alias_map() -> AliasMap:
     with get_session() as session:
         rows = session.exec(select(IngredientAlias)).all()
     return AliasMap.from_pairs({row.alias: row.canonical for row in rows})
+
+
+#: How similar two names must be before they are worth querying. Tuned so
+#: "grønsagsbouillon"/"grøntsagsbouillon" (0.97) is caught while genuinely
+#: different pairs that merely rhyme are not.
+SIMILARITY_THRESHOLD = 0.88
+
+
+def near_duplicates(
+    names: Iterable[str], *, threshold: float = SIMILARITY_THRESHOLD
+) -> list[tuple[str, str, float]]:
+    """Names so close together that they are probably one ingredient.
+
+    A shopping list that contains both "grønsagsbouillon" and
+    "grøntsagsbouillon" is not a list with two ingredients on it; it is a
+    spelling difference between two recipes, and it survives the kitchen walk
+    because ticking one says nothing about the other. That pair reached a real
+    basket, where one had been ticked as already in the house and the other was
+    about to be bought again.
+
+    Aliases are the cure, but only once someone notices. This is the noticing.
+    Returns ``(first, second, ratio)`` sorted most-similar first, and only for
+    names that differ -- exact repeats are already handled by the list builder.
+    """
+    unique = list(dict.fromkeys(name for name in names if name and name.strip()))
+    pairs: list[tuple[str, str, float]] = []
+
+    for i, first in enumerate(unique):
+        for second in unique[i + 1 :]:
+            left, right = normalise(first), normalise(second)
+            if left == right:
+                continue
+            ratio = SequenceMatcher(None, left, right).ratio()
+            if ratio >= threshold:
+                pairs.append((first, second, round(ratio, 3)))
+
+    pairs.sort(key=lambda pair: pair[2], reverse=True)
+    return pairs

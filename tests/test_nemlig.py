@@ -500,3 +500,134 @@ class TestProductMapFile:
         loaded = load_product_map(path)
         assert loaded["no_default_yet"] == {}
         assert loaded["usually_in_the_kitchen"]["items"] == []
+
+
+# --------------------------------------------------------------------------
+# coverage: does the chosen product add up to what the week needs?
+#
+# Every "short" case below is a row that really was under-bought in the
+# 2026-09-20 order, and every "covered" case is a row from the same order that
+# must stay quiet. The false-positive cases matter as much as the true ones:
+# the first version of this check flagged 12 cherrytomater against a 200 g box
+# as "10 stk short", which is the kind of noise that gets warnings ignored.
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "need,pack,qty",
+    [
+        ("2 stk", "1 stk.", 1),  # squash: bought one, needed two
+        ("5 dl + 2 l", "1 l / Arla ØKO", 2),  # mælk: half a litre short
+        ("2 pakker", "150 g / Danbo / Arla Klovborg", 1),  # pålæg: one pack short
+        ("250 g", "200 g / Danmark / Tvedemose", 1),  # champignon: 50 g short
+        ("2 slags", "4 stk. / 900g", 1),  # madpakkefrugt: only one kind
+    ],
+)
+def test_check_coverage_flags_real_shortfalls(need, pack, qty):
+    from src.core.nemlig import check_coverage
+
+    warning = check_coverage(need, pack, qty)
+    assert warning is not None, f"{need!r} against {qty} x {pack!r} should warn"
+    assert warning["message"]
+
+
+@pytest.mark.parametrize(
+    "need,pack,qty,why",
+    [
+        ("150 g", "140 g / Økolandet", 1, "shelf sizes never match exactly"),
+        ("500 g", "250 g / Pastella", 2, "two packs cover it exactly"),
+        ("3.5 dl", "0,50 l / Arla", 1, "half a litre covers 3,5 dl"),
+        ("12 stk", "200 g / Danmark", 2, "a count against a weight is not comparable"),
+        ("2 stk", "280 g / Denmark", 1, "two fillets may well be one 280 g pack"),
+        ("lidt salt", "200 g", 1, "unparseable need teaches nothing"),
+        ("250 g", "", 1, "no pack size to compare against"),
+    ],
+)
+def test_check_coverage_stays_quiet(need, pack, qty, why):
+    from src.core.nemlig import check_coverage
+
+    assert check_coverage(need, pack, qty) is None, why
+
+
+def test_parse_quantity_sums_within_a_family_only():
+    from src.core.nemlig import parse_quantity
+
+    assert parse_quantity("5 dl + 2 l") == {"volume": 2500.0}
+    assert parse_quantity("300 g + 1 kg") == {"mass": 1300.0}
+    # Families never merge: 2 packets and 150 g are both real, and unrelated.
+    assert parse_quantity("2 pakker + 150 g") == {"pack": 2.0, "mass": 150.0}
+
+
+def test_parse_pack_ignores_provenance_after_the_slash():
+    from src.core.nemlig import parse_pack
+
+    assert parse_pack("0,50 l / Arla Karolines Køkken") == ("volume", 500.0)
+    assert parse_pack("200 g / Danmark / Tvedemose  ★ købt før") == ("mass", 200.0)
+    assert parse_pack("4 stk. / 900g") == ("count", 4.0)
+    assert parse_pack("") is None
+
+
+def test_find_collisions_reports_two_rows_sharing_one_product():
+    from src.core.nemlig import find_collisions
+
+    # fløde and piskefløde both defaulted to the same 0,5 l carton, and
+    # merge_add_lines would have summed them into two cartons silently.
+    collisions = find_collisions(
+        [
+            {
+                "action": "buy",
+                "product_id": "5004338",
+                "product": {"name": "Piskefløde 38% øko.", "pack": "0,50 l"},
+                "ingredient": "fløde",
+                "need": "2 dl",
+                "qty": 1,
+            },
+            {
+                "action": "buy",
+                "product_id": "5004338",
+                "product": {"name": "Piskefløde 38% øko.", "pack": "0,50 l"},
+                "ingredient": "piskefløde",
+                "need": "1.5 dl",
+                "qty": 1,
+            },
+            {
+                "action": "buy",
+                "product_id": "701012",
+                "product": {"name": "Letmælk", "pack": "1 l"},
+                "ingredient": "mælk",
+                "need": "2 l",
+                "qty": 2,
+            },
+        ]
+    )
+
+    assert len(collisions) == 1
+    assert collisions[0]["ingredients"] == ["fløde", "piskefløde"]
+    assert collisions[0]["total_qty"] == 2
+
+
+def test_find_collisions_ignores_rows_that_are_not_being_bought():
+    from src.core.nemlig import find_collisions
+
+    # Declining one of the two is exactly how the real collision was resolved.
+    assert (
+        find_collisions(
+            [
+                {
+                    "action": "buy",
+                    "product_id": "5004338",
+                    "product": {"name": "Piskefløde"},
+                    "ingredient": "fløde",
+                    "qty": 1,
+                },
+                {
+                    "action": "not_this_week",
+                    "product_id": "5004338",
+                    "product": {"name": "Piskefløde"},
+                    "ingredient": "piskefløde",
+                    "qty": 1,
+                },
+            ]
+        )
+        == []
+    )

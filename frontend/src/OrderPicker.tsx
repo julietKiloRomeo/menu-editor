@@ -44,6 +44,28 @@ type OrderItem = {
   qty: number
   note: string
   url: string
+  shortfall: Shortfall | null
+}
+
+/** The chosen product does not add up to what the week needs. */
+type Shortfall = {
+  kind: 'short' | 'kinds'
+  need: string
+  required: number
+  bought: number
+  family?: string
+  message: string
+}
+
+/** Two or more rows resolved to the same product and will be merged. */
+type Collision = {
+  product_id: string
+  product_name: string
+  pack: string
+  ingredients: string[]
+  combined_need: string
+  total_qty: number
+  message: string
 }
 
 type Order = {
@@ -55,6 +77,8 @@ type Order = {
   decided: number
   total: number
   items: OrderItem[]
+  collisions: Collision[]
+  shortfalls: Array<{ ingredient: string } & Shortfall>
 }
 
 type BasketLine = {
@@ -437,6 +461,46 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
         </div>
       </div>
 
+      {/* Anything that will quietly go wrong at delivery, surfaced before the
+          basket is filled rather than discovered a week later. */}
+      {(order.shortfalls.length > 0 || order.collisions.length > 0) && (
+        <div
+          className="mb-5 rounded-2xl border border-rose-400/30 bg-rose-500/10 p-4"
+          data-testid="order-warnings"
+        >
+          <p className="text-sm font-semibold text-rose-200">
+            {order.shortfalls.length + order.collisions.length} thing
+            {order.shortfalls.length + order.collisions.length === 1 ? '' : 's'} worth a second look
+          </p>
+
+          {order.collisions.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {order.collisions.map((collision) => (
+                <li key={collision.product_id} className="text-xs text-rose-100/90">
+                  <span className="font-medium">{collision.ingredients.join(' + ')}</span>{' '}
+                  both resolve to {collision.product_name || collision.product_id} — buying{' '}
+                  {collision.total_qty} for a combined need of {collision.combined_need || '?'}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {order.shortfalls.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {order.shortfalls.map((shortfall) => (
+                <li key={shortfall.ingredient} className="text-xs text-rose-100/90">
+                  <span className="font-medium">{shortfall.ingredient}</span> — {shortfall.message}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="mt-2 text-[11px] text-rose-200/60">
+            Quantities are never changed automatically — these are only worth knowing about.
+          </p>
+        </div>
+      )}
+
       {/* Step 1 -- searches, run in the tab that already has the session */}
       {queries.length > 0 && (
         <div className="mb-5 rounded-2xl border border-white/10 bg-brand-dark/40 p-4">
@@ -498,6 +562,14 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                   </div>
                   {item.warning && (
                     <p className="mt-1 text-xs text-amber-300/80">⚠ {item.warning}</p>
+                  )}
+                  {item.shortfall && (
+                    <p
+                      className="mt-1 text-xs font-medium text-rose-300"
+                      data-testid={`shortfall-${item.id}`}
+                    >
+                      ⚠ {item.shortfall.message}
+                    </p>
                   )}
 
                   {item.candidates.length > 0 && (

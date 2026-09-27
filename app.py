@@ -5,6 +5,7 @@ import json
 import os
 import pathlib
 import re
+import socket
 import subprocess
 import unicodedata
 from enum import Enum
@@ -16,7 +17,7 @@ from flask import Flask, jsonify, render_template, request, send_from_directory,
 from flask_cors import CORS
 from fuzzywuzzy import fuzz
 from openai import OpenAI
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlmodel import select, Session
 from pydantic import BaseModel, Field
 
@@ -27,6 +28,8 @@ from src.core.nemlig import (
     DEFAULT_MAP_PATH as NEMLIG_MAP_PATH,
     adapt_product,
     adapt_search_results,
+    check_coverage,
+    find_collisions,
     load_product_map,
     merge_add_lines,
     reconcile_basket,
@@ -1178,6 +1181,37 @@ app.add_url_rule(
 )
 
 
+@app.route('/api/status', methods=['GET'])
+def app_status():
+    """Which database this process is actually serving.
+
+    Two stale dev servers once sat on port 5000 holding a six-recipe demo
+    database, and the app looked like it had lost the entire recipe collection
+    and was showing last week's menu. Nothing on screen said which file was
+    open, so the obvious reading was "the data is gone" rather than "this is a
+    different database". The identity of the data is part of the data.
+    """
+    from src.models import DATABASE_URL
+
+    path = DATABASE_URL
+    resolved = ""
+    if path.startswith("sqlite:///"):
+        candidate = pathlib.Path(path[len("sqlite:///") :])
+        resolved = str(candidate if candidate.is_absolute() else candidate.resolve())
+
+    with get_session() as session:
+        recipes = session.exec(select(func.count()).select_from(Recipe)).one()
+
+    return jsonify(
+        {
+            "database_url": DATABASE_URL,
+            "database_path": resolved,
+            "recipes": recipes,
+            "host": socket.gethostname(),
+        }
+    )
+
+
 @app.route('/api/recipes', methods=['GET'])
 def list_recipes():
     include_blacklisted = request.args.get('include_blacklisted', 'true').lower() not in {'0', 'false', 'no'}
@@ -2002,6 +2036,13 @@ def product_map_path() -> pathlib.Path:
 
 
 def serialise_order_item(item: NemligOrderItem) -> Dict[str, Any]:
+    # Computed on read rather than stored: it is a function of the need and the
+    # currently chosen product, both of which change while the picker is open.
+    # A stored copy would go stale the moment someone changes the quantity.
+    shortfall = None
+    if item.action in ("buy", "link"):
+        shortfall = check_coverage(item.need or "", (item.product or {}).get("pack", ""), item.qty)
+
     return {
         "id": item.id,
         "ingredient": item.ingredient,
@@ -2018,11 +2059,26 @@ def serialise_order_item(item: NemligOrderItem) -> Dict[str, Any]:
         "qty": item.qty,
         "note": item.note,
         "url": item.url,
+        "shortfall": shortfall,
     }
 
 
 def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[str, Any]:
     decided, total = order_progress(items)
+    payload = [serialise_order_item(item) for item in items]
+    collisions = find_collisions(
+        [
+            {
+                "action": item.action,
+                "product_id": item.product_id,
+                "product": item.product,
+                "ingredient": item.ingredient,
+                "need": item.need,
+                "qty": item.qty,
+            }
+            for item in items
+        ]
+    )
     return {
         "id": order.id,
         "run_id": order.run_id,
@@ -2031,7 +2087,13 @@ def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[st
         "recorded_at": order.recorded_at.isoformat() if order.recorded_at else None,
         "decided": decided,
         "total": total,
-        "items": [serialise_order_item(item) for item in items],
+        "items": payload,
+        "collisions": collisions,
+        "shortfalls": [
+            {"ingredient": row["ingredient"], **row["shortfall"]}
+            for row in payload
+            if row.get("shortfall")
+        ],
     }
 
 

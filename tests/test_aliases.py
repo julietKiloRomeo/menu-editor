@@ -90,3 +90,40 @@ class TestAggregationWithAliases:
         aliases = AliasMap.from_pairs({"koriander": "cilantro"})
         lines = {line.ingredient: line for line in aggregate(aliases).shopping.lines}
         assert lines["cilantro"].is_unmapped
+
+
+def test_near_duplicates_catches_the_bouillon_spelling_split():
+    """The pair that nearly got bought twice in the 2026-09-20 order.
+
+    One spelling was ticked off during the kitchen walk and the other was not,
+    because ticking one says nothing about the other.
+    """
+    from src.core.ingredients import near_duplicates
+
+    pairs = near_duplicates(
+        ["grønsagsbouillon", "hvidløg", "grøntsagsbouillon", "mælk"]
+    )
+
+    assert [(a, b) for a, b, _ in pairs] == [
+        ("grønsagsbouillon", "grøntsagsbouillon")
+    ]
+
+
+def test_near_duplicates_leaves_genuinely_different_ingredients_alone():
+    from src.core.ingredients import near_duplicates
+
+    # Each of these pairs is two real, separate things that happen to look
+    # alike. Flagging them would make the report useless.
+    for pair in [
+        ("mælk", "mel"),
+        ("løg", "rødløg"),
+        ("fløde", "piskefløde"),
+        ("gulerod", "gulerødder"),
+    ]:
+        assert near_duplicates(list(pair)) == [], pair
+
+
+def test_near_duplicates_ignores_case_and_exact_repeats():
+    from src.core.ingredients import near_duplicates
+
+    assert near_duplicates(["Mælk", "mælk", "mælk"]) == []

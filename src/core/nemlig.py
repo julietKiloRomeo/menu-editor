@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import shutil
 from datetime import date as _date
 from typing import Any, Iterable, Mapping, Sequence
@@ -374,6 +375,229 @@ def merge_add_lines(choices: Sequence[Mapping]) -> dict:
         "unresolved": unresolved,
         "declined": declined,
     }
+
+
+# --------------------------------------------------------------------------
+# does the chosen product actually cover what the week needs?
+# --------------------------------------------------------------------------
+
+#: unit -> (family, multiplier into the family's base unit)
+#:
+#: Families never convert into each other. "2 pakker" and "150 g" are both
+#: real answers to how much pålæg is wanted, but nothing here knows how many
+#: grams a pakke is, and guessing is how you buy a third of what you needed.
+_UNITS: dict[str, tuple[str, float]] = {
+    "ml": ("volume", 1.0),
+    "cl": ("volume", 10.0),
+    "dl": ("volume", 100.0),
+    "l": ("volume", 1000.0),
+    "liter": ("volume", 1000.0),
+    "g": ("mass", 1.0),
+    "gram": ("mass", 1.0),
+    "kg": ("mass", 1000.0),
+    "stk": ("count", 1.0),
+    "styk": ("count", 1.0),
+    "bundt": ("count", 1.0),
+    "fed": ("count", 1.0),
+    "pakke": ("pack", 1.0),
+    "pakker": ("pack", 1.0),
+    "pk": ("pack", 1.0),
+    "pose": ("pack", 1.0),
+    "poser": ("pack", 1.0),
+    "dåse": ("pack", 1.0),
+    "dåser": ("pack", 1.0),
+    "slags": ("kinds", 1.0),
+    "sorter": ("kinds", 1.0),
+}
+
+#: How far short a purchase may fall before it is worth mentioning.
+#:
+#: Shelf sizes rarely match a recipe exactly -- 140 g of cheddar against a
+#: 150 g need is the shop's fault, not a mistake, and warning about it would
+#: train people to ignore the warnings. A fifth short is a different thing.
+COVERAGE_TOLERANCE = 0.10
+
+_QUANTITY_RE = re.compile(
+    r"(\d+(?:[.,]\d+)?)\s*([a-zA-ZæøåÆØÅ]+\.?)",
+)
+
+
+def _unit(token: str) -> tuple[str, float] | None:
+    return _UNITS.get(token.strip().rstrip(".").casefold())
+
+
+def parse_quantity(text: str) -> dict[str, float]:
+    """Sum a free-text amount into ``{family: total_in_base_unit}``.
+
+    ``"5 dl + 2 l"`` becomes ``{"volume": 2500.0}``. Unrecognised units are
+    dropped rather than guessed at, so an unparseable need reads as "nothing
+    known" and produces no warning, instead of a confident wrong one.
+
+    Accepts both the decimal comma nemlig writes and the decimal point
+    :func:`format_need` produces.
+    """
+    totals: dict[str, float] = {}
+    for amount, token in _QUANTITY_RE.findall(text or ""):
+        unit = _unit(token)
+        if unit is None:
+            continue
+        family, multiplier = unit
+        totals[family] = totals.get(family, 0.0) + float(amount.replace(",", ".")) * multiplier
+    return totals
+
+
+def parse_pack(pack: str) -> tuple[str, float] | None:
+    """Read one product's pack size as ``(family, amount_in_base_unit)``.
+
+    Pack strings carry provenance after a slash -- ``"0,50 l / Arla Karolines
+    Køkken"``, ``"200 g / Danmark / Tvedemose  ★ købt før"`` -- and only the
+    first field is a size, so the rest is discarded before parsing. Returns
+    ``None`` when there is no size to read.
+    """
+    head = (pack or "").split("/")[0]
+    for amount, token in _QUANTITY_RE.findall(head):
+        unit = _unit(token)
+        if unit is not None:
+            family, multiplier = unit
+            return family, float(amount.replace(",", ".")) * multiplier
+    return None
+
+
+def check_coverage(need: str, pack: str, qty: int) -> dict | None:
+    """Warn when the chosen product does not add up to what the week needs.
+
+    The app has always known both halves of this and never compared them. Six
+    rows in one real order were short -- a squash, half a litre of milk, a pack
+    of pålæg, 50 g of mushrooms, and a second kind of fruit that never got
+    bought at all -- and every one of them was visible on screen at the time.
+
+    Returns ``None`` when the purchase covers the need, when the need is
+    unparseable, or when the two cannot honestly be compared. Warning only on
+    what can be shown is the point: a false alarm costs more than a silent pass,
+    because it is the thing that makes people stop reading warnings.
+    """
+    qty = max(1, int(qty or 1))
+    needs = parse_quantity(need)
+    if not needs:
+        return None
+
+    parsed_pack = parse_pack(pack)
+
+    for family, required in needs.items():
+        # "2 slags" is a request for variety, not volume: one product cannot
+        # satisfy it however many are bought.
+        if family == "kinds":
+            if required > 1:
+                return {
+                    "kind": "kinds",
+                    "need": need,
+                    "required": required,
+                    "bought": 1,
+                    "message": (
+                        f"{_number(required)} kinds wanted, but one product is "
+                        f"chosen -- pick another row for the second kind"
+                    ),
+                }
+            continue
+
+        if parsed_pack is None:
+            continue
+        pack_family, pack_amount = parsed_pack
+
+        if family == pack_family:
+            bought = pack_amount * qty
+        elif family == "pack" and pack_family in ("mass", "volume"):
+            # The need counts packages ("2 pakker") while the product is sold by
+            # weight. How many grams a pakke holds is unknowable here, but one
+            # pakke is one of whatever is on the shelf, so the count still maps
+            # directly onto how many to buy.
+            bought = float(qty)
+        else:
+            # No honest comparison exists. This deliberately includes a count
+            # against a weight -- "12 stk" cherrytomater against a 200 g box,
+            # or "2 stk" kyllingebryst against a 280 g pack. Treating the count
+            # as a pack count warns that two boxes of cherry tomatoes are ten
+            # short, which is nonsense, and a warning that cries wolf is worse
+            # than no warning: it is what teaches people to skip reading them.
+            continue
+
+        if bought >= required * (1 - COVERAGE_TOLERANCE):
+            continue
+
+        return {
+            "kind": "short",
+            "need": need,
+            "required": required,
+            "bought": bought,
+            "family": family,
+            "message": (
+                f"needs {need}, but {qty} x {pack.split('/')[0].strip() or 'this'} "
+                f"is {_shortfall(required, bought, family)} short"
+            ),
+        }
+
+    return None
+
+
+def _number(value: float) -> str:
+    return str(int(value)) if value == int(value) else f"{value:g}"
+
+
+_BASE_UNIT = {"volume": "ml", "mass": "g", "count": "stk", "pack": "pakker"}
+
+
+def _shortfall(required: float, bought: float, family: str) -> str:
+    missing = required - bought
+    unit = _BASE_UNIT.get(family, "")
+    if family == "volume" and missing >= 1000:
+        return f"{_number(missing / 1000)} l"
+    if family == "mass" and missing >= 1000:
+        return f"{_number(missing / 1000)} kg"
+    if family == "pack" and missing == 1:
+        unit = "pakke"
+    return f"{_number(missing)} {unit}".strip()
+
+
+def find_collisions(choices: Sequence[Mapping]) -> list[dict]:
+    """Rows that resolve to the same product, before anything is bought.
+
+    :func:`merge_add_lines` already sums these so the basket is correct, but it
+    does so silently and only at fill time. That is too late to ask the question
+    that matters: *should* both rows be this product? ``fløde`` and
+    ``piskefløde`` both defaulted to the same 0,5 l carton in one order, which
+    merged to two cartons for a combined need of 0,35 l.
+    """
+    by_product: dict[str, list[Mapping]] = {}
+    for choice in choices:
+        if choice.get("action") not in BUYING:
+            continue
+        product_id = str(choice.get("product_id") or "")
+        if product_id:
+            by_product.setdefault(product_id, []).append(choice)
+
+    collisions = []
+    for product_id, rows in by_product.items():
+        if len(rows) < 2:
+            continue
+        product = rows[0].get("product") or {}
+        collisions.append(
+            {
+                "product_id": product_id,
+                "product_name": product.get("name", ""),
+                "pack": product.get("pack", ""),
+                "ingredients": [row.get("ingredient", "") for row in rows],
+                "combined_need": " + ".join(
+                    row.get("need", "") for row in rows if row.get("need")
+                ),
+                "total_qty": sum(int(row.get("qty") or 1) for row in rows),
+                "message": (
+                    f"{len(rows)} rows both resolve to {product.get('name', product_id)} "
+                    f"-- they will be merged into "
+                    f"{sum(int(row.get('qty') or 1) for row in rows)}"
+                ),
+            }
+        )
+    return collisions
 
 
 def reconcile_basket(add_lines: Sequence[Mapping], basket: Mapping) -> dict:

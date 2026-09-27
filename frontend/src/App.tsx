@@ -5,6 +5,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import OrderPicker from './OrderPicker'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
+
+/** Which database this backend is serving. See /api/status for why. */
+type AppStatus = {
+  database_url: string
+  database_path: string
+  recipes: number
+  host: string
+}
 const RECIPES_ENDPOINT = `${API_BASE}/api/recipes?include_blacklisted=0`
 /** Which run this device is walking, so a locked screen does not lose your place. */
 const ACTIVE_RUN_KEY = 'menu-spinner.activeRun.v1'
@@ -173,6 +181,7 @@ function formatQuantities(quantities: Record<string, number>): string {
 
 function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [status, setStatus] = useState<AppStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -347,6 +356,29 @@ function App() {
       setRenameCandidate(ingredientNames[0] ?? '')
     }
   }, [ingredientNames, renameCandidate, view])
+
+  // Which database is behind this page. Cheap, fetched once, and the answer to
+  // "why is my menu missing" when a stale dev server is serving a different file.
+  useEffect(() => {
+    let cancelled = false
+    // Deliberately defensive: this is a decorative header line, and it must
+    // never be able to take the page down. await tolerates a fetch stub that
+    // returns undefined, and the catch covers everything else.
+    const load = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/status`)
+        if (!response?.ok) return
+        const payload = (await response.json()) as AppStatus
+        if (!cancelled && payload) setStatus(payload)
+      } catch {
+        /* the header simply stays quiet if this fails */
+      }
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
     const pushToast = useCallback((kind: ToastKind, message: string) => {
     const id = Date.now() + Math.floor(Math.random() * 1000)
@@ -1861,6 +1893,16 @@ function App() {
               <span className="hidden text-xs uppercase tracking-[0.25em] text-white/40 sm:inline">
                 {loading ? 'Syncing…' : `${eligibleRecipes.length} recipes`}
               </span>
+              {status && (
+                <span
+                  className="hidden text-[11px] text-white/30 md:inline"
+                  title={`${status.database_path || status.database_url} on ${status.host}`}
+                  data-testid="db-identity"
+                >
+                  {status.database_path?.split('/').pop() || status.database_url} · {status.host} ·{' '}
+                  {status.recipes} in db
+                </span>
+              )}
             </div>
             <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary">
               {([
