@@ -50,10 +50,15 @@ def load_alias_map() -> AliasMap:
     return AliasMap.from_pairs({row.alias: row.canonical for row in rows})
 
 
-#: How similar two names must be before they are worth querying. Tuned so
-#: "grønsagsbouillon"/"grøntsagsbouillon" (0.97) is caught while genuinely
-#: different pairs that merely rhyme are not.
-SIMILARITY_THRESHOLD = 0.88
+#: How similar two names must be before they are worth querying.
+#:
+#: Tuned against the real ingredient table, not guessed. At 0.88 the only
+#: false positive was "salat"/"salt" (0.889) -- lettuce and salt, which short
+#: words make look alike because four of five characters agree. 0.90 drops it
+#: and still catches every genuine pair found there:
+#: grønsagsbouillon/grøntsagsbouillon (0.970), frisk mozarella/frisk mozzarella
+#: (0.968), creme fraiche/cremefraiche (0.960), æggeblomme/æggeblommer (0.952).
+SIMILARITY_THRESHOLD = 0.90
 
 
 def near_duplicates(

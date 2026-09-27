@@ -116,6 +116,7 @@ def test_near_duplicates_leaves_genuinely_different_ingredients_alone():
     # alike. Flagging them would make the report useless.
     for pair in [
         ("mælk", "mel"),
+        ("salat", "salt"),  # 0.889 -- lettuce and salt, caught at a lower threshold
         ("løg", "rødløg"),
         ("fløde", "piskefløde"),
         ("gulerod", "gulerødder"),
