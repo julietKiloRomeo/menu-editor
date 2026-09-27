@@ -14,22 +14,58 @@ Operational notes for agents:
 
 ## Grocery ordering (nemlig.com)
 
-Use the `nemlig-shopping` skill. Do not re-derive the workflow.
+**The app's Order screen is the tool now**, not the skill's scripts. The
+`nemlig-shopping` skill at `~/.config/opencode/skills/nemlig-shopping/`
+predates it and drives the same workflow through standalone scripts
+(`prepare.py`, `picker.py`, `basket.py`, `record.py`). Its *judgement* notes are
+still the best writeup of why each step exists — read `SKILL.md` for that — but
+the mechanics now live in `app.py` and `src/core/nemlig.py`.
+
+Note the skill may not appear in the skills list. Descriptions over roughly
+500 characters seem not to load (every skill at <= 319 chars loads; the two at
+>= 587 do not), which fails silently — the skill looks absent rather than
+malformed. `nemlig-shopping`'s description was shortened on 2026-09-27; if it
+still does not appear, read `SKILL.md` directly instead of re-deriving.
+
+Prerequisites, in order — the whole workflow is blocked without them:
+
+1. **The app must run locally, on the same machine as Chrome.**
+   `src/browser.py` pins CDP to `127.0.0.1:9222` deliberately, so nemlig
+   tokens never leave the machine. The container on valhalla therefore cannot
+   drive a basket, and never will.
+2. Chrome needs `--remote-debugging-port=9222` (already in
+   `~/.config/chromium-flags.conf` on loke). `chrome://inspect` is **not**
+   equivalent: the port listens but `/json` 404s, which shows up as
+   `{"reachable": true, "tab": null}`.
+3. **The user logs in themselves.** Never handle the password; never persist a
+   session.
 
 - `data/nemlig_product_map.json` is the durable memory: ingredient -> product
   defaults, quantities, preference notes, likely-stocked staples, and unresolved
-  items. Back it up before writing (the skill's `record.py` does).
+  items. `POST /api/orders/<id>/record` folds a finished order back into it and
+  takes a `.bak` first.
 - Weekly menus and lists are **not** kept in this repo. They land in
   `~/Downloads/` as `shopping-<N>.pdf` (image-based, so `pdftotext` returns
   nothing — render with `pdftoppm` and read the pages) and sometimes
   `menu-<YYYY-MM-DD>.md`. The `<N>` is the user's own counter, not the ISO week.
-- Ordering is driven through a logged-in browser tab, not a Python HTTP client;
-  the user logs in themselves.
+  A run can also be built in the app directly via `POST /api/runs`.
 
 Known data discrepancies, so they are not mistaken for bugs:
 
-- `recipes.db` currently holds 6 English demo recipes. The real corpus is the
-  135 `.yml` files in `recipes/`.
+- There are two different databases called `recipes.db`, and confusing them
+  looks exactly like data loss:
+  - **`./recipes.db` in this repo holds 6 English demo recipes.** It is the
+    fallback `DATABASE_URL` and is what you get by running the app with no
+    environment set.
+  - **valhalla's `menu/data/recipes.db` is the real one** (144 recipes, the
+    live runs and orders), at
+    `valhalla:/home/jikr/projects/kastaniebakken-automation/menu/data/recipes.db`.
+    It is in **WAL mode**: never plain-`cp` it, use `sqlite3.connect(...).backup()`
+    or you will silently miss recent writes.
+  - `GET /api/status` reports which file the running process actually has open,
+    and the app header shows it. Check it before concluding anything is missing.
+- `recipes/` holds 136 `.yml` files. That corpus and the databases are not kept
+  in sync automatically.
 
 Frontend build/run tips:
 - Dev server: `bun --cwd frontend run dev` (expects API at `http://localhost:5000` unless `VITE_API_BASE` is set)

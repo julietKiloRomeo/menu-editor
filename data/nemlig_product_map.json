@@ -1,6 +1,6 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-09-12 from menu-2026-09-12.",
-  "_source_menu": "menu-2026-09-12",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-09-20 from uge_39_2026.",
+  "_source_menu": "uge_39_2026",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
@@ -45,7 +45,7 @@
       "query": "tomater",
       "product_id": "5601022",
       "name": "Triple Sweet Cherrytomater",
-      "pack": "200 g  ★ købt før",
+      "pack": "200 g",
       "price": 30,
       "last_qty": 2,
       "note": "kanonisk række for 'blomme tomater' og 'små tomater'"
@@ -123,8 +123,8 @@
       "query": "rødløg",
       "product_id": "5042129",
       "name": "Rødløg øko.",
-      "pack": "750 g / Danmark / Klasse 1",
-      "price": 25.0,
+      "pack": "750 g",
+      "price": 25,
       "last_qty": 1
     },
     "hakkede tomater": {
@@ -306,7 +306,7 @@
     "champignon": {
       "product_id": "5040333",
       "name": "Champignon i skiver øko.",
-      "pack": "200 g / Danmark / Tvedemose  ★ købt før",
+      "pack": "200 g",
       "price": 16,
       "query": "champignon",
       "last_qty": 1
@@ -322,7 +322,7 @@
     "frisk rosmarin": {
       "product_id": "5012403",
       "name": "Rosmarin",
-      "pack": "50 g / Kenya / Klasse 1",
+      "pack": "50 g",
       "price": 25,
       "query": "rosmarin",
       "last_qty": 1,
@@ -514,7 +514,7 @@
     "bladselleri": {
       "product_id": "5043420",
       "name": "Bladselleri øko.",
-      "pack": "1 bdt.  ★ købt før",
+      "pack": "1 bdt.",
       "price": 17,
       "last_qty": 1,
       "query": "bladselleri"
@@ -629,7 +629,7 @@
       "product_id": "5602633",
       "name": "Fettuccine (frisk)",
       "pack": "250 g / Pastella",
-      "price": 0,
+      "price": 19.95,
       "last_qty": 2,
       "query": null,
       "note": "IKKE søgbar: 'fettuccine frisk' rammer babyspinat/tortellini. Direkte link: https://www.nemlig.com/fettuccine-frisk-5602633 (250 g Pastella, 2 stk = 500 g)"
@@ -637,7 +637,7 @@
     "gnocchi": {
       "product_id": "5021415",
       "name": "Gnocchi (frisk)",
-      "pack": "500 g / Rana  ★ købt før",
+      "pack": "500 g / Rana",
       "price": 29.5,
       "last_qty": 1,
       "query": "gnocchi"
@@ -645,7 +645,7 @@
     "gouda": {
       "product_id": "5050734",
       "name": "Gouda",
-      "pack": "500 g / Gestus  ★ købt før",
+      "pack": "500 g / Gestus",
       "price": 47.72,
       "last_qty": 1,
       "query": "gouda"
@@ -681,7 +681,7 @@
       "name": "Bakkedal øko.",
       "pack": "200 g  ★ købt før",
       "price": 14.95,
-      "last_qty": 2,
+      "last_qty": 1,
       "query": "smørresmør",
       "note": "smørbart (Kærgården-typen). Det gammeldags blok-smør er til madlavning/bagning og er en anden vare"
     },
@@ -766,6 +766,78 @@
       "price": 14.97,
       "last_qty": 1,
       "query": "æggeblommer"
+    },
+    "rød chili": {
+      "product_id": "5016563",
+      "name": "Jalapenos (hot)",
+      "pack": "50 g",
+      "price": 25,
+      "last_qty": 1,
+      "query": "rød chili"
+    },
+    "hvide bønner": {
+      "product_id": "5043539",
+      "name": "Butter beans øko.",
+      "pack": "400 g / 240 g / vegansk / Økomama",
+      "price": 15.32,
+      "last_qty": 1,
+      "query": "hvide bønner"
+    },
+    "kaffe": {
+      "product_id": "5021188",
+      "name": "Merrild 103",
+      "pack": "500 g / hele bønner / Merrild",
+      "price": 97.75,
+      "last_qty": 2,
+      "query": "kaffe"
+    },
+    "kidney bønner": {
+      "product_id": "5602876",
+      "name": "Røde kidneybønner",
+      "pack": "400 g / 240 g / Taste of Nature",
+      "price": 7.15,
+      "last_qty": 1,
+      "query": "kidney bønner"
+    },
+    "rapsolie": {
+      "product_id": "5069703",
+      "name": "Rapsolie øko.",
+      "pack": "0,50 l / koldpresset / Dava",
+      "price": 33.95,
+      "last_qty": 1,
+      "query": "rapsolie"
+    },
+    "frosne ærter": {
+      "product_id": "5070874",
+      "name": "Ærter (ekstra fine)",
+      "pack": "400 g / frost / Gestus",
+      "price": 18.95,
+      "last_qty": 1,
+      "query": "frosne ærter"
+    },
+    "kyllingebryst": {
+      "product_id": "5056387",
+      "name": "Kyllingebrystfilet",
+      "pack": "280 g / Gårdkylling / Danske Familiegårde",
+      "price": 43.95,
+      "last_qty": 1,
+      "query": "kyllingebryst"
+    },
+    "bacon": {
+      "product_id": "5032446",
+      "name": "Bacon i skiver øko.",
+      "pack": "100 g / Tulip",
+      "price": 20.95,
+      "last_qty": 1,
+      "query": "bacon"
+    },
+    "bacon i tern": {
+      "product_id": "5600742",
+      "name": "Bacon i tern",
+      "pack": "300 g / 2 pk. / Tulip",
+      "price": 38.95,
+      "last_qty": 1,
+      "query": "bacon i tern"
     }
   },
   "no_default_yet": {
@@ -789,6 +861,7 @@
       "dijon sennep",
       "fine gryn",
       "garam masala",
+      "grøntsagsbouillon",
       "honning",
       "hvide bønner",
       "hvidløg",
