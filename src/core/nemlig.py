@@ -28,6 +28,7 @@ Two behaviours here are load-bearing, both learned by getting them wrong:
 from __future__ import annotations
 
 import json
+import math
 import pathlib
 import re
 import shutil
@@ -253,6 +254,7 @@ def rank_candidates(
     candidates: Sequence[Mapping],
     previous_id: str | None,
     product_map: Mapping | None = None,
+    query: str = "",
 ) -> list[dict]:
     """Order the shelf so the likely answer is first.
 
@@ -296,11 +298,31 @@ def rank_candidates(
             head = [found]
 
     rest = [c for c in ranked if not c.get("previous")]
-    rest.sort(key=lambda c: not c.get("fav"))
+    # A favourite is useful evidence only when it plausibly matches the thing
+    # searched for. Promoting every favourite put coffee above black beans and
+    # minced pork above beef in real runs. Keep nemlig's relevance order for
+    # unrelated favourites instead of letting purchase history defeat meaning.
+    rest.sort(
+        key=lambda c: not (
+            c.get("fav") and _has_token_overlap(query, str(c.get("name") or ""))
+        )
+    )
     for candidate in head + rest:
         candidate.setdefault("previous", False)
         candidate.setdefault("from_memory", False)
     return head + rest
+
+
+def _has_token_overlap(left: str, right: str) -> bool:
+    def tokens(value: str) -> list[str]:
+        return [
+            token
+            for token in re.findall(r"[a-zæøå0-9]+", value.casefold())
+            if len(token) >= 3
+        ]
+
+    a, b = tokens(left), tokens(right)
+    return any(x in y or y in x for x in a for y in b)
 
 
 # --------------------------------------------------------------------------
@@ -320,6 +342,7 @@ def merge_add_lines(choices: Sequence[Mapping]) -> dict:
     which rows were merged, and which are not yet answerable.
     """
     lines: dict[str, dict] = {}
+    rows_by_product: dict[str, list[Mapping]] = {}
     merged: list[dict] = []
     unresolved: list[dict] = []
     declined = 0
@@ -352,6 +375,7 @@ def merge_add_lines(choices: Sequence[Mapping]) -> dict:
             continue
 
         quantity = int(choice.get("qty") or 1)
+        rows_by_product.setdefault(str(product_id), []).append(choice)
         if product_id in lines:
             line = lines[product_id]
             line["qty"] += quantity
@@ -368,6 +392,21 @@ def merge_add_lines(choices: Sequence[Mapping]) -> dict:
                 "covers": [name],
                 "zone": choice.get("zone", ""),
             }
+
+    # When every quantity in a merged group is automatic, calculate once from
+    # the combined need. Adding row defaults is how 0.35 l of cream became two
+    # 0.5 l cartons and 550 g of cheese became five 140 g bags. A quantity the
+    # user edited is never changed here.
+    for product_id, rows in rows_by_product.items():
+        if any(row.get("qty_manual") for row in rows):
+            continue
+        line = lines[product_id]
+        suggested = recommend_quantity(
+            [str(row.get("need") or "") for row in rows],
+            str(line.get("pack") or ""),
+        )
+        if suggested is not None:
+            line["qty"] = suggested
 
     return {
         "lines": list(lines.values()),
@@ -406,6 +445,7 @@ _UNITS: dict[str, tuple[str, float]] = {
     "poser": ("pack", 1.0),
     "dåse": ("pack", 1.0),
     "dåser": ("pack", 1.0),
+    "ds": ("pack", 1.0),
     "slags": ("kinds", 1.0),
     "sorter": ("kinds", 1.0),
 }
@@ -461,6 +501,64 @@ def parse_pack(pack: str) -> tuple[str, float] | None:
             family, multiplier = unit
             return family, float(amount.replace(",", ".")) * multiplier
     return None
+
+
+def parse_pack_quantities(pack: str) -> dict[str, float]:
+    """All useful sizes in a product description, one value per family.
+
+    Unlike :func:`parse_pack`, this deliberately reads later slash-separated
+    fields too. ``"300 g / 2 pk. / Tulip"`` is both 300 g and two packets;
+    the latter is what matters when the shopping list asks for ``2 pakker``.
+    Unknown words and brand names are ignored.
+    """
+    sizes: dict[str, float] = {}
+    for amount, token in _QUANTITY_RE.findall(pack or ""):
+        unit = _unit(token)
+        if unit is None:
+            continue
+        family, multiplier = unit
+        sizes.setdefault(family, float(amount.replace(",", ".")) * multiplier)
+    return sizes
+
+
+def recommend_quantity(needs: Sequence[str], pack: str) -> int | None:
+    """Return a safe shelf-pack count for one product, or ``None``.
+
+    Needs are combined before dividing by the pack size, which is essential
+    when multiple recipe rows resolve to one product. A ten percent shelf-size
+    tolerance mirrors :func:`check_coverage`: 140 g is an acceptable answer to
+    150 g, while 560 g is the first acceptable answer to 550 g.
+
+    ``None`` means at least one need cannot honestly be compared with this
+    pack. In that case the persisted/user quantity is preserved rather than
+    replaced by a confident guess.
+    """
+    totals: dict[str, float] = {}
+    for need in needs:
+        parsed = parse_quantity(need)
+        if not parsed:
+            return None
+        for family, amount in parsed.items():
+            if family == "kinds":
+                return None
+            totals[family] = totals.get(family, 0.0) + amount
+
+    sizes = parse_pack_quantities(pack)
+    if not sizes:
+        return None
+
+    required_packs: list[int] = []
+    for family, required in totals.items():
+        size = sizes.get(family)
+        if size is None and family == "pack":
+            # One shelf item is one package unless the description explicitly
+            # says it contains several (for example ``2 pk.`` bacon).
+            size = 1.0
+        if not size:
+            return None
+        required_packs.append(max(1, math.ceil(required * (1 - COVERAGE_TOLERANCE) / size)))
+
+    return max(required_packs) if required_packs else None
 
 
 def check_coverage(need: str, pack: str, qty: int) -> dict | None:
@@ -580,6 +678,13 @@ def find_collisions(choices: Sequence[Mapping]) -> list[dict]:
         if len(rows) < 2:
             continue
         product = rows[0].get("product") or {}
+        suggested = None
+        if not any(row.get("qty_manual") for row in rows):
+            suggested = recommend_quantity(
+                [str(row.get("need") or "") for row in rows],
+                str(product.get("pack") or ""),
+            )
+        total_qty = suggested or sum(int(row.get("qty") or 1) for row in rows)
         collisions.append(
             {
                 "product_id": product_id,
@@ -589,11 +694,11 @@ def find_collisions(choices: Sequence[Mapping]) -> list[dict]:
                 "combined_need": " + ".join(
                     row.get("need", "") for row in rows if row.get("need")
                 ),
-                "total_qty": sum(int(row.get("qty") or 1) for row in rows),
+                "total_qty": total_qty,
                 "message": (
                     f"{len(rows)} rows both resolve to {product.get('name', product_id)} "
                     f"-- they will be merged into "
-                    f"{sum(int(row.get('qty') or 1) for row in rows)}"
+                    f"{total_qty}"
                 ),
             }
         )

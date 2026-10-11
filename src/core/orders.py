@@ -20,7 +20,7 @@ from typing import Mapping, Sequence
 
 from sqlmodel import Session, select
 
-from src.core.nemlig import ACTIONS, plan_item, queries_for, rank_candidates
+from src.core.nemlig import ACTIONS, plan_item, queries_for, rank_candidates, recommend_quantity
 from src.models import NemligOrder, NemligOrderItem, ShoppingRun, ShoppingRunItem
 
 
@@ -72,6 +72,7 @@ def start_order(
                 status=plan["status"],
                 query=plan["query"] or "",
                 qty=plan["qty"],
+                qty_manual=False,
                 warning=plan["warning"],
             )
         )
@@ -140,7 +141,9 @@ def attach_search_results(
         if hits is None:
             continue
         previous_id = (mappings.get(item.ingredient) or {}).get("product_id")
-        item.candidates = rank_candidates(hits, previous_id, product_map)
+        item.candidates = rank_candidates(
+            hits, previous_id, product_map, query=item.query
+        )
 
         preselected = next(
             (c for c in item.candidates if c.get("previous") and not c.get("from_memory")),
@@ -150,6 +153,10 @@ def attach_search_results(
             item.action = "buy"
             item.product_id = preselected["product_id"]
             item.product = preselected
+            suggested = recommend_quantity([item.need], preselected.get("pack", ""))
+            if suggested is not None:
+                item.qty = suggested
+                item.qty_manual = False
 
         session.add(item)
         touched += 1
@@ -166,6 +173,7 @@ def set_choice(
     product_id: str | None = ...,
     product: dict | None = ...,
     qty: int | None = ...,
+    qty_manual: bool | None = ...,
     note: str | None = ...,
     url: str | None = ...,
 ) -> NemligOrderItem | None:
@@ -195,6 +203,14 @@ def set_choice(
         item.product = product
     if qty is not ...:
         item.qty = max(1, int(qty or 1))
+        item.qty_manual = True if qty_manual is ... else bool(qty_manual)
+    elif qty_manual is not ...:
+        item.qty_manual = bool(qty_manual)
+    elif product is not ... and product:
+        suggested = recommend_quantity([item.need], product.get("pack", ""))
+        if suggested is not None:
+            item.qty = suggested
+            item.qty_manual = False
     if note is not ...:
         item.note = note or ""
     if url is not ...:

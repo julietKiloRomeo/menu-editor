@@ -138,6 +138,26 @@ class TestCreateOrder:
     def test_run_id_is_required(self, order_client):
         assert order_client.post("/api/orders", json={}).status_code == 400
 
+    def test_latest_starts_the_newest_run_and_then_resumes_it(self, order_client, run_id):
+        started = order_client.post("/api/orders/latest", json={})
+        resumed = order_client.post("/api/orders/latest", json={})
+
+        assert started.status_code == 201
+        assert started.get_json()["run_id"] == run_id
+        assert started.get_json()["resumed"] is False
+        assert all(item["qty_manual"] is False for item in started.get_json()["items"])
+        assert resumed.get_json()["id"] == started.get_json()["id"]
+        assert resumed.get_json()["resumed"] is True
+
+    def test_latest_refuses_to_reorder_a_completed_run(self, order_client, run_id):
+        order = order_client.post("/api/orders/latest", json={}).get_json()
+        order_client.post(f"/api/orders/{order['id']}/record", json={})
+
+        response = order_client.post("/api/orders/latest", json={})
+
+        assert response.status_code == 409
+        assert "already ordered" in response.get_json()["error"]
+
 
 class TestQueries:
     def test_lists_the_searches_to_run(self, order_client, run_id):
@@ -437,6 +457,35 @@ class TestChoices:
 
         assert response.status_code == 400
 
+    def test_a_pasted_link_is_resolved_immediately(
+        self, order_app, order_client, run_id, monkeypatch
+    ):
+        app_module, _, _ = order_app
+        monkeypatch.setattr(
+            app_module,
+            "tab_resolve_product_url",
+            lambda url: {
+                "Id": "5053401",
+                "Name": "Sorte bønner øko.",
+                "Description": "420 g / Økomama",
+                "Price": 14.5,
+            },
+        )
+        order = open_order(order_client, run_id).get_json()
+        item_id = items_of(order)["æble"]["id"]
+
+        response = order_client.patch(
+            f"/api/orders/items/{item_id}",
+            json={
+                "action": "link",
+                "url": "https://www.nemlig.com/sorte-boenner-oeko-5053401",
+            },
+        )
+
+        item = items_of(response.get_json())["æble"]
+        assert item["product_id"] == "5053401"
+        assert item["product"]["name"] == "Sorte bønner øko."
+
 
 class TestBasket:
     def test_quantities_are_summed_per_product(self, order_client, run_id):
@@ -460,6 +509,16 @@ class TestBasket:
         basket = order_client.get(f"/api/orders/{order['id']}/basket").get_json()
 
         assert sorted(u["ingredient"] for u in basket["unresolved"]) == ["mælk", "æble"]
+
+    def test_undecided_rows_refuse_fill_before_the_browser_is_touched(
+        self, order_client, run_id
+    ):
+        order = open_order(order_client, run_id).get_json()
+
+        response = order_client.post(f"/api/orders/{order['id']}/fill-basket", json={})
+
+        assert response.status_code == 409
+        assert "Decide every row" in response.get_json()["error"]
 
 
 class TestReconcile:

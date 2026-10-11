@@ -1,5 +1,13 @@
 # Automating the weekly run
 
+> **Shipped 2026-10-10.** The supported entry point is now
+> `uv run python scripts/order_latest.py`. It safely snapshots the newest live
+> kitchen run from valhalla, performs fresh searches through local Chrome,
+> opens the in-app picker, fills and reconciles the basket, records the product
+> memory, and syncs only the completed order back. Interrupted pickers and
+> failed final syncs resume on the next invocation. The implementation notes
+> below are retained as design history, not current operating instructions.
+
 Goal: next week is one command plus a short confirmation list, instead of the
 ~20 manual steps in `docs/nemlig-run-log.md` run 4.
 

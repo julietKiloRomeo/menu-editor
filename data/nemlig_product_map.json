@@ -1,6 +1,6 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-09-27 from uge_40_2026.",
-  "_source_menu": "uge_40_2026",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-10-10 from uge_42_2026.",
+  "_source_menu": "uge_42_2026",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
@@ -76,10 +76,10 @@
       "query": "tomater",
       "product_id": "5014547",
       "name": "Cherrytomater Snackmix",
-      "pack": "200 g / Danmark / Klasse 1",
-      "price": 20.0,
+      "pack": "200 g / 3 farver",
+      "price": 20,
       "last_qty": 2,
-      "note": "nemlig has NO plum tomatoes; 2 packs also covered the separate 'cherrytomater' line"
+      "note": "samme vare som 'små tomater'; 2 + 2 = 4 pk. i uge 42"
     },
     "bredbladet persille": {
       "product_id": "5003207",
@@ -121,14 +121,14 @@
       "price": 15.32,
       "last_qty": 1
     },
-    "butterdej": {
+    "grov tærtedej": {
       "product_id": "5068592",
       "name": "Tærtedej m. fuldkorn",
       "pack": "275 g / Gestus",
       "price": 11.95,
-      "query": "butterdej",
+      "query": "tærtedej",
       "last_qty": 1,
-      "note": "bruger Tærtedej m. fuldkorn til broccolitærten, ikke butterdej"
+      "note": "bruger Tærtedej m. fuldkorn som grov tærtedej til broccolitærten, ikke butterdej"
     },
     "bønner": {
       "product_id": "5602876",
@@ -202,7 +202,7 @@
       "pack": "0,50 l / Arla Karolines Køkken",
       "price": 24.5,
       "last_qty": 1,
-      "note": "dækker også 'piskefløde'; 0,25 l + 1,5 dl + 0,25 l = 2 stk. a 0,5 l"
+      "note": "samme vare som 'piskefløde'; 1 + 1 = 2 stk. i uge 42"
     },
     "forårsløg": {
       "product_id": "5007287",
@@ -232,7 +232,7 @@
     "frisk koriander": {
       "product_id": "5012402",
       "name": "Koriander",
-      "pack": "50 g / Kenya / Klasse 1",
+      "pack": "50 g",
       "price": 25,
       "query": "koriander frisk",
       "last_qty": 1
@@ -392,7 +392,7 @@
       "name": "Butter beans øko.",
       "pack": "400 g / 240 g / vegansk / Økomama",
       "price": 15.32,
-      "last_qty": 1,
+      "last_qty": 2,
       "query": "hvide bønner"
     },
     "hvidløgspulver": {
@@ -626,14 +626,14 @@
       "pack": "0,50 l / Arla Karolines Køkken",
       "price": 24.5,
       "last_qty": 1,
-      "note": "samme vare som 'fløde' - læg mængderne sammen før antal beregnes"
+      "note": "samme vare som 'fløde'; 1 + 1 = 2 stk. i uge 42"
     },
     "pitabrød": {
       "query": "pitabrød",
       "product_id": "5501616",
       "name": "Soft pitabrød",
-      "pack": "5 stk. / 375 g / frost / Hatting",
-      "price": 13.05,
+      "pack": "5 stk. / 375 g / frost / Hatting - Naturligvis",
+      "price": 12.95,
       "last_qty": 1,
       "note": "took 1 pack of 5 even though list said 6 stk"
     },
@@ -703,7 +703,7 @@
       "price": 30.95,
       "query": "revet cheddar",
       "last_qty": 1,
-      "note": "dækker også linjen 'revet ost'; 150 g + 100 g = 2 pk."
+      "note": "samme vare som 'revet ost'; 1 + 1 = 2 pk. i uge 42"
     },
     "revet mozzarella": {
       "product_id": "5031388",
@@ -720,7 +720,7 @@
       "price": 30.95,
       "query": "revet cheddar",
       "last_qty": 1,
-      "note": "samme vare som 'revet cheddar' - læg dem sammen til én linje"
+      "note": "samme vare som 'revet cheddar'; 1 + 1 = 2 pk. i uge 42"
     },
     "ris": {
       "query": "basmati ris",
@@ -819,7 +819,7 @@
       "price": 20,
       "query": "tomater",
       "last_qty": 2,
-      "note": "stavevariant af 'blomme tomater'/'cherrytomater'"
+      "note": "samme vare som 'blomme tomater'; 2 + 2 = 4 pk. i uge 42"
     },
     "smørresmør": {
       "product_id": "5068828",
@@ -967,6 +967,71 @@
       "price": 14.97,
       "last_qty": 1,
       "query": "æggeblommer"
+    },
+    "kikærter": {
+      "product_id": "5602877",
+      "name": "Kikærter øko.",
+      "pack": "400 g / 240 g / Taste of Nature",
+      "price": 7.86,
+      "last_qty": 2,
+      "query": "kikærter"
+    },
+    "salsa": {
+      "product_id": "5051811",
+      "name": "Tomatillo salsa",
+      "pack": "155 g / medium / Santa Maria - Tex Mex",
+      "price": 27.25,
+      "last_qty": 1,
+      "query": "salsa"
+    },
+    "sorte bønner": {
+      "product_id": "5053401",
+      "name": "Sorte bønner øko.",
+      "pack": "420 g / 252 g / Økomama",
+      "price": 14.335,
+      "last_qty": 2,
+      "note": "direkte link: https://www.nemlig.com/sorte-boenner-oeko-5053401; søgning på sorte bønner gav irrelevante varer",
+      "query": null
+    },
+    "wraps": {
+      "product_id": "5051856",
+      "name": "Tortilla fuldkorn 25 cm",
+      "pack": "6 stk. / 371 g / Santa Maria - Tex Mex",
+      "price": 31.5,
+      "last_qty": 1,
+      "query": "wraps"
+    },
+    "bacontern": {
+      "product_id": "5600742",
+      "name": "Bacon i tern",
+      "pack": "300 g / 2 pk. / Tulip",
+      "price": 38.95,
+      "last_qty": 1,
+      "query": "bacontern"
+    },
+    "madlavningsfløde": {
+      "product_id": "5606103",
+      "name": "Madlavningsfløde 15%",
+      "pack": "0,25 l / Arla Karolines Køkken",
+      "price": 14.75,
+      "last_qty": 1,
+      "query": "madlavningsfløde"
+    },
+    "tortillini med skinke": {
+      "product_id": "5067653",
+      "name": "Tortellini m. skinke (frisk)",
+      "pack": "250 g / Rana",
+      "price": 31.5,
+      "last_qty": 2,
+      "query": "tortillini med skinke"
+    },
+    "køkkenrulle": {
+      "product_id": "5066557",
+      "name": "Køkkenrulle",
+      "pack": "4 rl. / nemlig plus",
+      "price": 16.11,
+      "last_qty": 1,
+      "query": "køkkenrulle"
     }
   },
   "no_default_yet": {
@@ -981,9 +1046,6 @@
     },
     "pankorasp": {
       "reason": "ikke nødvendig når fiskekagerne købes færdige - fjern fra opskriften"
-    },
-    "agurk": {
-      "reason": "out of stock"
     }
   },
   "usually_in_the_kitchen": {

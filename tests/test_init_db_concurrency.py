@@ -127,3 +127,24 @@ def test_init_db_is_idempotent(tmp_path, monkeypatch):
 
     models.init_db()
     models.init_db()
+
+
+def test_quantity_migration_protects_preexisting_user_values(tmp_path):
+    """Rows saved before qty_manual existed must be treated as user-owned."""
+    import src.models as models
+
+    database = tmp_path / "old-order.db"
+    engine = models.create_engine(f"sqlite:///{database}")
+    with engine.begin() as connection:
+        connection.exec_driver_sql(
+            "create table nemligorderitem (id integer primary key, ingredient varchar not null)"
+        )
+        connection.exec_driver_sql(
+            "insert into nemligorderitem(id, ingredient) values (1, 'mælk')"
+        )
+        models.add_missing_columns(connection)
+        protected = connection.exec_driver_sql(
+            "select qty_manual from nemligorderitem where id=1"
+        ).scalar_one()
+
+    assert protected == 1

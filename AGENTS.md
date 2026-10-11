@@ -14,7 +14,14 @@ Operational notes for agents:
 
 ## Grocery ordering (nemlig.com)
 
-**The app's Order screen is the tool now**, not the skill's scripts. The
+**Use `uv run python scripts/order_latest.py` for a kitchen-run order.** It is
+the single entry point: it snapshots the real valhalla database safely, chooses
+the newest run, performs fresh searches, opens the app's Order screen, and syncs
+the recorded order back. Do not manually copy databases, parse a shopping PDF,
+create a temporary run, or launch the skill's standalone picker when a kitchen
+run exists.
+
+**The app's Order screen is the picker**, not the skill's scripts. The
 `nemlig-shopping` skill at `~/.config/opencode/skills/nemlig-shopping/`
 predates it and drives the same workflow through standalone scripts
 (`prepare.py`, `picker.py`, `basket.py`, `record.py`). Its *judgement* notes are

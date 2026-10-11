@@ -42,6 +42,7 @@ from src.nemlig_tab import (
     add_line as tab_add_line,
     ensure_session as tab_ensure_session,
     read_basket as tab_read_basket,
+    resolve_product_url as tab_resolve_product_url,
     search as tab_search,
 )
 from src.core.orders import (
@@ -2057,6 +2058,7 @@ def serialise_order_item(item: NemligOrderItem) -> Dict[str, Any]:
         "product_id": item.product_id,
         "product": item.product,
         "qty": item.qty,
+        "qty_manual": item.qty_manual,
         "note": item.note,
         "url": item.url,
         "shortfall": shortfall,
@@ -2075,6 +2077,7 @@ def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[st
                 "ingredient": item.ingredient,
                 "need": item.need,
                 "qty": item.qty,
+                "qty_manual": item.qty_manual,
             }
             for item in items
         ]
@@ -2131,6 +2134,50 @@ def create_order():
         if order is None:
             return jsonify({"error": "Run not found"}), 404
         return jsonify(serialise_order(order, order_items(order.id, session))), 201
+
+
+@app.route('/api/orders/latest', methods=['POST'])
+def create_latest_order():
+    """Resume or open an order for the newest kitchen run.
+
+    This is the safe entry point for the one-command local ordering bridge. It
+    removes menu-file guessing and refuses to silently order the same completed
+    run twice.
+    """
+    payload = request.get_json(silent=True) or {}
+    allow_recorded = bool(payload.get("allow_recorded"))
+
+    with get_session() as session:
+        run = next(iter(recent_runs(session, limit=1)), None)
+        if run is None:
+            return jsonify({"error": "No kitchen runs exist yet"}), 404
+
+        existing = session.exec(
+            select(NemligOrder)
+            .where(NemligOrder.run_id == run.id)
+            .order_by(NemligOrder.created_at.desc(), NemligOrder.id.desc())
+        ).first()
+        if existing is not None and existing.recorded_at is None:
+            response = serialise_order(existing, order_items(existing.id, session))
+            response["resumed"] = True
+            return jsonify(response)
+        if existing is not None and not allow_recorded:
+            return jsonify({
+                "error": (
+                    f"The latest kitchen run ({run.menu_name}) was already ordered. "
+                    "Start a new kitchen run, or pass allow_recorded deliberately."
+                )
+            }), 409
+
+        order = start_order(
+            run.id,
+            load_product_map(product_map_path()),
+            session,
+            source=run.menu_name,
+        )
+        response = serialise_order(order, order_items(order.id, session))
+        response["resumed"] = False
+        return jsonify(response), 201
 
 
 @app.route('/api/orders/<int:order_id>', methods=['GET'])
@@ -2256,6 +2303,9 @@ def post_order_fill_basket(order_id: int):
 
     merged = merge_add_lines(choices)
     lines = merged["lines"]
+    if merged["unresolved"]:
+        names = ", ".join(row["ingredient"] for row in merged["unresolved"])
+        return jsonify({"error": f"Decide every row before filling the basket: {names}"}), 409
     if not lines:
         return jsonify({"error": "Nothing chosen to buy yet"}), 400
 
@@ -2301,12 +2351,27 @@ def update_order_item(item_id: int):
         if action is not None and action not in ACTIONS:
             return jsonify({"error": f"unknown action {action!r}"}), 400
         fields["action"] = action
-    for key in ("product_id", "qty", "note", "url"):
+    for key in ("product_id", "qty", "qty_manual", "note", "url"):
         if key in payload:
             fields[key] = payload[key]
     if "product" in payload:
         product = payload["product"]
         fields["product"] = adapt_product(product) if product else None
+
+    # A direct link is a first-class choice, not a half-resolved id that needs
+    # an agent to inspect the product page by hand before the basket can work.
+    url = str(payload.get("url") or "").strip()
+    if url and payload.get("action") == "link" and not fields.get("product"):
+        try:
+            resolved = adapt_product(tab_resolve_product_url(url))
+        except BrowserUnavailable as exc:
+            return jsonify({"error": str(exc)}), 503
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+        if not resolved:
+            return jsonify({"error": "That nemlig product is not currently buyable"}), 400
+        fields["product"] = resolved
+        fields["product_id"] = resolved["product_id"]
     if not fields:
         return jsonify({"error": "nothing to update"}), 400
 

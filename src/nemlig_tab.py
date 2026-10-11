@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import time
+from urllib.parse import urlparse
 
 from src.browser import DEFAULT_DEBUG_URL, BrowserUnavailable, evaluate
 
@@ -86,7 +87,11 @@ def search(query: str, *, take: int = 8, debug_url: str = DEFAULT_DEBUG_URL) -> 
       url.searchParams.set('query', %s);
       url.searchParams.set('take', %s);
       url.searchParams.set('skip', '0');
-      const r = await fetch(url, { headers: { Authorization: 'Bearer ' + window.__meTok } });
+      let r = await fetch(url, { headers: { Authorization: 'Bearer ' + window.__meTok } });
+      if (r.status === 401) {
+        window.__meTok = (await (await fetch('/webapi/Token', { credentials: 'include' })).json()).access_token;
+        r = await fetch(url, { headers: { Authorization: 'Bearer ' + window.__meTok } });
+      }
       if (!r.ok) return JSON.stringify({error: 'http-' + r.status});
       const j = await r.json();
       return JSON.stringify({products: j.Products?.Products ?? []});
@@ -96,9 +101,71 @@ def search(query: str, *, take: int = 8, debug_url: str = DEFAULT_DEBUG_URL) -> 
     if result.get("error") == "no-session":
         raise BrowserUnavailable("Nemlig has not searched yet in this tab.")
     if result.get("error"):
-        # A failed single query is not worth aborting the whole run over.
-        return []
+        # Never turn an authentication/API failure into an empty shelf. The
+        # caller would reconstruct stale products from memory and the picker
+        # would look valid while containing no live results at all.
+        raise BrowserUnavailable(
+            f"Nemlig search failed for {query!r} ({result['error']}). "
+            "No choices were changed; try Search again."
+        )
     return result.get("products") or []
+
+
+def resolve_product_url(url: str, *, debug_url: str = DEFAULT_DEBUG_URL) -> dict:
+    """Resolve a pasted nemlig product link without navigating the user's tab."""
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https") or parsed.hostname not in (
+        "nemlig.com",
+        "www.nemlig.com",
+    ):
+        raise ValueError("Paste a nemlig.com product link")
+    if parsed.port not in (None, 443):
+        raise ValueError("Paste a nemlig.com product link")
+
+    # Rebuild rather than fetching the user's literal string: credentials,
+    # fragments and surprising ports have no place in a product lookup.
+    safe_url = f"https://www.nemlig.com{parsed.path or '/'}"
+    if parsed.query:
+        safe_url += f"?{parsed.query}"
+
+    body = """
+      const input = %s;
+      const r = await fetch(input, { credentials: 'include' });
+      if (!r.ok) return JSON.stringify({error: 'http-' + r.status});
+      const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+      let product = null;
+      for (const node of doc.querySelectorAll('script[type="application/ld+json"]')) {
+        try {
+          const parsed = JSON.parse(node.textContent || 'null');
+          const values = Array.isArray(parsed) ? parsed : [parsed];
+          product = values.find(value => value && value['@type'] === 'Product') || product;
+        } catch (_) {}
+      }
+      if (!product) return JSON.stringify({error: 'not-a-product'});
+      const id = new URL(input).pathname.match(/(\\d{5,})\\/?$/)?.[1];
+      if (!id) return JSON.stringify({error: 'missing-product-id'});
+      const offer = Array.isArray(product.offers) ? product.offers[0] : (product.offers || {});
+      return JSON.stringify({product: {
+        Id: id,
+        Name: product.name || '',
+        Description: product.description || '',
+        // JSON-LD prices have been observed to be wrong. The basket is the
+        // authority; keep this unknown rather than persisting a false price.
+        Price: null,
+        PrimaryImage: Array.isArray(product.image) ? product.image[0] : (product.image || ''),
+        Favorite: false,
+        Availability: {
+          IsDeliveryAvailable: true,
+          IsAvailableInStock: !String(offer.availability || '').endsWith('OutOfStock'),
+        },
+      }});
+    """ % json.dumps(safe_url)
+    result = _run(body, debug_url=debug_url)
+    if result.get("error"):
+        raise ValueError(f"Could not resolve that nemlig link ({result['error']})")
+    if not isinstance(result.get("product"), dict):
+        raise ValueError("Could not resolve that nemlig link (invalid product data)")
+    return result["product"]
 
 
 def add_line(product_id: str, qty: int, *, debug_url: str = DEFAULT_DEBUG_URL) -> int:

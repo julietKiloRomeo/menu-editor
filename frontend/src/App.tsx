@@ -263,10 +263,12 @@ function App() {
   const DRAG_MIME = 'application/x-recipe-row'
   const [toasts, setToasts] = useState<Toast[]>([])
   const toastTimeouts = useRef<number[]>([])
+  const nextToastId = useRef(0)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const mediaStreamRef = useRef<MediaStream | null>(null)
+  const imagePreviewUrlRef = useRef<string | null>(null)
   const [dropActive, setDropActive] = useState(false)
 
   const location = useLocation()
@@ -380,8 +382,8 @@ function App() {
     }
   }, [])
 
-    const pushToast = useCallback((kind: ToastKind, message: string) => {
-    const id = Date.now() + Math.floor(Math.random() * 1000)
+  const pushToast = useCallback((kind: ToastKind, message: string) => {
+    const id = ++nextToastId.current
     setToasts((prev) => [...prev, { id, kind, message }])
     const timeout = window.setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id))
@@ -513,14 +515,18 @@ function App() {
   )
 
   useEffect(() => {
+    imagePreviewUrlRef.current = imagePreviewUrl
+  }, [imagePreviewUrl])
+
+  useEffect(() => {
     return () => {
       toastTimeouts.current.forEach((timeout) => window.clearTimeout(timeout))
-      if (imagePreviewUrl) {
-        URL.revokeObjectURL(imagePreviewUrl)
+      if (imagePreviewUrlRef.current) {
+        URL.revokeObjectURL(imagePreviewUrlRef.current)
       }
       stopCamera()
     }
-  }, [imagePreviewUrl, stopCamera])
+  }, [stopCamera])
 
   const loadRecipes = useCallback(async () => {
     setLoading(true)

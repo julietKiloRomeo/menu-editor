@@ -183,12 +183,24 @@ class TestRankCandidates:
     def test_favourites_come_before_strangers(self):
         ranked = rank_candidates(
             [
-                {"product_id": "1", "name": "A", "fav": False},
-                {"product_id": "2", "name": "B", "fav": True},
+                {"product_id": "1", "name": "Havredrik", "fav": False},
+                {"product_id": "2", "name": "Letmælk", "fav": True},
             ],
             previous_id=None,
+            query="mælk",
         )
         assert [c["product_id"] for c in ranked] == ["2", "1"]
+
+    def test_unrelated_favourites_do_not_outrank_relevant_results(self):
+        ranked = rank_candidates(
+            [
+                {"product_id": "1", "name": "Sorte bønner", "fav": False},
+                {"product_id": "2", "name": "Merrild kaffe", "fav": True},
+            ],
+            previous_id=None,
+            query="sorte bønner",
+        )
+        assert [c["product_id"] for c in ranked] == ["1", "2"]
 
     def test_relevance_order_survives_within_each_group(self):
         ranked = rank_candidates(
@@ -567,11 +579,78 @@ def test_parse_pack_ignores_provenance_after_the_slash():
     assert parse_pack("") is None
 
 
+def test_recommend_quantity_combines_rows_before_rounding():
+    from src.core.nemlig import recommend_quantity
+
+    assert recommend_quantity(["2 dl", "1.5 dl"], "0,50 l / Arla") == 1
+    assert recommend_quantity(["250 g", "300 g"], "140 g / cheddar") == 4
+    assert recommend_quantity(["6 stk"], "5 stk. / Hatting") == 2
+    assert recommend_quantity(["2 pakker"], "300 g / 2 pk. / Tulip") == 1
+
+
+def test_recommend_quantity_refuses_incomparable_units():
+    from src.core.nemlig import recommend_quantity
+
+    assert recommend_quantity(["10 stk", "200 g"], "200 g / tomater") is None
+
+
+def test_automatic_merged_quantities_use_the_combined_need():
+    result = merge_add_lines(
+        [
+            {
+                "ingredient": "fløde",
+                "need": "2 dl",
+                "action": "buy",
+                "product_id": "5",
+                "qty": 1,
+                "qty_manual": False,
+                "product": {"name": "Piskefløde", "pack": "0,50 l"},
+            },
+            {
+                "ingredient": "piskefløde",
+                "need": "1.5 dl",
+                "action": "buy",
+                "product_id": "5",
+                "qty": 1,
+                "qty_manual": False,
+                "product": {"name": "Piskefløde", "pack": "0,50 l"},
+            },
+        ]
+    )
+    assert result["lines"][0]["qty"] == 1
+
+
+def test_a_manual_quantity_is_never_recalculated():
+    result = merge_add_lines(
+        [
+            {
+                "ingredient": "fløde",
+                "need": "2 dl",
+                "action": "buy",
+                "product_id": "5",
+                "qty": 2,
+                "qty_manual": True,
+                "product": {"name": "Piskefløde", "pack": "0,50 l"},
+            },
+            {
+                "ingredient": "piskefløde",
+                "need": "1.5 dl",
+                "action": "buy",
+                "product_id": "5",
+                "qty": 1,
+                "qty_manual": False,
+                "product": {"name": "Piskefløde", "pack": "0,50 l"},
+            },
+        ]
+    )
+    assert result["lines"][0]["qty"] == 3
+
+
 def test_find_collisions_reports_two_rows_sharing_one_product():
     from src.core.nemlig import find_collisions
 
-    # fløde and piskefløde both defaulted to the same 0,5 l carton, and
-    # merge_add_lines would have summed them into two cartons silently.
+    # fløde and piskefløde both use the same 0,5 l carton. Their combined need
+    # is only 0,35 l, so the automatic merged quantity is one carton.
     collisions = find_collisions(
         [
             {
@@ -603,7 +682,7 @@ def test_find_collisions_reports_two_rows_sharing_one_product():
 
     assert len(collisions) == 1
     assert collisions[0]["ingredients"] == ["fløde", "piskefløde"]
-    assert collisions[0]["total_qty"] == 2
+    assert collisions[0]["total_qty"] == 1
 
 
 def test_find_collisions_ignores_rows_that_are_not_being_bought():

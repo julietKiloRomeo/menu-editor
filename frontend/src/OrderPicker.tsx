@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 /**
  * The desktop half of the weekly shop: turning a walked list into a nemlig basket.
@@ -42,6 +42,7 @@ type OrderItem = {
   product_id: string | null
   product: Candidate | null
   qty: number
+  qty_manual: boolean
   note: string
   url: string
   shortfall: Shortfall | null
@@ -112,7 +113,7 @@ type Reconciliation = {
 /** Whether the backend can reach a logged-in nemlig tab, and why not if it can't. */
 type BrowserStatus = { reachable: boolean; tab: string | null; detail: string }
 
-type RunSummary = { id: number; menu: string; checked: number; total: number }
+type RunSummary = { id: number; menu: string; created_at: string | null; checked: number; total: number }
 
 type Props = {
   apiBase: string
@@ -168,6 +169,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
   const [browser, setBrowser] = useState<BrowserStatus | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const openedFromUrl = useRef(false)
 
   const call = useCallback(
     async <T,>(path: string, init?: RequestInit): Promise<T> => {
@@ -235,6 +237,48 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
     },
     [call, loadBasket, pushToast],
   )
+
+  useEffect(() => {
+    if (openedFromUrl.current || typeof window === 'undefined') return
+    const raw = new URLSearchParams(window.location.search).get('order')
+    const orderId = Number(raw)
+    if (!Number.isInteger(orderId) || orderId < 1) return
+    openedFromUrl.current = true
+    void openOrder(orderId)
+  }, [openOrder])
+
+  const startLatest = useCallback(async () => {
+    setBusy(true)
+    try {
+      const latest = await call<Order & { resumed: boolean }>('/api/orders/latest', {
+        method: 'POST',
+        body: '{}',
+      })
+      setOrder(latest)
+      setBasket(null)
+      setReconciliation(null)
+      await refreshLists()
+
+      const hasPendingSearch = latest.items.some((item) => !item.action && item.query)
+      if (browser?.reachable && browser.tab && hasPendingSearch) {
+        const searched = await call<{
+          searched: number
+          without_candidates: string[]
+          order: Order
+        }>(`/api/orders/${latest.id}/run-search`, { method: 'POST', body: '{}' })
+        setOrder(searched.order)
+        await loadBasket(latest.id)
+        pushToast('success', `${searched.searched} live searches ready`)
+      } else {
+        pushToast('info', latest.resumed ? 'Resumed the latest order' : 'Started the latest order')
+      }
+    } catch (caught) {
+      pushToast('error', caught instanceof Error ? caught.message : 'Could not start the latest order')
+      void checkBrowser()
+    } finally {
+      setBusy(false)
+    }
+  }, [browser, call, checkBrowser, loadBasket, pushToast, refreshLists])
 
   const startOrder = useCallback(
     async (runId: number) => {
@@ -321,7 +365,10 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
       if (body.failed.length) {
         pushToast('error', `${body.failed.length} lines were refused by nemlig`)
       } else if (body.reconciliation.ok) {
-        pushToast('success', 'Basket filled')
+        await call(`/api/orders/${order.id}/record`, { method: 'POST', body: '{}' })
+        const saved = await call<Order>(`/api/orders/${order.id}`)
+        setOrder(saved)
+        pushToast('success', 'Basket filled and choices saved for next week')
       } else {
         pushToast('info', 'Basket filled, but check the report below')
       }
@@ -364,6 +411,26 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
           and that is what an order starts from.
         </p>
 
+        <div className="mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/10 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-white">Continue the newest kitchen run</p>
+              <p className="mt-1 text-xs text-white/50">
+                Resumes an unfinished order and searches live products immediately.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void startLatest()}
+              className="rounded-full bg-brand-accent px-5 py-2 text-sm font-medium text-brand-dark transition disabled:opacity-40"
+            >
+              {busy ? 'Starting…' : 'Start latest & search'}
+            </button>
+          </div>
+          <BrowserNotice status={browser} onRecheck={() => void checkBrowser()} />
+        </div>
+
         {error && (
           <p className="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
             {error}
@@ -380,7 +447,12 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                 onClick={() => void startOrder(run.id)}
                 className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/10 bg-brand-dark/40 px-4 py-3 text-left transition hover:border-brand-accent/60 disabled:opacity-40"
               >
-                <span className="truncate font-medium text-white">{run.menu}</span>
+                <span className="min-w-0">
+                  <span className="block truncate font-medium text-white">{run.menu}</span>
+                  <span className="block text-xs text-white/40">
+                    {run.created_at ? new Date(run.created_at).toLocaleString() : ''}
+                  </span>
+                </span>
                 <span className="shrink-0 text-xs text-white/50">
                   {run.total - run.checked} to buy · {run.checked} ticked off
                 </span>
@@ -496,7 +568,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
           )}
 
           <p className="mt-2 text-[11px] text-rose-200/60">
-            Quantities are never changed automatically — these are only worth knowing about.
+            Automatic quantities use the combined need. Any quantity you edit is preserved exactly.
           </p>
         </div>
       )}
@@ -580,6 +652,8 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                           <button
                             key={candidate.product_id}
                             type="button"
+                            disabled={candidate.from_memory}
+                            title={candidate.from_memory ? 'Not present in the current live results' : undefined}
                             onClick={() =>
                               void patchItem(item.id, {
                                 action: 'buy',
@@ -590,7 +664,9 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                             className={`flex gap-3 rounded-xl border p-2 text-left transition ${
                               chosen
                                 ? 'border-brand-accent bg-brand-accent/10'
-                                : 'border-white/10 hover:border-white/30'
+                                : candidate.from_memory
+                                  ? 'cursor-not-allowed border-white/10 opacity-45'
+                                  : 'border-white/10 hover:border-white/30'
                             }`}
                           >
                             {candidate.image ? (
@@ -607,7 +683,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                               <span className="flex flex-wrap items-center gap-1">
                                 {candidate.previous && (
                                   <span className="rounded-full bg-brand-accent px-1.5 text-[10px] font-semibold text-brand-dark">
-                                    {candidate.from_memory ? 'last time' : 'last time'}
+                                    {candidate.from_memory ? 'not live' : 'last time'}
                                   </span>
                                 )}
                                 {candidate.fav && !candidate.previous && (
@@ -666,12 +742,11 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                       onBlur={(event) => {
                         const value = event.target.value.trim()
                         if (value === item.url) return
-                        const match = value.match(/(\d{5,})\s*$/)
                         // A pasted link beats every heuristic: nemlig's own
                         // search cannot reach some products at all.
                         void patchItem(item.id, {
                           url: value,
-                          ...(match ? { action: 'link', product_id: match[1] } : {}),
+                          ...(value ? { action: 'link' } : {}),
                         })
                       }}
                       className="min-w-[12rem] flex-1 rounded-lg border border-white/10 bg-brand-dark/60 px-3 py-1 text-xs text-white/80"
@@ -703,7 +778,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
 
           {basket.merged.length > 0 && (
             <p className="mt-2 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3 text-xs text-amber-100">
-              Quantities summed where rows share a product:{' '}
+              Combined quantities where rows share a product:{' '}
               {basket.merged.map((line) => `${line.covers.join(' + ')} → ×${line.qty}`).join('; ')}.
               Posting them separately would leave one pack, not two.
             </p>
@@ -718,11 +793,11 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
             <div className="mt-3 flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                disabled={busy || browser?.reachable === false}
+                disabled={busy || browser?.reachable === false || basket.unresolved.length > 0}
                 onClick={() => void fillBasket()}
                 className="rounded-full bg-brand-accent px-5 py-2 text-sm font-medium text-brand-dark transition disabled:opacity-40"
               >
-                {busy ? 'Filling…' : `Add ${basket.lines.length} lines to the basket`}
+                {busy ? 'Filling…' : `Fill basket & remember ${basket.lines.length} lines`}
               </button>
               <p className="text-xs text-white/50">
                 Then add your own extras and pay on nemlig.com.
@@ -783,21 +858,18 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
         </div>
       )}
 
-      {/* Step 4 -- what the week taught us */}
+      {/* What the week taught us. Writing is tied to a clean basket fill so a
+          half-finished picker cannot be mistaken for a completed order. */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-brand-dark/40 p-4">
-        <h3 className="text-sm font-semibold text-white">3 · Remember this for next week</h3>
+        <h3 className="text-sm font-semibold text-white">3 · Remembered for next week</h3>
         <p className="mt-1 text-xs text-white/50">
-          Writes the chosen products, quantities and notes back into the product map, and adds
-          anything marked “Have it” to the kitchen staples. Keeps one backup.
-          {order.recorded_at && ' Already recorded once.'}
+          {order.recorded_at
+            ? 'Saved after the basket reconciled cleanly.'
+            : 'Nothing is recorded until every chosen line lands in the basket. A clean fill saves products, exact quantities, notes and “Have it” staples automatically.'}
         </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {[
-            { label: 'Preview', dry: true },
-            { label: order.recorded_at ? 'Record again' : 'Record', dry: false },
-          ].map(({ label, dry }) => (
+        {!order.recorded_at && (
+          <div className="mt-3 flex flex-wrap gap-2">
             <button
-              key={label}
               type="button"
               disabled={busy}
               onClick={() => {
@@ -809,7 +881,7 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                   cleared_unresolved: string[]
                 }>(`/api/orders/${order.id}/record`, {
                   method: 'POST',
-                  body: JSON.stringify({ dry_run: dry }),
+                  body: JSON.stringify({ dry_run: true }),
                 })
                   .then((result) => {
                     const parts = [`${result.added} new, ${result.updated} updated`]
@@ -819,22 +891,17 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
                     if (result.cleared_unresolved.length) {
                       parts.push(`resolved: ${result.cleared_unresolved.join(', ')}`)
                     }
-                    pushToast(dry ? 'info' : 'success', `${dry ? 'Would write' : 'Wrote'} — ${parts.join(' · ')}`)
-                    if (!dry) void openOrder(order.id)
+                    pushToast('info', `Would write — ${parts.join(' · ')}`)
                   })
                   .catch((caught) => pushToast('error', caught.message))
                   .finally(() => setBusy(false))
               }}
-              className={`rounded-full px-5 py-2 text-sm font-medium transition disabled:opacity-40 ${
-                dry
-                  ? 'border border-white/15 text-white/70 hover:text-white'
-                  : 'bg-brand-accent text-brand-dark'
-              }`}
+              className="rounded-full border border-white/15 px-5 py-2 text-sm font-medium text-white/70 transition hover:text-white disabled:opacity-40"
             >
-              {label}
+              Preview what will be remembered
             </button>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   )

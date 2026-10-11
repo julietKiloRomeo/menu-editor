@@ -230,6 +230,10 @@ class NemligOrderItem(SQLModel, table=True):
     #: candidate list is later rebuilt from a fresh search
     product: Optional[dict] = Field(default=None, sa_column=Column(JSON))
     qty: int = Field(default=1)
+    #: True only after the user edits the quantity. The database default is
+    #: deliberately true so quantities saved before this flag existed are
+    #: protected during migration. New picker rows explicitly set it false.
+    qty_manual: bool = Field(default=True)
     note: str = Field(default="")
     url: str = Field(default="")
 

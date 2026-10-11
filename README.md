@@ -2,6 +2,20 @@
   uv run python app.py 
 ```
 
+## Order the latest kitchen run
+
+Run the complete local nemlig bridge with one command:
+
+```bash
+uv run python scripts/order_latest.py
+```
+
+It safely snapshots the live WAL-mode database from valhalla, resumes the
+newest unfinished kitchen run, searches live products in the logged-in local
+Chrome tab, and opens the in-app image picker. A clean basket fill records the
+choices, syncs only that completed order back to valhalla, opens the basket,
+and exits. It never copies browser credentials or replaces the live database.
+
 ## React/Tailwind frontend
 
 ```bash

@@ -5,6 +5,35 @@ decided by hand, so the next run can decide less. Append newest at the top.
 
 ---
 
+## Run 42 postmortem — 2026-10-10
+
+The basket was ultimately correct (33 lines, 50 items, 1,012.06 kr), but the
+workflow was not: an agent manually bridged the live and local databases,
+revived the old standalone picker, lost time to an expired cached token, and
+made the user wait while state moved between several temporary files. The app
+already contained most of the finished workflow, but there was no single safe
+entry point that joined valhalla's database to local Chrome.
+
+Changes made from this run:
+
+- `scripts/order_latest.py` is the only kitchen-run entry point. It takes a
+  SQLite backup over SSH (safe for WAL), chooses/resumes the newest run, builds
+  and opens the app picker, searches live products, and syncs the completed
+  order back without replacing the live database.
+- Interrupted picks are kept locally and resumed. A clean fill that could not
+  sync is retried idempotently on the next invocation.
+- Search now refreshes an expired bearer token once and aborts visibly on any
+  remaining API error instead of presenting stale memory as live results.
+- Direct product links resolve inside the logged-in tab immediately.
+- Automatic pack quantities come from this week's need; duplicate rows are
+  calculated from their combined need. User-edited quantities always win,
+  including values saved before the new quantity-origin flag existed.
+- Basket fill is blocked until every row is decided. A clean reconciliation
+  records product memory automatically; the premature manual Record action was
+  removed from the picker.
+
+---
+
 ## Bridge verified live — 2026-09-12, after run 4
 
 The Order screen now drives the browser itself; no snippets, no pasting. Live

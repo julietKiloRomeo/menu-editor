@@ -11,13 +11,16 @@ function mockStream(options?: {
   if (options?.supportContinuous) caps.focusMode = ['continuous']
   if (options?.withFocusDistance) caps.focusDistance = { min: 0, max: 10 }
   const applyConstraints = jest.fn().mockResolvedValue(undefined)
+  const stop = jest.fn()
   const track: any = {
     getCapabilities: jest.fn(() => caps),
     applyConstraints,
+    stop,
   }
   return {
     stream: {
       getVideoTracks: () => [track],
+      getTracks: () => [track],
     } as any as MediaStream,
     track,
   }
@@ -28,7 +31,19 @@ beforeEach(() => {
   ;(navigator as any).mediaDevices = {
     getUserMedia: jest.fn(),
   }
+  Object.defineProperty(HTMLVideoElement.prototype, 'videoWidth', {
+    configurable: true,
+    value: 640,
+  })
+  Object.defineProperty(HTMLVideoElement.prototype, 'videoHeight', {
+    configurable: true,
+    value: 480,
+  })
 })
+
+async function openCameraInput() {
+  fireEvent.click(await screen.findByRole('tab', { name: /camera/i }))
+}
 
 test('starts camera and shows full-screen modal', async () => {
   const { stream, track } = mockStream({ supportContinuous: true })
@@ -40,6 +55,7 @@ test('starts camera and shows full-screen modal', async () => {
     </MemoryRouter>,
   )
 
+  await openCameraInput()
   const startBtn = await screen.findByRole('button', { name: /start camera/i })
   fireEvent.click(startBtn)
 
@@ -75,6 +91,7 @@ test('capture triggers parse and populates form', async () => {
     </MemoryRouter>,
   )
 
+  await openCameraInput()
   fireEvent.click(await screen.findByRole('button', { name: /start camera/i }))
   fireEvent.click(await screen.findByRole('button', { name: /capture photo/i }))
 
@@ -92,7 +109,7 @@ test('shows spinner overlay while processing', async () => {
     ok: true,
     status: 200,
     headers: { get: () => 'application/json' },
-    json: async () => ({ recipe: { navn: 'Spin Test', ingredienser: {}, extras: {} } }),
+    json: () => new Promise(() => {}),
   })
 
   render(
@@ -101,6 +118,7 @@ test('shows spinner overlay while processing', async () => {
     </MemoryRouter>,
   )
 
+  await openCameraInput()
   fireEvent.click(await screen.findByRole('button', { name: /start camera/i }))
   fireEvent.click(await screen.findByRole('button', { name: /capture photo/i }))
 
@@ -118,6 +136,7 @@ test('manual focus slider applies constraints when supported', async () => {
     </MemoryRouter>,
   )
 
+  await openCameraInput()
   fireEvent.click(await screen.findByRole('button', { name: /start camera/i }))
 
   const slider = await screen.findByRole('slider', { name: /focus/i })
@@ -152,12 +171,15 @@ test('preserves ingredient order from parser', async () => {
     </MemoryRouter>,
   )
 
+  await openCameraInput()
   fireEvent.click(await screen.findByRole('button', { name: /start camera/i }))
   fireEvent.click(await screen.findByRole('button', { name: /capture photo/i }))
 
-  const inputs = await screen.findAllByPlaceholderText(/ingredient/i)
-  expect(inputs[0]).toHaveValue('First')
-  expect(inputs[1]).toHaveValue('Second')
+  await waitFor(async () => {
+    const inputs = await screen.findAllByPlaceholderText(/ingredient/i)
+    expect(inputs[0]).toHaveValue('First')
+    expect(inputs[1]).toHaveValue('Second')
+  })
 })
 
 test('adding a new row prepends to top', async () => {
