@@ -9,9 +9,9 @@ ingredienser:
   "fenikkelfr\xF8":
     amount: 0.5
     unit: tsk
-  frisk estragon:
-    amount: 1.0
-    unit: bundt
+  bearnaise essens:
+    amount: 10.0
+    unit: ml
   "guler\xF8dder":
     amount: 3.0
     unit: stk

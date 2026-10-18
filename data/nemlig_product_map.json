@@ -1,6 +1,6 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-10-10 from uge_42_2026.",
-  "_source_menu": "uge_42_2026",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-10-18 from uge_43_2026.",
+  "_source_menu": "uge_43_2026",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
@@ -28,7 +28,7 @@
       "product_id": "5004143",
       "name": "Avocado formodnet",
       "pack": "2 stk.",
-      "price": 20,
+      "price": 22,
       "last_qty": 1
     },
     "bacon": {
@@ -173,10 +173,10 @@
     },
     "citron": {
       "product_id": "5012344",
-      "name": "Citron lille øko.",
+      "name": "Citron øko.",
       "pack": "1 stk.",
       "price": 5,
-      "last_qty": 3,
+      "last_qty": 2,
       "query": "citron"
     },
     "creme fraiche": {
@@ -205,10 +205,10 @@
       "note": "samme vare som 'piskefløde'; 1 + 1 = 2 stk. i uge 42"
     },
     "forårsløg": {
-      "product_id": "5007287",
+      "product_id": "5036009",
       "name": "Forårsløg øko.",
       "pack": "1 bdt.",
-      "price": 18,
+      "price": 14,
       "last_qty": 1,
       "query": "forårsløg"
     },
@@ -380,10 +380,10 @@
       "last_qty": 2
     },
     "hummus": {
-      "product_id": "5600789",
-      "name": "Hummus m. avocado",
-      "pack": "150 g / Sun Salat",
-      "price": 23.95,
+      "product_id": "5603969",
+      "name": "Hummus",
+      "pack": "200 g / Mezete",
+      "price": 31.5,
       "last_qty": 1,
       "query": "hummus"
     },
@@ -421,11 +421,11 @@
     },
     "kartofler": {
       "query": "kartofler",
-      "product_id": "5014541",
+      "product_id": "5029063",
       "name": "Kartofler øko.",
       "pack": "1 kg",
-      "price": 15,
-      "last_qty": 1
+      "price": 18,
+      "last_qty": 2
     },
     "kidney bønner": {
       "product_id": "5602876",
@@ -513,9 +513,9 @@
     },
     "madpakkefrugt": {
       "query": "æbler",
-      "product_id": "5047005",
-      "name": "Æbler Cosmic Crisp",
-      "pack": "4 stk. / ca. 900g",
+      "product_id": "5036549",
+      "name": "Æbler Ingrid Marie øko.",
+      "pack": "1 kg",
       "price": 25,
       "last_qty": 1,
       "note": "Cosmic Crisp sold out; substituted Joya"
@@ -551,7 +551,7 @@
       "product_id": "5058627",
       "name": "Ekstra jomfru olivenolie øko",
       "pack": "0,50 l / koldpresset / Casaneo",
-      "price": 58.12,
+      "price": 49.95,
       "last_qty": 1
     },
     "pak choi": {
@@ -576,7 +576,7 @@
       "name": "Grana Padano",
       "pack": "200 g / Gestus",
       "price": 37.95,
-      "last_qty": 2,
+      "last_qty": 1,
       "query": "parmesan"
     },
     "peberfrugt": {
@@ -614,7 +614,7 @@
     "pinjekerner": {
       "product_id": "5054962",
       "name": "Pinjekerner øko.",
-      "pack": "50 g / Nordthy  ★ købt før",
+      "pack": "50 g / Nordthy",
       "price": 24,
       "last_qty": 2,
       "query": "pinjekerner"
@@ -638,10 +638,10 @@
       "note": "took 1 pack of 5 even though list said 6 stk"
     },
     "porre": {
-      "product_id": "5001631",
-      "name": "Porrer øko.",
-      "pack": "3 stk. / 1 bdt.",
-      "price": 28,
+      "product_id": "2301075",
+      "name": "Porrer i skiver",
+      "pack": "500 g / frost / Frigodan",
+      "price": 19.95,
       "query": "porre",
       "last_qty": 1
     },
@@ -651,7 +651,7 @@
       "pack": "240 g / Danbo / Riberhus",
       "price": 48.5,
       "query": "ost i skiver",
-      "last_qty": 1,
+      "last_qty": 2,
       "note": "valgte ost i skiver (Danbo ML) - listen siger '2 pakker', kun 1 slags valgt"
     },
     "pålæg (leverpostej)": {
@@ -818,14 +818,14 @@
       "pack": "200 g / 3 farver",
       "price": 20,
       "query": "tomater",
-      "last_qty": 2,
+      "last_qty": 1,
       "note": "samme vare som 'blomme tomater'; 2 + 2 = 4 pk. i uge 42"
     },
     "smørresmør": {
-      "product_id": "5068828",
-      "name": "Bakkedal øko.",
-      "pack": "200 g  ★ købt før",
-      "price": 14.95,
+      "product_id": "5057142",
+      "name": "Smørbar original",
+      "pack": "200 g / Kærgården",
+      "price": 0,
       "last_qty": 1,
       "query": "smørresmør",
       "note": "smørbart (Kærgården-typen). Det gammeldags blok-smør er til madlavning/bagning og er en anden vare"
@@ -1032,6 +1032,54 @@
       "price": 16.11,
       "last_qty": 1,
       "query": "køkkenrulle"
+    },
+    "asparges": {
+      "product_id": "5007146",
+      "name": "Asparges grønne",
+      "pack": "250 g",
+      "price": 35,
+      "last_qty": 2,
+      "query": "asparges"
+    },
+    "edamamebønner": {
+      "product_id": "5024911",
+      "name": "Edamame bønner (pillede)",
+      "pack": "350 g / frost / ORIENTAL CHEF",
+      "price": 17.5,
+      "last_qty": 2,
+      "query": "edamamebønner"
+    },
+    "mynte": {
+      "product_id": "5006126",
+      "name": "Mynte",
+      "pack": "50 g",
+      "price": 25,
+      "last_qty": 1,
+      "query": "mynte"
+    },
+    "skalotteløg": {
+      "product_id": "5037916",
+      "name": "Skalotteløg øko.",
+      "pack": "250 g",
+      "price": 18,
+      "last_qty": 1,
+      "query": "skalotteløg"
+    },
+    "tortilla": {
+      "product_id": "5051856",
+      "name": "Tortilla fuldkorn 25 cm",
+      "pack": "6 stk. / 371 g / Santa Maria - Tex Mex",
+      "price": 31.5,
+      "last_qty": 1,
+      "query": "tortilla"
+    },
+    "hytteost": {
+      "product_id": "5068992",
+      "name": "Hytteost 4%",
+      "pack": "450 g / Mammen",
+      "price": 16.95,
+      "last_qty": 1,
+      "query": "hytteost"
     }
   },
   "no_default_yet": {
@@ -1046,6 +1094,9 @@
     },
     "pankorasp": {
       "reason": "ikke nødvendig når fiskekagerne købes færdige - fjern fra opskriften"
+    },
+    "frisk estragon": {
+      "reason": "we actually dont buy this - we buy this instead to make the sauce an easier way: https://www.nemlig.com/bearnaise-essens-5020250 maybe we should change the ingredient list for that recipe"
     }
   },
   "usually_in_the_kitchen": {
@@ -1053,6 +1104,7 @@
     "items": [
       "chiliflager",
       "dijon sennep",
+      "fenikkelfrø",
       "fine gryn",
       "garam masala",
       "grøntsagsbouillon",
