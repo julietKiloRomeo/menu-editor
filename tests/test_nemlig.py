@@ -7,6 +7,7 @@ import pytest
 from src.core.nemlig import (
     adapt_product,
     adapt_search_results,
+    find_note_requests,
     format_need,
     load_product_map,
     merge_add_lines,
@@ -710,3 +711,50 @@ def test_find_collisions_ignores_rows_that_are_not_being_bought():
         )
         == []
     )
+
+
+class TestNoteRequests:
+    """A note is memory, except when it is an instruction for this basket."""
+
+    def test_a_note_with_a_link_is_reported_as_unfulfilled(self):
+        requests = find_note_requests(
+            [
+                {
+                    "ingredient": "madpakkefrugt",
+                    "note": "could you also add 3 of these: "
+                    "https://www.nemlig.com/paere-nashi-5016285 both this time and next time?",
+                }
+            ]
+        )
+
+        assert requests == [
+            {
+                "ingredient": "madpakkefrugt",
+                "note": "could you also add 3 of these: "
+                "https://www.nemlig.com/paere-nashi-5016285 both this time and next time?",
+                "links": ["https://www.nemlig.com/paere-nashi-5016285"],
+                "message": "the note asks for an extra product, which filling the basket "
+                "does not add",
+            }
+        ]
+
+    def test_an_ordinary_note_is_not_a_request(self):
+        """"Danbo, not smoked" is memory, and must not become a warning."""
+        assert find_note_requests(
+            [{"ingredient": "pålæg", "note": "1 cheese and 1 leverpostej"}]
+        ) == []
+
+    def test_two_links_in_one_note_are_both_kept(self):
+        requests = find_note_requests(
+            [
+                {
+                    "ingredient": "pålæg",
+                    "note": "also add https://www.nemlig.com/a-1 and https://www.nemlig.com/b-2",
+                }
+            ]
+        )
+
+        assert requests[0]["links"] == [
+            "https://www.nemlig.com/a-1",
+            "https://www.nemlig.com/b-2",
+        ]

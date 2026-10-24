@@ -705,6 +705,41 @@ def find_collisions(choices: Sequence[Mapping]) -> list[dict]:
     return collisions
 
 
+#: Anything that looks like a product link. Notes are free text written by a
+#: human, so this stays deliberately loose.
+_NOTE_LINK = re.compile(r"https?://\S+", re.IGNORECASE)
+
+
+def find_note_requests(choices: Sequence[Mapping]) -> list[dict]:
+    """Notes that ask for something the basket will not contain.
+
+    A note is memory for the next run, and that is right for "Danbo, not
+    smoked". It is wrong for "also add 3 of these: <link>": that is an
+    instruction for *this* basket, and the fill reads chosen products only. On
+    run 44 two such notes were written, the order was recorded, and the pears
+    and the leverpostej never arrived -- nobody noticed until the basket was
+    already empty of them.
+    """
+    requests = []
+    for choice in choices:
+        note = str(choice.get("note") or "")
+        links = _NOTE_LINK.findall(note)
+        if not links:
+            continue
+        requests.append(
+            {
+                "ingredient": choice.get("ingredient", ""),
+                "note": note,
+                "links": links,
+                "message": (
+                    "the note asks for an extra product, which filling the "
+                    "basket does not add"
+                ),
+            }
+        )
+    return requests
+
+
 def reconcile_basket(add_lines: Sequence[Mapping], basket: Mapping) -> dict:
     """Compare what we asked for against what the basket actually holds.
 

@@ -33,6 +33,36 @@ NEMLIG_TAB = {
 }
 
 
+class TestOpeningALink:
+    def test_it_opens_where_the_session_is_not_in_the_default_browser(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(
+            browser.httpx,
+            "put",
+            lambda url, **kwargs: calls.append(url) or FakeResponse({}),
+        )
+
+        browser.open_url("https://www.nemlig.com/basket")
+
+        assert calls == ["http://127.0.0.1:9222/json/new?https://www.nemlig.com/basket"]
+
+    def test_it_falls_back_to_navigating_the_open_tab(self, monkeypatch):
+        def refuse(*args, **kwargs):
+            raise httpx.HTTPStatusError("no", request=None, response=None)
+
+        evaluated = []
+        monkeypatch.setattr(browser.httpx, "put", refuse)
+        monkeypatch.setattr(browser.httpx, "get", lambda *a, **k: FakeResponse([NEMLIG_TAB]))
+        monkeypatch.setattr(
+            browser, "evaluate", lambda expression, **kwargs: evaluated.append(expression)
+        )
+
+        browser.open_url("https://www.nemlig.com/basket")
+
+        assert evaluated and "location.assign" in evaluated[0]
+        assert "https://www.nemlig.com/basket" in evaluated[0]
+
+
 class TestFindingTheTab:
     def test_it_finds_the_nemlig_tab_among_others(self, monkeypatch):
         monkeypatch.setattr(browser.httpx, "get", lambda *a, **k: FakeResponse([

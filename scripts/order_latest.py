@@ -28,8 +28,12 @@ import webbrowser
 
 import httpx
 
-
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.browser import BrowserUnavailable, open_url  # noqa: E402
+
 WORK = pathlib.Path("/tmp/opencode/menu-editor")
 STATE = WORK / "nemlig-order-state.json"
 DEFAULT_HOST = "valhalla"
@@ -136,13 +140,40 @@ def scp(source: str, destination: str) -> None:
     )
 
 
+def clear_database(path: pathlib.Path) -> None:
+    """Remove a database together with the log files that belonged to it.
+
+    The app leaves ``-wal``/``-shm`` behind. Dropping a fresh snapshot next to
+    an old log is not half-usable: sqlite reads the stale frames against the
+    new file and calls the whole image malformed, which looks like a corrupt
+    live database when it is only a leftover.
+    """
+    for suffix in ("", "-wal", "-shm"):
+        pathlib.Path(f"{path}{suffix}").unlink(missing_ok=True)
+
+
+def verify_database(path: pathlib.Path) -> None:
+    """Refuse a snapshot sqlite cannot read, instead of failing later as 'malformed'."""
+    try:
+        connection = sqlite3.connect(path, timeout=5)
+        try:
+            verdict = connection.execute("pragma integrity_check").fetchone()
+        finally:
+            connection.close()
+    except sqlite3.Error as exc:
+        raise RuntimeError(f"The copied kitchen database is unreadable: {path}") from exc
+    if not verdict or verdict[0] != "ok":
+        raise RuntimeError(f"The copied kitchen database is unreadable: {path}")
+
+
 def snapshot_live_database(host: str, remote_db: str, local_db: pathlib.Path) -> None:
     WORK.mkdir(parents=True, exist_ok=True)
     remote_copy = f"/tmp/menu-editor-order-{os.getpid()}.db"
     try:
         ssh(host, "python3", "-", remote_db, remote_copy, input_text=REMOTE_BACKUP)
-        local_db.unlink(missing_ok=True)
+        clear_database(local_db)
         scp(f"{host}:{remote_copy}", str(local_db))
+        verify_database(local_db)
     finally:
         try:
             ssh(host, "rm", "-f", remote_copy)
@@ -183,6 +214,14 @@ def sync_completed_order(
             ssh(host, "rm", "-f", remote_copy)
         except subprocess.CalledProcessError:
             pass
+
+
+def show_in_attached_browser(url: str) -> None:
+    """Open a nemlig page where the session is, not in the desktop default."""
+    try:
+        open_url(url)
+    except (BrowserUnavailable, httpx.HTTPError):
+        webbrowser.open(url)
 
 
 def wait_for_app(base: str, server: subprocess.Popen, timeout: float = 30) -> dict:
@@ -321,7 +360,7 @@ def run(args: argparse.Namespace) -> int:
                 flush=True,
             )
             if not args.no_open:
-                webbrowser.open("https://www.nemlig.com/basket")
+                show_in_attached_browser("https://www.nemlig.com/basket")
             return 0
 
         if saved:
@@ -336,6 +375,7 @@ def run(args: argparse.Namespace) -> int:
                     "or rerun with --discard-unfinished."
                 )
             else:
+                clear_database(local_db)
                 incoming_db.replace(local_db)
                 STATE.unlink(missing_ok=True)
         else:
@@ -376,8 +416,13 @@ def run(args: argparse.Namespace) -> int:
         browser = api("GET", f"{base}/api/browser/status")
         if not (browser.get("reachable") and browser.get("tab")):
             if not args.no_open:
-                webbrowser.open("https://www.nemlig.com/")
-            print(browser.get("detail") or "Open nemlig.com in logged-in Chrome.", flush=True)
+                show_in_attached_browser("https://www.nemlig.com/")
+            detail = browser.get("detail") or "Open nemlig.com in logged-in Chrome."
+            if not sys.stdin.isatty():
+                # Nothing can answer a prompt in a pipe or a background job, and
+                # an EOF traceback makes a fixable setup problem look like a bug.
+                raise RuntimeError(detail)
+            print(detail, flush=True)
             input("Log in yourself, then press Enter to continue: ")
 
         pending = api("GET", f"{base}/api/orders/{order['id']}/queries")["queries"]
@@ -412,7 +457,7 @@ def run(args: argparse.Namespace) -> int:
                     flush=True,
                 )
                 if not args.no_open:
-                    webbrowser.open("https://www.nemlig.com/basket")
+                    show_in_attached_browser("https://www.nemlig.com/basket")
                 return 0
             time.sleep(1)
         raise RuntimeError(f"The local app stopped. See {log_path}")

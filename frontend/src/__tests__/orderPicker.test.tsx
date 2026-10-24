@@ -46,6 +46,7 @@ const order = {
   total: 1,
   items: [item],
   collisions: [],
+  note_requests: [],
   shortfalls: [],
 }
 
@@ -123,4 +124,35 @@ test('a clean basket fill records the order automatically', async () => {
       expect.objectContaining({ method: 'POST' }),
     )
   })
+})
+
+test('a note asking for an extra product is shown before the basket is filled', async () => {
+  window.history.replaceState({}, '', '/order?order=9')
+  const withNote = {
+    ...order,
+    note_requests: [
+      {
+        ingredient: 'madpakkefrugt',
+        note: 'could you also add 3 of these: https://www.nemlig.com/paere-nashi-5016285',
+        links: ['https://www.nemlig.com/paere-nashi-5016285'],
+        message: 'the note asks for an extra product, which filling the basket does not add',
+      },
+    ],
+  }
+  const fetchMock = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    if (url.endsWith('/api/orders') && !init?.method) return response({ orders: [withNote] })
+    if (url.endsWith('/api/runs')) return response({ runs: [] })
+    if (url.endsWith('/api/browser/status')) return response({ reachable: true, tab: 'https://www.nemlig.com/', detail: '' })
+    if (url.endsWith('/api/orders/9') && !init?.method) return response(withNote)
+    if (url.endsWith('/api/orders/9/basket')) return response(basket)
+    throw new Error(`Unexpected request: ${init?.method || 'GET'} ${url}`)
+  })
+  global.fetch = fetchMock
+
+  render(<OrderPicker apiBase="" pushToast={jest.fn()} />)
+
+  const warning = await screen.findByTestId('note-requests')
+  expect(warning).toHaveTextContent('madpakkefrugt')
+  expect(screen.getByRole('link', { name: 'https://www.nemlig.com/paere-nashi-5016285' })).toBeInTheDocument()
 })

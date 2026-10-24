@@ -72,6 +72,40 @@ def test_corrupt_state_is_ignored(tmp_path, monkeypatch):
     assert order_latest.read_state() is None
 
 
+def test_clearing_a_database_takes_its_stale_log_with_it(tmp_path):
+    database = tmp_path / "order.db"
+    make_database(database)
+    (tmp_path / "order.db-wal").write_bytes(b"stale frames")
+    (tmp_path / "order.db-shm").write_bytes(b"stale index")
+
+    order_latest.clear_database(database)
+
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_a_snapshot_sqlite_cannot_read_is_refused(tmp_path):
+    database = tmp_path / "order.db"
+    make_database(database)
+    # A copy cut short reads like a corrupt image, which is what a partial
+    # transfer over ssh produces.
+    with database.open("r+b") as handle:
+        handle.truncate(database.stat().st_size // 2)
+
+    try:
+        order_latest.verify_database(database)
+    except RuntimeError as exc:
+        assert "unreadable" in str(exc)
+    else:  # pragma: no cover - the truncation above must be detected
+        raise AssertionError("a truncated snapshot was accepted")
+
+
+def test_a_readable_snapshot_passes_verification(tmp_path):
+    database = tmp_path / "order.db"
+    make_database(database)
+
+    order_latest.verify_database(database)
+
+
 def test_remote_sync_replaces_only_the_matching_unfinished_order(tmp_path):
     live_path = tmp_path / "live.db"
     snapshot_path = tmp_path / "snapshot.db"

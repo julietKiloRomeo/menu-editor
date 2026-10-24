@@ -5,6 +5,45 @@ decided by hand, so the next run can decide less. Append newest at the top.
 
 ---
 
+## Run 44 postmortem — 2026-10-24
+
+Basket ended correct (32 lines, 41 products, 767,05 kr), but three things cost
+time and one would have gone unnoticed without a diff:
+
+- **"Where is today's list?" had no answer.** The walk lives in the live
+  database; the newest PDF in `~/Downloads` was five weeks old. Finding run 9
+  meant checking file mtimes, then copying a WAL-mode database over SSH by hand
+  — the exact thing the ordering command exists to do safely.
+- **A stale `-wal` next to a fresh snapshot read as data loss.** The first
+  `order_latest.py` run died with `database disk image is malformed` because
+  only the `.db` was unlinked; an 18 Oct `-wal`/`-shm` stayed behind and sqlite
+  applied it to the new file. The live database was never damaged.
+- **The basket was opened in the wrong browser.** The script ended with
+  `webbrowser.open`, which uses the desktop default: Firefox on loke, with no
+  nemlig session. The fill had worked; the user was looking at an empty basket
+  in a logged-out browser.
+- **Two "also add … \<link\>" notes were written and never acted on.** Notes are
+  memory for the next run, and the fill only reads chosen products, so the nashi
+  pears and the leverpostej were politely recorded and silently skipped. They
+  were found by diffing the product map after the fact.
+
+Changes made from this run:
+
+- `scripts/latest_run.py` answers "what did I just walk?" read-only, using the
+  same WAL-safe backup: newest run, ticks, order state, and what is left by zone.
+- Snapshots now clear `-wal`/`-shm` alongside the database and are verified with
+  `integrity_check` before the app is pointed at them, so a bad copy fails
+  loudly instead of as "malformed".
+- `src/browser.open_url()` opens nemlig pages in the attached Chrome; the basket
+  and login links use it. The local picker URL still uses the desktop default.
+- `find_note_requests()` surfaces notes containing links in the Order screen's
+  "worth a second look" box, so an unfulfillable request is visible before the
+  basket is filled rather than after.
+- The login prompt is skipped when stdin is not a terminal, so a background run
+  reports the setup problem instead of an EOF traceback.
+
+---
+
 ## Run 42 postmortem — 2026-10-10
 
 The basket was ultimately correct (33 lines, 50 items, 1,012.06 kr), but the

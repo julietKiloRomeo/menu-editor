@@ -69,6 +69,14 @@ type Collision = {
   message: string
 }
 
+/** A note that asks for an extra product, which filling the basket ignores. */
+type NoteRequest = {
+  ingredient: string
+  note: string
+  links: string[]
+  message: string
+}
+
 type Order = {
   id: number
   run_id: number | null
@@ -79,6 +87,7 @@ type Order = {
   total: number
   items: OrderItem[]
   collisions: Collision[]
+  note_requests: NoteRequest[]
   shortfalls: Array<{ ingredient: string } & Shortfall>
 }
 
@@ -535,15 +544,41 @@ export default function OrderPicker({ apiBase, pushToast }: Props) {
 
       {/* Anything that will quietly go wrong at delivery, surfaced before the
           basket is filled rather than discovered a week later. */}
-      {(order.shortfalls.length > 0 || order.collisions.length > 0) && (
+      {(order.shortfalls.length > 0 ||
+        order.collisions.length > 0 ||
+        order.note_requests.length > 0) && (
         <div
           className="mb-5 rounded-2xl border border-rose-400/30 bg-rose-500/10 p-4"
           data-testid="order-warnings"
         >
           <p className="text-sm font-semibold text-rose-200">
-            {order.shortfalls.length + order.collisions.length} thing
-            {order.shortfalls.length + order.collisions.length === 1 ? '' : 's'} worth a second look
+            {order.shortfalls.length + order.collisions.length + order.note_requests.length} thing
+            {order.shortfalls.length + order.collisions.length + order.note_requests.length === 1
+              ? ''
+              : 's'}{' '}
+            worth a second look
           </p>
+
+          {order.note_requests.length > 0 && (
+            <ul className="mt-2 space-y-1" data-testid="note-requests">
+              {order.note_requests.map((request) => (
+                <li key={request.ingredient} className="text-xs text-rose-100/90">
+                  <span className="font-medium">{request.ingredient}</span> — {request.message}:{' '}
+                  {request.links.map((link) => (
+                    <a
+                      key={link}
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline decoration-rose-300/50 hover:text-white"
+                    >
+                      {link}
+                    </a>
+                  ))}
+                </li>
+              ))}
+            </ul>
+          )}
 
           {order.collisions.length > 0 && (
             <ul className="mt-2 space-y-1">

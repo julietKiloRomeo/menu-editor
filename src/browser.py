@@ -105,6 +105,27 @@ def status(debug_url: str = DEFAULT_DEBUG_URL) -> dict:
     return {"reachable": True, "tab": tab.get("url"), "detail": ""}
 
 
+def open_url(url: str, *, debug_url: str = DEFAULT_DEBUG_URL) -> None:
+    """Show ``url`` in the browser this bridge is attached to.
+
+    ``webbrowser.open`` is *not* this: it hands the URL to the desktop default,
+    which is regularly a different browser with no nemlig session. The user
+    then lands on a logged-out, empty basket and concludes the fill failed --
+    when the basket they wanted is sitting in the other window.
+    """
+    try:
+        response = httpx.put(f"{debug_url}/json/new?{url}", timeout=5.0)
+        response.raise_for_status()
+        return
+    except httpx.HTTPError:
+        pass  # older Chrome wants a different shape; fall back to the open tab
+
+    tab = find_tab(debug_url)
+    if tab is None:
+        raise BrowserUnavailable(status(debug_url)["detail"])
+    evaluate(f"location.assign({json.dumps(url)}); true", debug_url=debug_url)
+
+
 def evaluate(expression: str, *, debug_url: str = DEFAULT_DEBUG_URL) -> Any:
     """Run one short piece of JavaScript in the nemlig tab and return its value.
 

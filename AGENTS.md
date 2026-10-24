@@ -28,6 +28,19 @@ predates it and drives the same workflow through standalone scripts
 still the best writeup of why each step exists — read `SKILL.md` for that — but
 the mechanics now live in `app.py` and `src/core/nemlig.py`.
 
+**"The walk" is the run, not a document.** The user walks the list on their
+phone: ticking off what the house already has, in the app. That lives in
+`shoppingrun`/`shoppingrunitem` on valhalla. When they say they just walked the
+list, they mean the newest run — do not go looking for a PDF:
+
+```bash
+uv run python scripts/latest_run.py   # newest run, ticks, what is left, by zone
+```
+
+It takes the same WAL-safe backup the ordering command uses and writes nothing
+back. It is read-only on purpose: it answers "where is today's list?" without
+starting an order or touching the live database.
+
 Note the skill may not appear in the skills list. Descriptions over roughly
 500 characters seem not to load (every skill at <= 319 chars loads; the two at
 >= 587 do not), which fails silently — the skill looks absent rather than
@@ -51,11 +64,24 @@ Prerequisites, in order — the whole workflow is blocked without them:
   defaults, quantities, preference notes, likely-stocked staples, and unresolved
   items. `POST /api/orders/<id>/record` folds a finished order back into it and
   takes a `.bak` first.
-- Weekly menus and lists are **not** kept in this repo. They land in
-  `~/Downloads/` as `shopping-<N>.pdf` (image-based, so `pdftotext` returns
-  nothing — render with `pdftoppm` and read the pages) and sometimes
-  `menu-<YYYY-MM-DD>.md`. The `<N>` is the user's own counter, not the ISO week.
-  A run can also be built in the app directly via `POST /api/runs`.
+- **The basket lives in the Chrome on port 9222, not in the desktop's default
+  browser.** This machine defaults to Firefox, which has no nemlig session, so
+  a basket URL opened the ordinary way shows an empty basket and reads as a
+  failed fill. `src/browser.open_url()` opens a page in the attached browser;
+  use it (or `scripts/order_latest.py`, which does) instead of
+  `webbrowser.open` for anything on nemlig.com. The local `127.0.0.1` picker URL
+  may use the default browser — it is local.
+- A note on an order row is **memory for next time**, and filling the basket
+  never acts on it. "also add 3 of these: \<link\>" is therefore an instruction
+  that only a human can carry out; the Order screen lists such notes under
+  "worth a second look" (`find_note_requests`) so they are not lost. Add the
+  products to the basket yourself when the user asked for them.
+- Weekly menus and lists are **not** kept in this repo, and the PDF habit is
+  historical: `~/Downloads/shopping-<N>.pdf` (image-based, so `pdftotext`
+  returns nothing — render with `pdftoppm` and read the pages) and
+  `menu-<YYYY-MM-DD>.md` exist for older weeks only. The `<N>` is the user's own
+  counter, not the ISO week. A run can also be built in the app directly via
+  `POST /api/runs`.
 
 Known data discrepancies, so they are not mistaken for bugs:
 
@@ -112,5 +138,6 @@ bun --cwd frontend run test
 
 - `gh` (GitHub CLI) for issue workflows.
 - `podman` to run the trufflehog secrets scan.
-- `uv` for Python dependency management and running `ruff`.
+- `uv` for Python dependency management, and `uvx ruff` for linting — `ruff` is
+  not in this project's environment, so `uv run ruff` fails.
 - `node` + `npm` for frontend lint/test tasks.

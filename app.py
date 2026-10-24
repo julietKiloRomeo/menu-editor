@@ -30,6 +30,7 @@ from src.core.nemlig import (
     adapt_search_results,
     check_coverage,
     find_collisions,
+    find_note_requests,
     load_product_map,
     merge_add_lines,
     reconcile_basket,
@@ -2068,20 +2069,20 @@ def serialise_order_item(item: NemligOrderItem) -> Dict[str, Any]:
 def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[str, Any]:
     decided, total = order_progress(items)
     payload = [serialise_order_item(item) for item in items]
-    collisions = find_collisions(
-        [
-            {
-                "action": item.action,
-                "product_id": item.product_id,
-                "product": item.product,
-                "ingredient": item.ingredient,
-                "need": item.need,
-                "qty": item.qty,
-                "qty_manual": item.qty_manual,
-            }
-            for item in items
-        ]
-    )
+    choices = [
+        {
+            "action": item.action,
+            "product_id": item.product_id,
+            "product": item.product,
+            "ingredient": item.ingredient,
+            "need": item.need,
+            "qty": item.qty,
+            "qty_manual": item.qty_manual,
+            "note": item.note,
+        }
+        for item in items
+    ]
+    collisions = find_collisions(choices)
     return {
         "id": order.id,
         "run_id": order.run_id,
@@ -2092,6 +2093,7 @@ def serialise_order(order: NemligOrder, items: List[NemligOrderItem]) -> Dict[st
         "total": total,
         "items": payload,
         "collisions": collisions,
+        "note_requests": find_note_requests(choices),
         "shortfalls": [
             {"ingredient": row["ingredient"], **row["shortfall"]}
             for row in payload
