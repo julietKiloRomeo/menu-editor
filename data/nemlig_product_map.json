@@ -1,6 +1,6 @@
 {
-  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-10-18 from uge_43_2026.",
-  "_source_menu": "uge_43_2026",
+  "_comment": "Learned ingredient -> nemlig.com product defaults. Updated 2026-10-24 from uge_44_2026(3).",
+  "_source_menu": "uge_44_2026(3)",
   "_api": {
     "search": "GET https://webapi.prod.knl.nemlig.it/searchgateway/api/search?query=&take=&skip=&recipeCount=0&timeslotUtc=&deliveryZoneId=",
     "search_auth": "Bearer token from same-origin GET https://www.nemlig.com/webapi/Token (expires; refresh on 401)",
@@ -84,7 +84,7 @@
     "bredbladet persille": {
       "product_id": "5003207",
       "name": "Persille bredbladet",
-      "pack": "180 g  ★ købt før",
+      "pack": "180 g",
       "price": 25,
       "last_qty": 1,
       "query": "bredbladet persille"
@@ -241,8 +241,8 @@
       "product_id": "5066908",
       "name": "Mozzarella Fior di Latte øko.",
       "pack": "100 g",
-      "price": 17.95,
-      "last_qty": 1,
+      "price": 15,
+      "last_qty": 2,
       "query": "mozzarella",
       "note": "recipes also spell this \"frisk mozarella\"; aliased to this key 2026-09-27"
     },
@@ -331,10 +331,10 @@
     },
     "hakkede tomater": {
       "query": "hakkede tomater",
-      "product_id": "5054625",
+      "product_id": "5602152",
       "name": "Hakkede tomater øko.",
-      "pack": "400 g / Rodolfi",
-      "price": 18.95,
+      "pack": "400 g / Taste of Nature",
+      "price": 6.91,
       "last_qty": 2,
       "note": "Taste of Nature (5602152) var udsolgt 29/08 - Rodolfi er erstatningen og en favorit"
     },
@@ -425,7 +425,7 @@
       "name": "Kartofler øko.",
       "pack": "1 kg",
       "price": 18,
-      "last_qty": 2
+      "last_qty": 1
     },
     "kidney bønner": {
       "product_id": "5602876",
@@ -513,12 +513,12 @@
     },
     "madpakkefrugt": {
       "query": "æbler",
-      "product_id": "5036549",
-      "name": "Æbler Ingrid Marie øko.",
-      "pack": "1 kg",
+      "product_id": "5047005",
+      "name": "Æbler Cosmic Crisp",
+      "pack": "4 stk. / ca. 900g",
       "price": 25,
       "last_qty": 1,
-      "note": "Cosmic Crisp sold out; substituted Joya"
+      "note": "could you also add 3 of these: https://www.nemlig.com/paere-nashi-5016285 both this time and next time?"
     },
     "majs": {
       "product_id": "5058689",
@@ -651,8 +651,8 @@
       "pack": "240 g / Danbo / Riberhus",
       "price": 48.5,
       "query": "ost i skiver",
-      "last_qty": 2,
-      "note": "valgte ost i skiver (Danbo ML) - listen siger '2 pakker', kun 1 slags valgt"
+      "last_qty": 1,
+      "note": "also add 1 of these: https://www.nemlig.com/grovhakket-leverpostej-5601624 and also do that in the future. 1 cheese and 1 leverpostej"
     },
     "pålæg (leverpostej)": {
       "product_id": "5601624",
@@ -750,8 +750,8 @@
     "rucola": {
       "product_id": "5021835",
       "name": "Rucola øko.",
-      "pack": "100 g / Skyllet og klar til brug  ★ købt før",
-      "price": 18,
+      "pack": "100 g / Skyllet og klar til brug",
+      "price": 20,
       "last_qty": 1,
       "query": "rucola"
     },
@@ -797,10 +797,10 @@
       "query": "rødspættefilet"
     },
     "salat": {
-      "product_id": "5004900",
-      "name": "Hjertesalat øko.",
-      "pack": "2 stk.",
-      "price": 15,
+      "product_id": "5004705",
+      "name": "Iceberg salat",
+      "pack": "1 stk. / Spanien / Klasse 1",
+      "price": 13,
       "last_qty": 1,
       "query": "salat"
     },
@@ -1080,6 +1080,62 @@
       "price": 16.95,
       "last_qty": 1,
       "query": "hytteost"
+    },
+    "frisk salvie": {
+      "product_id": "5004605",
+      "name": "Salvie øko.",
+      "pack": "20 g",
+      "price": 0,
+      "last_qty": 1,
+      "query": "frisk salvie"
+    },
+    "mango": {
+      "product_id": "5061033",
+      "name": "Mango stor formodnet",
+      "pack": "1 stk.",
+      "price": 30,
+      "last_qty": 1,
+      "query": "mango"
+    },
+    "søde kartofler": {
+      "product_id": "5005971",
+      "name": "Søde kartofler øko.",
+      "pack": "500 g",
+      "price": 20,
+      "last_qty": 1,
+      "query": "søde kartofler"
+    },
+    "mandler": {
+      "product_id": "5045235",
+      "name": "Mandler",
+      "pack": "200 g / Nordthy",
+      "price": 19.75,
+      "last_qty": 1,
+      "query": "mandler"
+    },
+    "købe naan": {
+      "product_id": "5066140",
+      "name": "Naanbrød m. hvidløg",
+      "pack": "2 stk. / 160 g / frost / Bread of the World",
+      "price": 22.32,
+      "last_qty": 1,
+      "query": "købe naan"
+    },
+    "pizzadej": {
+      "product_id": "5061474",
+      "name": "Pizzadej",
+      "pack": "275 g / frost / Miss Bagel",
+      "price": 9.95,
+      "last_qty": 2,
+      "query": "pizzadej"
+    },
+    "yoghurt naturelle": {
+      "product_id": "5065677",
+      "name": "Yoghurt naturel 3,5% øko.",
+      "pack": "150 g / Naturmælk",
+      "price": 7.95,
+      "last_qty": 1,
+      "query": "yoghurt naturelle"
     }
   },
   "no_default_yet": {
@@ -1102,6 +1158,7 @@
   "usually_in_the_kitchen": {
     "_comment": "Toggled off by hand on 2026-08-22 while checking cupboards. Treat as 'likely have', still show, default unchecked.",
     "items": [
+      "balsamico",
       "chiliflager",
       "dijon sennep",
       "fenikkelfrø",
