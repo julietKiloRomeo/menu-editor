@@ -296,11 +296,6 @@ function App() {
   }, [location.pathname])
 
   const goToView = useCallback((next: View) => {
-    // React Router defers the view change in a transition, so an effect keyed
-    // on `view` would clear a pending auto-print while this navigation was
-    // still settling. Clear it here instead, on the intent to leave the
-    // shopping view (the print actions call goToView('shopping') themselves).
-    if (next !== 'shopping') setAutoPrintPending(false)
     switch (next) {
       case 'planner':
         navigate('/')
@@ -1754,6 +1749,15 @@ function App() {
     })
     return () => window.cancelAnimationFrame(id)
   }, [autoPrintPending, view, menuPreview, exporting])
+
+  // If the view actually changes away from shopping before the preview is
+  // ready, drop the pending auto-print. Deliberately not keyed on
+  // autoPrintPending: React Router defers navigation in a transition, so
+  // setting the flag would otherwise re-run this against the stale view and
+  // clear the request before /shopping commits.
+  useEffect(() => {
+    if (view !== 'shopping') setAutoPrintPending(false)
+  }, [view])
 
   const handleDownloadMarkdown = useCallback(() => {
     if (!menuMarkdown) return
