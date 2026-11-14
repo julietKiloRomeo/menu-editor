@@ -1894,6 +1894,35 @@ def list_menus():
     )
 
 
+@app.route('/api/menus/<name>/render', methods=['GET'])
+def render_saved_menu(name: str):
+    """Render a saved menu as the printable markdown the app already knows.
+
+    Printing used to be reachable only by re-picking every recipe on the Plan
+    tab. This lets the Shop screen print a menu file as it is, without creating
+    another menu file as a side effect.
+    """
+    menu_path = menu_path_for(name)
+    if menu_path is None:
+        return jsonify({"error": "Menu not found"}), 404
+
+    try:
+        aggregated = parser.aggregate_menu_file(
+            menu_path, silent_sections={get_staple_label()}
+        )
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    menu_text = MenuText()
+    render_markdown(aggregated, printer=menu_text.add)
+    return jsonify(
+        {
+            "markdown": str(menu_text),
+            "export": menu_export(aggregated, name=menu_path.stem),
+        }
+    )
+
+
 @app.route('/api/runs', methods=['GET'])
 def list_runs():
     """Runs available to walk or resume, newest first."""

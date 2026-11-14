@@ -202,6 +202,10 @@ function App() {
   const [menuPreview, setMenuPreview] = useState<MenuPreview | null>(null)
   const [exporting, setExporting] = useState(false)
   const [autoPrintPending, setAutoPrintPending] = useState(false)
+  const [printHint, setPrintHint] = useState<string | null>(null)
+  // When set, the printable preview came from a saved menu file rather than
+  // the recipes currently ticked on the Plan tab.
+  const [savedMenuName, setSavedMenuName] = useState<string | null>(null)
   const [formName, setFormName] = useState('')
   const [formPlacement, setFormPlacement] = useState('')
   const [formServings, setFormServings] = useState(4)
@@ -389,6 +393,39 @@ function App() {
       setToasts((prev) => prev.filter((toast) => toast.id !== id))
     }, 4000)
     toastTimeouts.current.push(timeout)
+  }, [])
+
+  // Safari on iOS has historically ignored window.print() unless it is called
+  // directly from a tap, and some in-app browsers expose window.print() but
+  // never open anything. execCommand('print') is the old Safari escape hatch;
+  // if neither produces a beforeprint event, say so instead of leaving the
+  // user tapping a button that looks broken.
+  const printPage = useCallback(({ reportBlocked = true }: { reportBlocked?: boolean } = {}) => {
+    setPrintHint(null)
+    let started = false
+    const markStarted = () => {
+      started = true
+    }
+    window.addEventListener('beforeprint', markStarted)
+    try {
+      let handled = false
+      try {
+        handled = document.execCommand('print', false, undefined)
+      } catch {
+        handled = false
+      }
+      if (!handled) window.print()
+    } catch {
+      window.print()
+    }
+    window.setTimeout(() => {
+      window.removeEventListener('beforeprint', markStarted)
+      if (!started && reportBlocked) {
+        setPrintHint(
+          'This browser did not open a print dialog. Open the page in Safari or Chrome, then use Share → Print.',
+        )
+      }
+    }, 1500)
   }, [])
 
   // --- Shopping run (kitchen / shop check-off) ------------------------------
@@ -1687,6 +1724,8 @@ function App() {
   const runGenerateMenu = useCallback(async ({ silent }: { silent: boolean }) => {
     if (!hasSelection) return
     setExporting(true)
+    setSavedMenuName(null)
+    setPrintHint(null)
     if (!silent) {
       setMenuMarkdown('')
       setMenuExport(null)
@@ -1723,15 +1762,47 @@ function App() {
     }
   }, [selection, hasSelection, pushToast, selectionSignature])
 
+  const printSavedMenu = useCallback(async (name: string) => {
+    setExporting(true)
+    setSavedMenuName(name)
+    setPrintHint(null)
+    setMenuMarkdown('')
+    setMenuExport(null)
+    setMenuPreview(null)
+    try {
+      const response = await fetch(`${API_BASE}/api/menus/${encodeURIComponent(name)}/render`)
+      const payload = await ensureJson<{ markdown?: string; export?: MenuExport; error?: string }>(response)
+      if (!response.ok) {
+        throw new Error(payload.error ?? `Failed with status ${response.status}`)
+      }
+      const markdown = payload.markdown ?? ''
+      setMenuMarkdown(markdown)
+      setMenuExport(payload.export ?? null)
+
+      const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
+      setMenuPreview({ menuHtml })
+      setLastRenderedSig('')
+      setAutoPrintPending(true)
+      goToView('shopping')
+    } catch (err) {
+      setSavedMenuName(null)
+      pushToast('error', (err as Error).message)
+    } finally {
+      setExporting(false)
+    }
+  }, [goToView, pushToast])
+
   // Auto-generate when entering shopping view (or when selection changed since last render)
   useEffect(() => {
     if (view !== 'shopping') return
+    // A saved menu is not the current selection; do not silently replace it.
+    if (savedMenuName) return
     if (!hasSelection) return
     if (exporting) return
     if (lastRenderedSig === selectionSignature && menuPreview) return
     void runGenerateMenu({ silent: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, hasSelection, selectionSignature])
+  }, [view, hasSelection, savedMenuName, selectionSignature])
 
   // Auto-open the browser print dialog once the preview is ready, when requested from the Plan page.
   useEffect(() => {
@@ -1744,11 +1815,13 @@ function App() {
     const id = window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         setAutoPrintPending(false)
-        window.print()
+        // A delayed call has no user activation on iOS. It is still useful on
+        // desktop, so try it; the Ready-to-print screen keeps a direct button.
+        printPage({ reportBlocked: false })
       })
     })
     return () => window.cancelAnimationFrame(id)
-  }, [autoPrintPending, view, menuPreview, exporting])
+  }, [autoPrintPending, view, menuPreview, exporting, printPage])
 
   // If the view actually changes away from shopping before the preview is
   // ready, drop the pending auto-print. Deliberately not keyed on
@@ -2157,7 +2230,7 @@ function App() {
                 <button
                   type="button"
                   className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-accent px-5 py-3 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-40"
-                  onClick={() => { setAutoPrintPending(true); goToView('shopping') }}
+                  onClick={() => { setSavedMenuName(null); setPrintHint(null); setAutoPrintPending(true); goToView('shopping') }}
                   disabled={!hasSelection}
                 >
                   Print menu →
@@ -2171,7 +2244,7 @@ function App() {
                 <button
                   type="button"
                   className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-brand-dark shadow-2xl shadow-brand-accent/40"
-                  onClick={() => { setAutoPrintPending(true); goToView('shopping') }}
+                  onClick={() => { setSavedMenuName(null); setPrintHint(null); setAutoPrintPending(true); goToView('shopping') }}
                 >
                   {selectionEntries.length} recipe{selectionEntries.length === 1 ? '' : 's'} · Print menu →
                 </button>
@@ -3160,24 +3233,35 @@ function App() {
                     <ul className="mt-3 space-y-2">
                       {menuOptions.slice(0, 5).map((menu) => (
                         <li key={menu.name}>
-                          <button
-                            type="button"
-                            disabled={startingRun}
-                            onClick={() => void startRunFromMenu(menu.name)}
-                            className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-brand-dark/40 px-4 py-3 text-left transition hover:border-brand-accent/60 disabled:opacity-40"
-                          >
-                            <span className="min-w-0">
-                              <span className="block truncate text-sm font-medium text-white">
-                                {menu.name}
+                          <div className="flex items-stretch gap-2 rounded-xl border border-white/10 bg-brand-dark/40 transition focus-within:border-brand-accent/60 hover:border-brand-accent/60">
+                            <button
+                              type="button"
+                              disabled={startingRun}
+                              onClick={() => void startRunFromMenu(menu.name)}
+                              className="flex min-w-0 flex-1 items-center justify-between gap-3 px-4 py-3 text-left disabled:opacity-40"
+                            >
+                              <span className="min-w-0">
+                                <span className="block truncate text-sm font-medium text-white">
+                                  {menu.name}
+                                </span>
+                                <span className="block text-xs text-white/40">
+                                  {new Date(menu.modified).toLocaleDateString()}
+                                </span>
                               </span>
-                              <span className="block text-xs text-white/40">
-                                {new Date(menu.modified).toLocaleDateString()}
+                              <span className="shrink-0 text-xs text-brand-accent">
+                                {startingRun ? '…' : 'Walk it'}
                               </span>
-                            </span>
-                            <span className="shrink-0 text-xs text-brand-accent">
-                              {startingRun ? '…' : 'Walk it'}
-                            </span>
-                          </button>
+                            </button>
+                            <button
+                              type="button"
+                              disabled={exporting}
+                              onClick={() => void printSavedMenu(menu.name)}
+                              className="shrink-0 border-l border-white/10 px-4 text-xs font-medium text-white/70 transition hover:text-white disabled:opacity-40"
+                              title={`Print ${menu.name}`}
+                            >
+                              🖨 Print
+                            </button>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -3353,7 +3437,9 @@ function App() {
                   <p className="text-sm text-white/60">
                     {selectionEntries.length
                       ? `${selectionEntries.length} recipe${selectionEntries.length === 1 ? '' : 's'} on the menu`
-                      : 'No recipes chosen yet.'}
+                      : savedMenuName
+                        ? `Saved menu: ${savedMenuName}`
+                        : 'No recipes chosen yet.'}
                     {exporting && <span className="ml-2 text-brand-accent">Refreshing…</span>}
                   </p>
                 </div>
@@ -3367,8 +3453,8 @@ function App() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2 text-sm text-white/80 transition hover:text-white disabled:opacity-50"
-                    onClick={() => window.print()}
+                    className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
+                    onClick={() => printPage()}
                     disabled={!menuPreview}
                     title="Open the browser print dialog"
                   >
@@ -3376,7 +3462,7 @@ function App() {
                   </button>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
+                    className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2 text-sm text-white/80 transition hover:text-white disabled:opacity-50"
                     onClick={handleDownloadExport}
                     disabled={!menuExport || exporting}
                     title="Download the shopping list for scripts/import_menu.py"
@@ -3385,6 +3471,12 @@ function App() {
                   </button>
                 </div>
               </div>
+
+              {printHint && (
+                <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+                  {printHint}
+                </p>
+              )}
 
               {/* Secondary actions, smaller and de-emphasized */}
               <details className="mt-3 text-xs text-white/50">
@@ -3428,7 +3520,7 @@ function App() {
 
             {/* Preview */}
             <section className="rounded-panel bg-white/95 p-5 text-slate-900 shadow-panel lg:p-8">
-              {!hasSelection ? (
+              {!hasSelection && !savedMenuName ? (
                 <div className="py-12 text-center text-sm text-slate-600">
                   <p>Add recipes on the Plan tab to see a printable preview here.</p>
                   <button

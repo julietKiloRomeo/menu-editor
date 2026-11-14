@@ -252,6 +252,40 @@ def test_menu_generation_requires_known_recipes(client):
     assert "error" in response.get_json()
 
 
+def test_render_saved_menu_does_not_create_another_menu(
+    client, app_module, monkeypatch, tmp_path
+):
+    recipe_name = "Saved Roast Veg"
+    client.post(
+        "/api/recipes",
+        json=recipe_payload(
+            navn=recipe_name,
+            ingredienser={"Kartoffel": {"amount": 4, "unit": "stk"}},
+            extras={},
+        ),
+    )
+    menu = {
+        recipe_name: [{"saved-roast-veg": {"amount": 4, "unit": "plates"}}],
+    }
+    menu_path = tmp_path / "uge_45_2026.yml"
+    menu_path.write_text(yaml.safe_dump(menu), encoding="utf-8")
+    monkeypatch.setattr(app_module, "data_dir", lambda: tmp_path)
+
+    before = {path.name for path in tmp_path.iterdir()}
+    response = client.get("/api/menus/uge_45_2026/render")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert recipe_name in payload["markdown"]
+    assert payload["export"]["name"] == "uge_45_2026"
+    assert {path.name for path in tmp_path.iterdir()} == before
+
+
+def test_render_missing_menu_returns_404(client, app_module, monkeypatch, tmp_path):
+    monkeypatch.setattr(app_module, "data_dir", lambda: tmp_path)
+    response = client.get("/api/menus/not-there/render")
+    assert response.status_code == 404
+
+
 def test_recipe_search_and_similar_endpoints(client, add_category, add_ingredient_mapping):
     veg = add_category(name="Vegetables", priority=1)
     add_ingredient_mapping("Gulerod", veg.id)
