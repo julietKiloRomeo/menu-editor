@@ -11,7 +11,6 @@ export function isIosHomeScreen(): boolean {
 }
 
 /** A normal HTML page avoids iOS's control-less full-screen PDF viewer. */
-export function safariPrintUrls(pdfUrl: string): { page: string; safari: string } {
-  const page = new URL(pdfUrl.replace(/\.pdf$/, ''), window.location.href).href
-  return { page, safari: `x-safari-${page}` }
+export function safariPrintPage(pdfUrl: string): string {
+  return new URL(pdfUrl.replace(/\.pdf$/, ''), window.location.href).href
 }

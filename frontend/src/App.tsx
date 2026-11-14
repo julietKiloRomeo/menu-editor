@@ -3,7 +3,8 @@ import type { ChangeEvent, DragEvent, FormEvent } from 'react'
 import { marked } from 'marked'
 import { useLocation, useNavigate } from 'react-router-dom'
 import OrderPicker from './OrderPicker'
-import { isIosDevice, isIosHomeScreen, safariPrintUrls } from './print'
+import SafariPrintInstructions from './SafariPrintInstructions'
+import { isIosDevice, isIosHomeScreen } from './print'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 
@@ -3511,14 +3512,7 @@ function App() {
                   >
                     ← Edit selection
                   </button>
-                  {isIosHomeScreen() && menuPdfUrl && menuPreview ? (
-                    <a
-                      href={safariPrintUrls(menuPdfUrl).safari}
-                      className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark"
-                    >
-                      🖨 Open in Safari to print
-                    </a>
-                  ) : (
+                  {!(isIosHomeScreen() && menuPdfUrl && menuPreview) && (
                     <button
                       type="button"
                       className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
@@ -3541,24 +3535,14 @@ function App() {
                 </div>
               </div>
 
-              {isIosHomeScreen() && menuPdfUrl && menuPreview && (
-                <div className="mt-3 text-sm text-white/70">
-                  <p>Open in Safari, then tap Print menu. Return here using your app switcher.</p>
-                  <p className="mt-2">If Safari does not open, open it yourself and enter this address:</p>
-                  <input
-                    aria-label="Safari print page address"
-                    readOnly
-                    value={safariPrintUrls(menuPdfUrl).page}
-                    onFocus={(event) => event.currentTarget.select()}
-                    className="mt-1 w-full rounded-lg border border-white/15 bg-brand-dark/40 px-3 py-2 text-xs text-white"
-                  />
-                </div>
+              {(isIosHomeScreen() || (isIosDevice() && printHint)) && menuPdfUrl && menuPreview && (
+                <SafariPrintInstructions key={menuPdfUrl} pdfUrl={menuPdfUrl} />
               )}
 
               {printHint && (
                 <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
                   {printHint}
-                  {menuPdfUrl && <> <a className="underline" href={isIosDevice() ? safariPrintUrls(menuPdfUrl).safari : menuPdfUrl} target={isIosDevice() ? undefined : '_blank'} rel="noopener noreferrer">{isIosDevice() ? 'Open in Safari to print' : 'Open printable PDF'}</a></>}
+                  {menuPdfUrl && !isIosDevice() && <> <a className="underline" href={menuPdfUrl} target="_blank" rel="noopener noreferrer">Open printable PDF</a></>}
                 </p>
               )}
 

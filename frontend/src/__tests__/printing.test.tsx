@@ -3,9 +3,11 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
 
-test('home-screen iPhone opens the current run in Safari instead of a trapped PDF', async () => {
+test('home-screen iPhone can copy the current run address without opening a PDF', async () => {
   Object.defineProperty(navigator, 'userAgent', { configurable: true, value: 'iPhone' })
   Object.defineProperty(navigator, 'standalone', { configurable: true, value: true })
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined })
+  document.execCommand = jest.fn().mockReturnValue(true)
   window.localStorage.clear()
   window.print = jest.fn()
   global.fetch = jest.fn(async (input) => {
@@ -20,9 +22,21 @@ test('home-screen iPhone opens the current run in Safari instead of a trapped PD
   render(<MemoryRouter initialEntries={['/run']}><App /></MemoryRouter>)
   fireEvent.click(await screen.findByRole('button', { name: 'Print uge_47_2026(1)' }))
 
-  const printLink = await screen.findByRole('link', { name: '🖨 Open in Safari to print' })
-  expect(printLink).toHaveAttribute('href', 'x-safari-http://localhost/api/runs/13/print')
+  const copyButton = await screen.findByRole('button', { name: 'Copy print address' })
   expect(screen.getByLabelText('Safari print page address')).toHaveValue('http://localhost/api/runs/13/print')
-  expect(screen.getByText(/tap Print menu/i)).toBeInTheDocument()
+  fireEvent.click(copyButton)
+  expect(document.execCommand).toHaveBeenCalledWith('copy')
+  expect(screen.getByRole('status')).toHaveTextContent('Copied. Open Safari')
+  expect(screen.queryByRole('link', { name: /Safari to print/i })).not.toBeInTheDocument()
   expect(window.print).not.toHaveBeenCalled()
+})
+
+test('copy failure leaves a selectable address and clear instructions', async () => {
+  const SafariPrintInstructions = (await import('../SafariPrintInstructions')).default
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined })
+  document.execCommand = jest.fn().mockReturnValue(false)
+  render(<SafariPrintInstructions pdfUrl="/api/runs/13/print.pdf" />)
+  fireEvent.click(screen.getByRole('button', { name: 'Copy print address' }))
+  expect(screen.getByRole('status')).toHaveTextContent('Select and copy the address')
+  expect(screen.getByLabelText('Safari print page address')).toHaveFocus()
 })
