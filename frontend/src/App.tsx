@@ -3435,10 +3435,10 @@ function App() {
                 <div>
                   <h2 className="font-display text-xl text-white lg:text-2xl">Ready to print</h2>
                   <p className="text-sm text-white/60">
-                    {selectionEntries.length
-                      ? `${selectionEntries.length} recipe${selectionEntries.length === 1 ? '' : 's'} on the menu`
-                      : savedMenuName
-                        ? `Saved menu: ${savedMenuName}`
+                    {savedMenuName
+                      ? `Saved menu: ${savedMenuName}`
+                      : selectionEntries.length
+                        ? `${selectionEntries.length} recipe${selectionEntries.length === 1 ? '' : 's'} on the menu`
                         : 'No recipes chosen yet.'}
                     {exporting && <span className="ml-2 text-brand-accent">Refreshing…</span>}
                   </p>
