@@ -25,6 +25,24 @@ def test_search_refreshes_an_expired_token_once(monkeypatch):
     assert expression.count("r = await fetch(url") == 2
 
 
+def test_search_asks_for_enough_hits_to_reach_the_ordinary_product(monkeypatch):
+    expressions = []
+
+    def fake_evaluate(expression, *, debug_url):
+        expressions.append(expression)
+        return json.dumps({"products": []})
+
+    monkeypatch.setattr(nemlig_tab, "evaluate", fake_evaluate)
+
+    nemlig_tab.search("tomat")
+    nemlig_tab.search("tomat", take=5)
+
+    # Eight hits of nemlig's own relevance stop at cherry, chopped and purée
+    # tomatoes; the plain punnet the list meant is further down.
+    assert "url.searchParams.set('take', \"24\")" in expressions[0]
+    assert "url.searchParams.set('take', \"5\")" in expressions[1]
+
+
 def test_search_failure_does_not_masquerade_as_an_empty_shelf(monkeypatch):
     monkeypatch.setattr(
         nemlig_tab,

@@ -432,13 +432,21 @@ def run(args: argparse.Namespace) -> int:
             ready = searched["order"]
         else:
             ready = order
+        picker_url = f"{base}/order?order={order['id']}"
+        undecided = ready["total"] - ready["decided"]
         print(
             f"Ready: {ready['decided']}/{ready['total']} reused safely; "
-            f"{ready['total'] - ready['decided']} choices need attention.",
+            f"{undecided} choices need attention.",
             flush=True,
         )
-        picker_url = f"{base}/order?order={order['id']}"
-        print(picker_url, flush=True)
+        # The handoff is the end of the scripted workflow, so say so in the
+        # output rather than leaving a bare URL that reads like another step.
+        print(
+            f"Handoff: {picker_url}  ({undecided} rows need you)\n"
+            "Nothing left to automate: the user decides in the picker, and this "
+            "command exits once the basket is filled and the order is recorded.",
+            flush=True,
+        )
         if not args.no_open:
             webbrowser.open(picker_url)
 

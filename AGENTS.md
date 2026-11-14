@@ -19,7 +19,22 @@ the single entry point: it snapshots the real valhalla database safely, chooses
 the newest run, performs fresh searches, opens the app's Order screen, and syncs
 the recorded order back. Do not manually copy databases, parse a shopping PDF,
 create a temporary run, or launch the skill's standalone picker when a kitchen
-run exists.
+run exists. Run it in the **foreground with the tool timeout disabled**: it
+blocks until the order is recorded, which is the point — there is nothing to do
+while the user is deciding, and backgrounding it only invites improvised work.
+
+**When the script prints its `Handoff:` line, the ordering session is the
+user's. Stop.** Say the URL and how many rows are undecided, then wait for the
+script to finish and report the sync. Specifically, while a picker is open:
+
+- Never ask about products in chat, and never use the question tool for a
+  product, quantity, or "do you have this?" choice. Rows that need a decision
+  *are* the picker; that is what it is for.
+- Never decide a row yourself, not even the obvious ones. `have_it` and `buy`
+  are both durable statements about this kitchen.
+- Never run searches, database queries, or extra scripts "to help". A row with
+  no candidates is a bug in the search path and belongs in code, not in an
+  ad-hoc one-liner during a live order.
 
 **The app's Order screen is the picker**, not the skill's scripts. The
 `nemlig-shopping` skill at `~/.config/opencode/skills/nemlig-shopping/`

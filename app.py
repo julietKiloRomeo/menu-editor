@@ -46,6 +46,7 @@ from src.nemlig_tab import (
     resolve_product_url as tab_resolve_product_url,
     search as tab_search,
 )
+from src.core.order_search import retry_queries
 from src.core.orders import (
     attach_search_results,
     mark_recorded,
@@ -2260,6 +2261,11 @@ def post_order_run_search(order_id: int):
         if order is None:
             return jsonify({"error": "Order not found"}), 404
         queries = pending_queries(order_id, session)
+        rows = [
+            {"query": item.query, "ingredient": item.ingredient}
+            for item in order_items(order_id, session)
+            if not item.action
+        ]
 
     if not queries:
         return jsonify({"error": "Nothing left to search"}), 400
@@ -2267,6 +2273,12 @@ def post_order_run_search(order_id: int):
     try:
         tab_ensure_session()
         results = {query: tab_search(query) for query in queries}
+        # A dead query leaves a row with no choices, which looks like "cannot
+        # be bought" rather than "wrong word". Ask once more in the list's own
+        # words, still filed under the original query so the row is unchanged.
+        retry = retry_queries(rows, results)
+        for query, ingredient in retry.items():
+            results[query] = tab_search(ingredient)
     except BrowserUnavailable as exc:
         return jsonify({"error": str(exc)}), 503
 

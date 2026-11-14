@@ -77,7 +77,14 @@ def ensure_session(*, debug_url: str = DEFAULT_DEBUG_URL, timeout: float = 20.0)
     )
 
 
-def search(query: str, *, take: int = 8, debug_url: str = DEFAULT_DEBUG_URL) -> list[dict]:
+#: How many hits to ask for. Eight is nemlig's own relevance page and is not
+#: enough to reach the ordinary product: "tomat" returns cherry, chopped and
+#: purée tomatoes before it returns a plain 500 g punnet, and the plain one is
+#: usually what the list meant.
+SEARCH_TAKE = 24
+
+
+def search(query: str, *, take: int = SEARCH_TAKE, debug_url: str = DEFAULT_DEBUG_URL) -> list[dict]:
     """Products matching one query, as nemlig's search returns them."""
     body = _PRELUDE + """
       if (!ref) return JSON.stringify({error: 'no-session'});
