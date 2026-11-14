@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Print menu</title>
+  <style>
+    body { margin: 0 auto; max-width: 52rem; padding: 1rem; font: 16px/1.5 system-ui, sans-serif; color: #1b1b1b; }
+    .controls { padding: 1rem; border: 1px solid #ccc; border-radius: 1rem; background: #f5f5f5; }
+    button { font: inherit; font-weight: bold; padding: .75rem 1.4rem; border: 0; border-radius: 2rem; background: #174d34; color: white; }
+    .controls p { margin-bottom: 0; }
+    h1 { font-size: 2rem; }
+    h2 { margin: 1.25rem 0 .25rem; font-size: 1.35rem; break-after: avoid; }
+    .entry { margin: .25rem 0; }
+    @media print { .controls { display: none; } body { max-width: none; } }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button type="button" onclick="window.print()">🖨 Print menu</button>
+    <p>If the print dialog doesn't open, use Safari's Share button → Print.</p>
+    <p><a href="/">Back to menu app</a></p>
+  </div>
+  {% for raw in lines %}
+    {% set line = raw.strip() %}
+    {% if line.startswith('## ') %}<h2>{{ line[3:] }}</h2>
+    {% elif line.startswith('# ') %}<h1>{{ line[2:] }}</h1>
+    {% elif line.startswith('- ') %}<p class="entry">• {{ line[2:] }}</p>
+    {% elif line %}<p>{{ line }}</p>{% endif %}
+  {% endfor %}
+</body>
+</html>

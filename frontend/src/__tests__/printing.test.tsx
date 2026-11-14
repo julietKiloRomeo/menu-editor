@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
 
-test('home-screen iPhone opens the current run as a printable PDF', async () => {
+test('home-screen iPhone opens the current run in Safari instead of a trapped PDF', async () => {
   Object.defineProperty(navigator, 'userAgent', { configurable: true, value: 'iPhone' })
   Object.defineProperty(navigator, 'standalone', { configurable: true, value: true })
   window.localStorage.clear()
@@ -20,9 +20,9 @@ test('home-screen iPhone opens the current run as a printable PDF', async () => 
   render(<MemoryRouter initialEntries={['/run']}><App /></MemoryRouter>)
   fireEvent.click(await screen.findByRole('button', { name: 'Print uge_47_2026(1)' }))
 
-  const printLink = await screen.findByRole('link', { name: '🖨 Print' })
-  expect(printLink).toHaveAttribute('href', '/api/runs/13/print.pdf')
-  expect(printLink).toHaveAttribute('target', '_blank')
-  expect(screen.getByText(/tap Share → Print/i)).toBeInTheDocument()
+  const printLink = await screen.findByRole('link', { name: '🖨 Open in Safari to print' })
+  expect(printLink).toHaveAttribute('href', 'x-safari-http://localhost/api/runs/13/print')
+  expect(screen.getByLabelText('Safari print page address')).toHaveValue('http://localhost/api/runs/13/print')
+  expect(screen.getByText(/tap Print menu/i)).toBeInTheDocument()
   expect(window.print).not.toHaveBeenCalled()
 })

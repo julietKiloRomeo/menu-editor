@@ -3,7 +3,7 @@ import type { ChangeEvent, DragEvent, FormEvent } from 'react'
 import { marked } from 'marked'
 import { useLocation, useNavigate } from 'react-router-dom'
 import OrderPicker from './OrderPicker'
-import { isIosHomeScreen } from './print'
+import { isIosDevice, isIosHomeScreen, safariPrintUrls } from './print'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 
@@ -416,7 +416,7 @@ function App() {
       window.removeEventListener('beforeprint', markStarted)
       if (!started && reportBlocked) {
         setPrintHint(
-          'The print dialog may not have opened. Try the printable PDF below, then use Share → Print.',
+          'The print dialog may not have opened. Try the alternative below, then use Share → Print.',
         )
       }
     }, 1500)
@@ -3513,12 +3513,10 @@ function App() {
                   </button>
                   {isIosHomeScreen() && menuPdfUrl && menuPreview ? (
                     <a
-                      href={menuPdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={safariPrintUrls(menuPdfUrl).safari}
                       className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark"
                     >
-                      🖨 Print
+                      🖨 Open in Safari to print
                     </a>
                   ) : (
                     <button
@@ -3544,15 +3542,23 @@ function App() {
               </div>
 
               {isIosHomeScreen() && menuPdfUrl && menuPreview && (
-                <p className="mt-3 text-sm text-white/70">
-                  Print opens a PDF. In the PDF viewer, tap Share → Print.
-                </p>
+                <div className="mt-3 text-sm text-white/70">
+                  <p>Open in Safari, then tap Print menu. Return here using your app switcher.</p>
+                  <p className="mt-2">If Safari does not open, open it yourself and enter this address:</p>
+                  <input
+                    aria-label="Safari print page address"
+                    readOnly
+                    value={safariPrintUrls(menuPdfUrl).page}
+                    onFocus={(event) => event.currentTarget.select()}
+                    className="mt-1 w-full rounded-lg border border-white/15 bg-brand-dark/40 px-3 py-2 text-xs text-white"
+                  />
+                </div>
               )}
 
               {printHint && (
                 <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
                   {printHint}
-                  {menuPdfUrl && <> <a className="underline" href={menuPdfUrl} target="_blank" rel="noopener noreferrer">Open printable PDF</a></>}
+                  {menuPdfUrl && <> <a className="underline" href={isIosDevice() ? safariPrintUrls(menuPdfUrl).safari : menuPdfUrl} target={isIosDevice() ? undefined : '_blank'} rel="noopener noreferrer">{isIosDevice() ? 'Open in Safari to print' : 'Open printable PDF'}</a></>}
                 </p>
               )}
 

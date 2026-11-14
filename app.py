@@ -2062,6 +2062,25 @@ def printable_pdf(rendered):
     )
 
 
+def printable_page(rendered):
+    """Show the same menu in Safari with its own print and navigation controls."""
+    response = app.make_response(rendered)
+    if response.status_code != 200:
+        return response
+    page = render_template("print_menu.html", lines=response.get_json()["markdown"].splitlines())
+    return app.response_class(page, mimetype="text/html", headers={"Cache-Control": "no-store"})
+
+
+@app.route('/api/menus/<name>/print', methods=['GET'])
+def print_saved_menu_page(name: str):
+    return printable_page(render_saved_menu(name))
+
+
+@app.route('/api/runs/<int:run_id>/print', methods=['GET'])
+def print_run_menu_page(run_id: int):
+    return printable_page(render_run_menu(run_id))
+
+
 @app.route('/api/menus/<name>/print.pdf', methods=['GET'])
 def print_saved_menu_pdf(name: str):
     return printable_pdf(render_saved_menu(name))

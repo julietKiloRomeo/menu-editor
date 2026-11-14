@@ -1,13 +1,8 @@
 import '@testing-library/jest-dom'
 
 // Minimal mocks for browser APIs used in App
-Object.defineProperty(global, 'URL', {
-  value: {
-    createObjectURL: jest.fn(() => 'blob:mock'),
-    revokeObjectURL: jest.fn(),
-  },
-  writable: true,
-})
+URL.createObjectURL = jest.fn(() => 'blob:mock')
+URL.revokeObjectURL = jest.fn()
 
 // Mock play() to resolve
 // @ts-ignore
@@ -24,4 +19,3 @@ HTMLCanvasElement.prototype.toBlob = jest.fn((cb: (blob: Blob | null) => void) =
   const blob = new Blob(['test'], { type: 'image/jpeg' })
   cb(blob)
 })
-

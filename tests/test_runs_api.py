@@ -136,6 +136,28 @@ class TestRenderRunMenu:
         assert menu_client.get("/api/menus/missing/print.pdf").status_code == 404
         assert menu_client.get("/api/runs/9999/print.pdf").status_code == 404
 
+    def test_print_page_for_run_without_file(self, menu_client, menu_app):
+        run = create_run(menu_client).get_json()
+        (menu_app[0].data_dir() / "uge_34_2026.yaml").unlink()
+        response = menu_client.get(f"/api/runs/{run['id']}/print")
+        assert response.status_code == 200
+        assert response.mimetype == "text/html"
+        assert "Pandekager" in response.get_data(as_text=True)
+        assert "window.print()" in response.get_data(as_text=True)
+        assert "Back to menu app" in response.get_data(as_text=True)
+        assert response.headers["Cache-Control"] == "no-store"
+        assert menu_client.get("/api/runs/9999/print").status_code == 404
+        assert menu_client.get("/api/menus/missing/print").status_code == 404
+
+    def test_print_page_escapes_menu_content(self, menu_app):
+        app_module = menu_app[0]
+        with app_module.app.test_request_context():
+            rendered = app_module.jsonify({"markdown": "# Menu\n## <script>alert(1)</script>"})
+            response = app_module.printable_page(rendered)
+        html = response.get_data(as_text=True)
+        assert "<script>alert(1)</script>" not in html
+        assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
+
 
 class TestCreateRun:
     def test_creates_a_run_from_a_menu(self, menu_client):
