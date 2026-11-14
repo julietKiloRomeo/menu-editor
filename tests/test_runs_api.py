@@ -89,6 +89,35 @@ class TestListMenus:
         assert create_run(menu_client, "kitchen_zones").status_code == 404
 
 
+class TestRenderRunMenu:
+    def test_renders_the_saved_menu_when_available(self, menu_client):
+        run = create_run(menu_client).get_json()
+
+        response = menu_client.get(f"/api/runs/{run['id']}/render")
+
+        assert response.status_code == 200
+        payload = response.get_json()
+        assert "## Mandag" in payload["markdown"]
+        assert "Pandekager" in payload["markdown"]
+        assert payload["export"] is not None
+        assert not payload.get("reconstructed")
+
+    def test_reconstructs_when_menu_file_is_missing(self, menu_client, menu_app):
+        run = create_run(menu_client).get_json()
+        (menu_app[0].data_dir() / "uge_34_2026.yaml").unlink()
+
+        response = menu_client.get(f"/api/runs/{run['id']}/render")
+
+        assert response.status_code == 200
+        payload = response.get_json()
+        assert "## Pandekager" in payload["markdown"]
+        assert payload["reconstructed"] is True
+        assert payload["export"] is None
+
+    def test_unknown_run_is_404(self, menu_client):
+        assert menu_client.get("/api/runs/9999/render").status_code == 404
+
+
 class TestCreateRun:
     def test_creates_a_run_from_a_menu(self, menu_client):
         response = create_run(menu_client)

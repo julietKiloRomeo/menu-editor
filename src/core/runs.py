@@ -147,7 +147,7 @@ def run_items(run_id: int, session: Session) -> list[ShoppingRunItem]:
     )
 
 
-def recent_runs(session: Session, limit: int = 25) -> list[ShoppingRun]:
+def recent_runs(session: Session, limit: int | None = 25) -> list[ShoppingRun]:
     """Runs most recently started first -- what the phone offers to resume.
 
     Runs are listed from the database rather than derived from the menu files

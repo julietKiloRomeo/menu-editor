@@ -203,6 +203,7 @@ function App() {
   const [exporting, setExporting] = useState(false)
   const [autoPrintPending, setAutoPrintPending] = useState(false)
   const [printHint, setPrintHint] = useState<string | null>(null)
+  const [printReconstructed, setPrintReconstructed] = useState(false)
   // When set, the printable preview came from a saved menu file rather than
   // the recipes currently ticked on the Plan tab.
   const [savedMenuName, setSavedMenuName] = useState<string | null>(null)
@@ -1725,6 +1726,7 @@ function App() {
     if (!hasSelection) return
     setExporting(true)
     setSavedMenuName(null)
+    setPrintReconstructed(false)
     setPrintHint(null)
     if (!silent) {
       setMenuMarkdown('')
@@ -1765,6 +1767,7 @@ function App() {
   const printSavedMenu = useCallback(async (name: string) => {
     setExporting(true)
     setSavedMenuName(name)
+    setPrintReconstructed(false)
     setPrintHint(null)
     setMenuMarkdown('')
     setMenuExport(null)
@@ -1783,6 +1786,38 @@ function App() {
       setMenuPreview({ menuHtml })
       setLastRenderedSig('')
       setAutoPrintPending(true)
+      goToView('shopping')
+    } catch (err) {
+      setSavedMenuName(null)
+      pushToast('error', (err as Error).message)
+    } finally {
+      setExporting(false)
+    }
+  }, [goToView, pushToast])
+
+  const printRunMenu = useCallback(async (runId: number, menuName: string) => {
+    setExporting(true)
+    setSavedMenuName(menuName)
+    setPrintReconstructed(false)
+    setPrintHint(null)
+    setMenuMarkdown('')
+    setMenuExport(null)
+    setMenuPreview(null)
+    try {
+      const response = await fetch(`${API_BASE}/api/runs/${runId}/render`)
+      const payload = await ensureJson<{ markdown?: string; export?: MenuExport; reconstructed?: boolean; error?: string }>(response)
+      if (!response.ok) {
+        throw new Error(payload.error ?? `Failed with status ${response.status}`)
+      }
+      const markdown = payload.markdown ?? ''
+      setMenuMarkdown(markdown)
+      setMenuExport(payload.export ?? null)
+      setPrintReconstructed(Boolean(payload.reconstructed))
+
+      const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
+      setMenuPreview({ menuHtml })
+      setLastRenderedSig('')
+      setAutoPrintPending(!payload.reconstructed)
       goToView('shopping')
     } catch (err) {
       setSavedMenuName(null)
@@ -3231,7 +3266,7 @@ function App() {
                       mid-walk cannot reshuffle the rows under your thumb.
                     </p>
                     <ul className="mt-3 space-y-2">
-                      {menuOptions.slice(0, 5).map((menu) => (
+                      {menuOptions.map((menu) => (
                         <li key={menu.name}>
                           <div className="flex items-stretch gap-2 rounded-xl border border-white/10 bg-brand-dark/40 transition focus-within:border-brand-accent/60 hover:border-brand-accent/60">
                             <button
@@ -3273,26 +3308,38 @@ function App() {
                     const remaining = run.total - run.checked
                     return (
                       <li key={run.id}>
-                        <button
-                          type="button"
-                          onClick={() => void openRun(run.id)}
-                          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/10 bg-brand-dark/40 px-4 py-4 text-left transition hover:border-brand-accent/60"
-                        >
-                          <span className="min-w-0">
-                            <span className="block truncate font-medium text-white">{run.menu}</span>
-                            <span className="block text-xs text-white/50">
-                              {run.created_at ? new Date(run.created_at).toLocaleString() : 'unknown date'}
+                        <div className="flex items-stretch gap-2 rounded-2xl border border-white/10 bg-brand-dark/40 transition focus-within:border-brand-accent/60 hover:border-brand-accent/60">
+                          <button
+                            type="button"
+                            onClick={() => void openRun(run.id)}
+                            className="flex min-w-0 flex-1 items-center justify-between gap-3 px-4 py-4 text-left"
+                          >
+                            <span className="min-w-0">
+                              <span className="block truncate font-medium text-white">{run.menu}</span>
+                              <span className="block text-xs text-white/50">
+                                {run.created_at ? new Date(run.created_at).toLocaleString() : 'unknown date'}
+                              </span>
                             </span>
-                          </span>
-                          <span className="shrink-0 text-right text-xs">
-                            <span className="block font-semibold text-brand-accent">
-                              {remaining} left
+                            <span className="shrink-0 text-right text-xs">
+                              <span className="block font-semibold text-brand-accent">
+                                {remaining} left
+                              </span>
+                              <span className="block text-white/40">
+                                {run.checked}/{run.total}
+                              </span>
                             </span>
-                            <span className="block text-white/40">
-                              {run.checked}/{run.total}
-                            </span>
-                          </span>
-                        </button>
+                          </button>
+                          <button
+                            type="button"
+                            disabled={exporting}
+                            onClick={() => void printRunMenu(run.id, run.menu)}
+                            className="shrink-0 border-l border-white/10 px-4 text-xs font-medium text-white/70 transition hover:text-white disabled:opacity-40"
+                            title={`Print ${run.menu}`}
+                            aria-label={`Print ${run.menu}`}
+                          >
+                            🖨 Print
+                          </button>
+                        </div>
                       </li>
                     )
                   })}
@@ -3322,6 +3369,16 @@ function App() {
                         {activeRun.total - activeRun.checked} left of {activeRun.total}
                       </p>
                     </div>
+                    <button
+                      type="button"
+                      disabled={exporting}
+                      onClick={() => void printRunMenu(activeRun.id, activeRun.menu)}
+                      aria-label="Print menu"
+                      title="Print menu"
+                      className="rounded-full border border-white/15 px-3 py-2 text-sm text-white/70 transition hover:text-white disabled:opacity-40"
+                    >
+                      🖨 Print
+                    </button>
                     <button
                       type="button"
                       onClick={() => setHideChecked((prev) => !prev)}
@@ -3475,6 +3532,12 @@ function App() {
               {printHint && (
                 <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
                   {printHint}
+                </p>
+              )}
+
+              {printReconstructed && (
+                <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+                  The original menu file is missing. This preview was reconstructed from the shopping run; dish order, quantities and some dishes may be missing or different. Please check it before printing.
                 </p>
               )}
 

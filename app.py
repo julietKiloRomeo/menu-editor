@@ -67,6 +67,7 @@ from src.core.runs import (
     set_checked,
     start_run,
 )
+from src.core.shopping import AggregatedMenu, MenuEntry, MenuSection
 from src.core.zones import load_zone_config, seed_zones
 from src.render.export import to_dict as menu_export
 from src.render.markdown import render as render_markdown
@@ -1927,7 +1928,7 @@ def render_saved_menu(name: str):
 def list_runs():
     """Runs available to walk or resume, newest first."""
     with get_session() as session:
-        runs = recent_runs(session)
+        runs = recent_runs(session, limit=None)
         totals = progress_by_run(session)
         return jsonify(
             {
@@ -1990,6 +1991,61 @@ def get_run(run_id: int):
         if run is None:
             return jsonify({"error": "Run not found"}), 404
         return jsonify(serialise_run(run, run_items(run.id, session)))
+
+
+@app.route('/api/runs/<int:run_id>/render', methods=['GET'])
+def render_run_menu(run_id: int):
+    """Reconstruct a printable menu for a run.
+
+    Menu files used to live in the container's writable layer, so old runs can
+    outlive the file they were started from. The run items remember which
+    recipes contributed to each ingredient, which is enough to print the dish
+    list even when the menu file is gone.
+    """
+    with get_session() as session:
+        run = session.get(ShoppingRun, run_id)
+        if run is None:
+            return jsonify({"error": "Run not found"}), 404
+        menu_name = run.menu_name
+        items = run_items(run.id, session)
+
+    if menu_path_for(menu_name) is not None:
+        return render_saved_menu(menu_name)
+
+    recipe_names: List[str] = []
+    for item in items:
+        for name in item.recipes or []:
+            if name not in recipe_names:
+                recipe_names.append(name)
+    recipes = fetch_recipes_by_names(recipe_names)
+
+    sections: List[MenuSection] = []
+    for name in recipe_names:
+        recipe = recipes.get(name)
+        if recipe is None:
+            # Staples and other non-recipe sources share the same column.
+            continue
+        sections.append(
+            MenuSection(
+                name=recipe.navn,
+                silent=False,
+                entries=[
+                    MenuEntry(
+                        name=recipe.navn,
+                        placering=recipe.placering or "",
+                        multiplier=1,
+                        silent=False,
+                    )
+                ],
+            )
+        )
+
+    if not sections:
+        return jsonify({"error": "Could not reconstruct this menu"}), 400
+
+    menu_text = MenuText()
+    render_markdown(AggregatedMenu(sections=sections), printer=menu_text.add)
+    return jsonify({"markdown": str(menu_text), "export": None, "reconstructed": True})
 
 
 @app.route('/api/runs/items/<int:item_id>', methods=['PATCH'])
