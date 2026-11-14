@@ -117,6 +117,25 @@ class TestRenderRunMenu:
     def test_unknown_run_is_404(self, menu_client):
         assert menu_client.get("/api/runs/9999/render").status_code == 404
 
+    def test_printable_pdf_survives_missing_menu_file(self, menu_client, menu_app):
+        run = create_run(menu_client).get_json()
+        (menu_app[0].data_dir() / "uge_34_2026.yaml").unlink()
+
+        response = menu_client.get(f"/api/runs/{run['id']}/print.pdf")
+
+        assert response.status_code == 200
+        assert response.mimetype == "application/pdf"
+        assert response.data.startswith(b"%PDF-")
+        assert response.headers["Content-Disposition"].startswith("inline")
+        assert response.headers["Cache-Control"] == "no-store"
+
+    def test_saved_menu_pdf_and_missing_items(self, menu_client):
+        response = menu_client.get("/api/menus/uge_34_2026/print.pdf")
+        assert response.status_code == 200
+        assert response.mimetype == "application/pdf"
+        assert menu_client.get("/api/menus/missing/print.pdf").status_code == 404
+        assert menu_client.get("/api/runs/9999/print.pdf").status_code == 404
+
 
 class TestCreateRun:
     def test_creates_a_run_from_a_menu(self, menu_client):

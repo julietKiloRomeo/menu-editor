@@ -3,6 +3,7 @@ import type { ChangeEvent, DragEvent, FormEvent } from 'react'
 import { marked } from 'marked'
 import { useLocation, useNavigate } from 'react-router-dom'
 import OrderPicker from './OrderPicker'
+import { isIosHomeScreen } from './print'
 
 const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '')
 
@@ -204,6 +205,7 @@ function App() {
   const [autoPrintPending, setAutoPrintPending] = useState(false)
   const [printHint, setPrintHint] = useState<string | null>(null)
   const [printReconstructed, setPrintReconstructed] = useState(false)
+  const [menuPdfUrl, setMenuPdfUrl] = useState<string | null>(null)
   // When set, the printable preview came from a saved menu file rather than
   // the recipes currently ticked on the Plan tab.
   const [savedMenuName, setSavedMenuName] = useState<string | null>(null)
@@ -396,11 +398,8 @@ function App() {
     toastTimeouts.current.push(timeout)
   }, [])
 
-  // Safari on iOS has historically ignored window.print() unless it is called
-  // directly from a tap, and some in-app browsers expose window.print() but
-  // never open anything. execCommand('print') is the old Safari escape hatch;
-  // if neither produces a beforeprint event, say so instead of leaving the
-  // user tapping a button that looks broken.
+  // Call print directly from the tap. execCommand can report success without
+  // actually opening a dialog, so use it only if window.print throws.
   const printPage = useCallback(({ reportBlocked = true }: { reportBlocked?: boolean } = {}) => {
     setPrintHint(null)
     let started = false
@@ -409,21 +408,15 @@ function App() {
     }
     window.addEventListener('beforeprint', markStarted)
     try {
-      let handled = false
-      try {
-        handled = document.execCommand('print', false, undefined)
-      } catch {
-        handled = false
-      }
-      if (!handled) window.print()
-    } catch {
       window.print()
+    } catch {
+      try { document.execCommand('print', false, undefined) } catch { /* unavailable */ }
     }
     window.setTimeout(() => {
       window.removeEventListener('beforeprint', markStarted)
       if (!started && reportBlocked) {
         setPrintHint(
-          'This browser did not open a print dialog. Open the page in Safari or Chrome, then use Share → Print.',
+          'The print dialog may not have opened. Try the printable PDF below, then use Share → Print.',
         )
       }
     }, 1500)
@@ -1727,6 +1720,7 @@ function App() {
     setExporting(true)
     setSavedMenuName(null)
     setPrintReconstructed(false)
+    setMenuPdfUrl(null)
     setPrintHint(null)
     if (!silent) {
       setMenuMarkdown('')
@@ -1752,6 +1746,7 @@ function App() {
       const markdown = payload.markdown ?? ''
       setMenuMarkdown(markdown)
       setMenuExport(payload.export ?? null)
+      setMenuPdfUrl(payload.export?.name ? `${API_BASE}/api/menus/${encodeURIComponent(payload.export.name)}/print.pdf` : null)
 
       const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
       setMenuPreview({ menuHtml })
@@ -1768,6 +1763,7 @@ function App() {
     setExporting(true)
     setSavedMenuName(name)
     setPrintReconstructed(false)
+    setMenuPdfUrl(null)
     setPrintHint(null)
     setMenuMarkdown('')
     setMenuExport(null)
@@ -1781,6 +1777,7 @@ function App() {
       const markdown = payload.markdown ?? ''
       setMenuMarkdown(markdown)
       setMenuExport(payload.export ?? null)
+      setMenuPdfUrl(`${API_BASE}/api/menus/${encodeURIComponent(name)}/print.pdf`)
 
       const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
       setMenuPreview({ menuHtml })
@@ -1799,6 +1796,7 @@ function App() {
     setExporting(true)
     setSavedMenuName(menuName)
     setPrintReconstructed(false)
+    setMenuPdfUrl(null)
     setPrintHint(null)
     setMenuMarkdown('')
     setMenuExport(null)
@@ -1812,6 +1810,7 @@ function App() {
       const markdown = payload.markdown ?? ''
       setMenuMarkdown(markdown)
       setMenuExport(payload.export ?? null)
+      setMenuPdfUrl(`${API_BASE}/api/runs/${runId}/print.pdf`)
       setPrintReconstructed(Boolean(payload.reconstructed))
 
       const menuHtml = (await marked.parse(markdown, { breaks: true })) as string
@@ -1842,6 +1841,10 @@ function App() {
   // Auto-open the browser print dialog once the preview is ready, when requested from the Plan page.
   useEffect(() => {
     if (!autoPrintPending) return
+    if (isIosHomeScreen()) {
+      setAutoPrintPending(false)
+      return
+    }
     if (view !== 'shopping') return
     if (!menuPreview) return
     if (exporting) return
@@ -3508,15 +3511,26 @@ function App() {
                   >
                     ← Edit selection
                   </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
-                    onClick={() => printPage()}
-                    disabled={!menuPreview}
-                    title="Open the browser print dialog"
-                  >
-                    🖨 Print
-                  </button>
+                  {isIosHomeScreen() && menuPdfUrl && menuPreview ? (
+                    <a
+                      href={menuPdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark"
+                    >
+                      🖨 Print
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:translate-y-[1px] disabled:opacity-50"
+                      onClick={() => printPage()}
+                      disabled={!menuPreview}
+                      title="Open the browser print dialog"
+                    >
+                      🖨 Print
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="rounded-full border border-white/15 bg-brand-dark/40 px-4 py-2 text-sm text-white/80 transition hover:text-white disabled:opacity-50"
@@ -3529,9 +3543,16 @@ function App() {
                 </div>
               </div>
 
+              {isIosHomeScreen() && menuPdfUrl && menuPreview && (
+                <p className="mt-3 text-sm text-white/70">
+                  Print opens a PDF. In the PDF viewer, tap Share → Print.
+                </p>
+              )}
+
               {printHint && (
                 <p className="mt-3 rounded-2xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
                   {printHint}
+                  {menuPdfUrl && <> <a className="underline" href={menuPdfUrl} target="_blank" rel="noopener noreferrer">Open printable PDF</a></>}
                 </p>
               )}
 

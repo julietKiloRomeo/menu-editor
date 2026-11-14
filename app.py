@@ -71,6 +71,7 @@ from src.core.shopping import AggregatedMenu, MenuEntry, MenuSection
 from src.core.zones import load_zone_config, seed_zones
 from src.render.export import to_dict as menu_export
 from src.render.markdown import render as render_markdown
+from src.render.pdf import render_pdf
 from src.models import (
     CategoryConfig,
     IngredientAlias,
@@ -2046,6 +2047,29 @@ def render_run_menu(run_id: int):
     menu_text = MenuText()
     render_markdown(AggregatedMenu(sections=sections), printer=menu_text.add)
     return jsonify({"markdown": str(menu_text), "export": None, "reconstructed": True})
+
+
+def printable_pdf(rendered):
+    """Convert an existing menu render response without saving any state."""
+    response = app.make_response(rendered)
+    if response.status_code != 200:
+        return response
+    pdf = render_pdf(response.get_json()["markdown"])
+    return app.response_class(
+        pdf,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": 'inline; filename="menu.pdf"', "Cache-Control": "no-store"},
+    )
+
+
+@app.route('/api/menus/<name>/print.pdf', methods=['GET'])
+def print_saved_menu_pdf(name: str):
+    return printable_pdf(render_saved_menu(name))
+
+
+@app.route('/api/runs/<int:run_id>/print.pdf', methods=['GET'])
+def print_run_menu_pdf(run_id: int):
+    return printable_pdf(render_run_menu(run_id))
 
 
 @app.route('/api/runs/items/<int:item_id>', methods=['PATCH'])
